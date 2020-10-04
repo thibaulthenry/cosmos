@@ -1,55 +1,90 @@
 package cosmos;
 
-import com.google.inject.Inject;
-import cosmos.commands.CommandRegister;
-import cosmos.utils.Finder;
-import org.slf4j.Logger;
+import cosmos.commands.time.IgnorePlayersSleeping;
+import cosmos.commands.time.RealTime;
+import cosmos.listeners.ListenerRegister;
+import cosmos.modules.Root;
+import cosmos.statics.config.Config;
+import cosmos.statics.finders.FinderFile;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.GameReloadEvent;
+import org.spongepowered.api.event.game.state.GameConstructionEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
+import org.spongepowered.api.event.game.state.GameStoppingEvent;
+import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
+
+import java.util.Arrays;
 
 @Plugin(
         id = "cosmos",
         name = "Cosmos",
-        version = "alpha",
-        description = "Cosmos | Worlds management plugin"
+        version = "1.0.0-7.3.0",
+        description = "Cosmos | Worlds management | Per-world management",
+        url = "https://ore.spongepowered.org/Kazz96/Cosmos",
+        authors = "Kazz"
 )
+@SuppressWarnings("MethodMayBeStatic")
 public class Cosmos {
 
-    private static Cosmos instance;
+    public static Cosmos instance;
 
-    @Inject
-    private Logger logger;
-
-    public static Cosmos getInstance() {
-        return instance;
+    public static void sendConsole(Object... values) {
+        Arrays.stream(values)
+                .map(value -> Text.of("[COSMOS]: ", value))
+                .forEach(text -> Sponge.getServer().getConsole().sendMessages(text));
     }
 
     @Listener
-    @SuppressWarnings("unused")
+    public void onConstruction(GameConstructionEvent event) {
+        if (instance == null) instance = this;
+    }
+
+    @Listener
+    public void onPreInitialization(GamePreInitializationEvent event) {
+        Config.load();
+    }
+
+    @Listener
     public void onInitialization(GameInitializationEvent event) {
-        instance = this;
+        Sponge.getCommandManager().register(this, new Root().getCommandSpec(), "cosmos", "cm");
+        ListenerRegister.initializeListeners();
 
-        Sponge.getCommandManager().register(this, new CommandRegister().getCommandSpec(), "cosmos", "cm");
-
-        if (!Finder.initBackupsFolders()) {
-            sendConsole("An error occurred while initializing backups folder");
+        if (!FinderFile.initDirectories()) {
+            sendConsole(Text.of(TextColors.RED, "An error occurred while initializing Cosmos directories"));
         }
     }
 
     @Listener
-    @SuppressWarnings("unused")
-    public void onServerStarting(GameStartingServerEvent event) {
+    public void onGameStarting(GameStartingServerEvent event) {
+        IgnorePlayersSleeping.enableSleepIgnoranceFromConfig();
+        RealTime.enableRealTimeFromConfig();
     }
 
-    public Logger getLogger() {
-        return logger;
+    @Listener
+    public void onServerStopping(GameStoppingServerEvent event) {
+        RealTime.manageRealTimeConflicts();
     }
 
-    public void sendConsole(String text) {
-        Sponge.getServer().getConsole().sendMessage(Text.of("[COSMOS]: ", text));
+    @Listener
+    public void onGameStopping(GameStoppingEvent event) {
+        Config.save();
+        RealTime.cancelTask();
+        ListenerRegister.cancelScheduledSaveTask();
+    }
+
+    @Listener
+    public void onReload(GameReloadEvent event) {
+        ListenerRegister.unregisterAll();
+        Config.load();
+        RealTime.manageRealTimeConflicts();
+        ListenerRegister.initializeListeners();
+        IgnorePlayersSleeping.enableSleepIgnoranceFromConfig();
+        RealTime.enableRealTimeFromConfig();
     }
 }

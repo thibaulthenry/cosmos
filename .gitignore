@@ -2,6 +2,7 @@
 .gradle/
 gradle/
 build/
+classes/
 settings.gradle
 gradlew
 gradlew.bat
