@@ -1,0 +1,16 @@
+#Ignoring Gradle Folders & Files
+.gradle/
+gradle/
+build/
+classes/
+settings.gradle
+gradlew
+gradlew.bat
+META-INF/
+
+#Ignoring IntelliJ Folders
+.idea/
+out/
+
+#Ignoring MacOS files
+.DS_Store
