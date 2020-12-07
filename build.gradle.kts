@@ -2,9 +2,7 @@ plugins {
     java
 }
 
-group = "cosmos"
-version = "1.12-7.3.0-beta"
-description = project.description
+version = "2.0.0-8.0.0"
 
 repositories {
     mavenCentral()
@@ -12,5 +10,6 @@ repositories {
 }
 
 dependencies {
-    implementation("org.spongepowered:spongeapi:8.0.0-SNAPSHOT")
+    //implementation("org.spongepowered:spongeapi:8.0.0-SNAPSHOT")
+    implementation("org.spongepowered:spongeapi:8.0.0-20201203.141757-258")
 }

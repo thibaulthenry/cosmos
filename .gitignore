@@ -7,6 +7,7 @@ settings.gradle
 gradlew
 gradlew.bat
 META-INF/
+!src/main/resources/META-INF/plugins.json
 
 #Ignoring IntelliJ Folders
 .idea/
