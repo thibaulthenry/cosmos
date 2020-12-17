@@ -10,7 +10,7 @@ import org.spongepowered.api.world.storage.WorldProperties;
 public class SpawnPosition extends AbstractPropertiesCommand {
 
     @Override
-    protected void run(final Audience audience, final CommandContext context, final WorldProperties properties) throws CommandException {
+    protected void run(final Audience src, final CommandContext context, final WorldProperties properties) throws CommandException {
 
     }
 }

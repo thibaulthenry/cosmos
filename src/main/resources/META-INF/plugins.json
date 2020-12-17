@@ -1,0 +1,30 @@
+{
+  "plugins": [
+    {
+      "loader": "java_plain",
+      "id": "cosmos",
+      "name": "Cosmos",
+      "version": "2.0.0-8.0.0",
+      "main-class": "cosmos.Cosmos",
+      "description": "Cosmos | Worlds management | Per-world management",
+      "links": {
+        "homepage": "https://ore.spongepowered.org/Kazz96/Cosmos",
+        "source": "https://github.com/thibaulthenry/cosmos",
+        "issues": "https://github.com/thibaulthenry/cosmos/issues"
+      },
+      "contributors": [
+        {
+          "name": "Kazź (Thibault)",
+          "description": "Lead Developer"
+        }
+      ],
+      "dependencies": [
+        {
+          "id": "spongeapi",
+          "version": "8.0.0"
+        }
+      ],
+      "extra": {}
+    }
+  ]
+}

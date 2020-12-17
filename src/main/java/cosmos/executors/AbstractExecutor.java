@@ -23,7 +23,7 @@ public abstract class AbstractExecutor implements CommandExecutor {
         return this.execute(context.getCause().getAudience(), context);
     }
 
-    protected abstract CommandResult execute(final Audience audience, final CommandContext context) throws CommandException;
+    protected abstract CommandResult execute(final Audience src, final CommandContext context) throws CommandException;
 
     public abstract Command.Parameterized getParametrized();
 }

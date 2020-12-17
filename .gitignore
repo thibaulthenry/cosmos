@@ -7,7 +7,7 @@ settings.gradle
 gradlew
 gradlew.bat
 META-INF/
-!src/main/resources/META-INF/plugins.json
+!src/main/resources/META-INF
 
 #Ignoring IntelliJ Folders
 .idea/
@@ -15,3 +15,4 @@ out/
 
 #Ignoring MacOS files
 .DS_Store
+

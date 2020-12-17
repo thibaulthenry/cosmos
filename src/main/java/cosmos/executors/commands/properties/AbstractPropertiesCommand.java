@@ -14,10 +14,10 @@ abstract class AbstractPropertiesCommand extends AbstractCommand {
     }
 
     @Override
-    protected void run(final Audience audience, final CommandContext context) throws CommandException {
+    protected void run(final Audience src, final CommandContext context) throws CommandException {
         final WorldProperties properties = this.serviceProvider.worldProperties().get(context);
-        this.run(audience, context, properties);
+        this.run(src, context, properties);
     }
 
-    protected abstract void run(final Audience audience, final CommandContext context, final WorldProperties properties) throws CommandException;
+    protected abstract void run(final Audience src, final CommandContext context, final WorldProperties properties) throws CommandException;
 }

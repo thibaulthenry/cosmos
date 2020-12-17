@@ -15,7 +15,8 @@ import cosmos.executors.commands.properties.LoadOnStartup;
 import cosmos.executors.commands.properties.Pvp;
 import cosmos.executors.commands.properties.SpawnPosition;
 import cosmos.executors.commands.properties.ViewDistance;
-import cosmos.executors.parameters.CosmosParameters;
+import cosmos.executors.parameters.CosmosKeys;
+import org.spongepowered.api.command.parameter.Parameter;
 
 @Singleton
 class Properties extends AbstractModule {
@@ -23,7 +24,7 @@ class Properties extends AbstractModule {
     @Inject
     Properties(final Injector injector) {
         super(
-                CosmosParameters.WORLD_PROPERTIES_ALL_OPTIONAL,
+                Parameter.worldProperties(false).setKey(CosmosKeys.WORLD).optional().build(),
                 injector.getInstance(Difficulty.class),
                 injector.getInstance(EnableCommandBlocks.class),
                 injector.getInstance(EnableStructures.class),

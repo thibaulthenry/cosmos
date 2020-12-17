@@ -10,7 +10,7 @@ import org.spongepowered.api.command.parameter.CommandContext;
 public class New extends AbstractCommand {
 
     @Override
-    protected void run(Audience audience, CommandContext context) throws CommandException {
+    protected void run(Audience src, CommandContext context) throws CommandException {
 
     }
 

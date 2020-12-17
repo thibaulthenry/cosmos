@@ -11,7 +11,14 @@ import org.spongepowered.api.world.storage.WorldProperties;
 public class Remove extends AbstractBorderCommand {
 
     @Override
-    protected void run(final Audience audience, final CommandContext context, final WorldProperties properties, final WorldBorder border) throws CommandException {
+    protected void run(final Audience src, final CommandContext context, final WorldProperties properties, final WorldBorder border) throws CommandException {
+        border.setDiameter(Double.POSITIVE_INFINITY);
+        //this.serviceProvider.properties().save(properties); TODO Add in 1.16
 
+        this.serviceProvider.message()
+                .getMessage(src, "success.border.remove")
+                .replace("world", properties)
+                .successColor()
+                .sendTo(src);
     }
 }

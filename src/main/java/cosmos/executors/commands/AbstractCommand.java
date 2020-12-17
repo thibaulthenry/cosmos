@@ -26,13 +26,13 @@ public abstract class AbstractCommand extends AbstractExecutor {
     }
 
     @Override
-    public CommandResult execute(final Audience audience, final CommandContext context) throws CommandException {
+    public CommandResult execute(final Audience src, final CommandContext context) throws CommandException {
         this.run(context.getCause().getAudience(), context);
 
         return CommandResult.success();
     }
 
-    protected abstract void run(final Audience audience, final CommandContext context) throws CommandException;
+    protected abstract void run(final Audience src, final CommandContext context) throws CommandException;
 
     @Override
     public Command.Parameterized getParametrized() {

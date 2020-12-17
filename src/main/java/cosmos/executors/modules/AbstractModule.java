@@ -41,10 +41,10 @@ public class AbstractModule extends AbstractExecutor {
     }
 
     @Override
-    protected CommandResult execute(final Audience audience, final CommandContext context) {
-        final TextComponent hoverHelpText = this.serviceProvider.message().getMessage(audience, "modules.help.hover").asText();
+    protected CommandResult execute(final Audience src, final CommandContext context) {
+        final TextComponent hoverHelpText = this.serviceProvider.message().getMessage(src, "modules.help.hover").asText();
 
-        final TextComponent helpText = this.serviceProvider.message().getMessage(audience, "modules.help")
+        final TextComponent helpText = this.serviceProvider.message().getMessage(src, "modules.help")
                 .replace("module", this.moduleName)
                 .hoverEvent("help", HoverEvent.showText(hoverHelpText))
                 .clickEvent("help", ClickEvent.suggestCommand("/cm help"))
@@ -61,12 +61,12 @@ public class AbstractModule extends AbstractExecutor {
                         .collect(Collectors.toSet())
         );
 
-        final TextComponent helpCommandsText = this.serviceProvider.message().getMessage(audience, "modules.help.commands")
+        final TextComponent helpCommandsText = this.serviceProvider.message().getMessage(src, "modules.help.commands")
                 .replace("commands", allowedSubCommands)
                 .defaultColor(NamedTextColor.GRAY)
                 .asText();
 
-        audience.sendMessage(Component.text().append(helpText).append(Component.newline()).append(helpCommandsText).build());
+        src.sendMessage(Component.text().append(helpText).append(Component.newline()).append(helpCommandsText).build());
 
         return CommandResult.success();
     }
