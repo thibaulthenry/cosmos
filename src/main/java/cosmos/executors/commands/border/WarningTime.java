@@ -1,7 +1,8 @@
 package cosmos.executors.commands.border;
 
 import com.google.inject.Singleton;
-import cosmos.executors.parameters.CosmosKeys;
+import cosmos.models.parameters.CosmosKeys;
+import cosmos.models.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -19,7 +20,7 @@ public class WarningTime extends AbstractBorderCommand {
     public WarningTime() {
         super(
                 Parameter.longNumber().setKey(CosmosKeys.DURATION).optional().build(),
-                Parameter.enumValue(ChronoUnit.class).setKey(CosmosKeys.TEMPORAL_UNIT).orDefault(ChronoUnit.SECONDS).build()
+                CosmosParameters.TIME_UNIT_OPTIONAL
         );
     }
 
@@ -28,6 +29,7 @@ public class WarningTime extends AbstractBorderCommand {
         final Optional<Long> optionalInput = context.getOne(CosmosKeys.DURATION);
         Duration value = border.getWarningTime();
 
+        // TODO TIME UNIT
         if (optionalInput.isPresent()) {
             value = Duration.of(optionalInput.get(), ChronoUnit.SECONDS);
             border.setWarningTime(value);

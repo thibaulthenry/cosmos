@@ -8,12 +8,13 @@ import cosmos.executors.commands.border.DamageAmount;
 import cosmos.executors.commands.border.DamageThreshold;
 import cosmos.executors.commands.border.DefaultSettings;
 import cosmos.executors.commands.border.Information;
+import cosmos.executors.commands.border.Operate;
 import cosmos.executors.commands.border.Remove;
 import cosmos.executors.commands.border.Size;
 import cosmos.executors.commands.border.Transpose;
 import cosmos.executors.commands.border.WarningDistance;
 import cosmos.executors.commands.border.WarningTime;
-import cosmos.executors.parameters.CosmosKeys;
+import cosmos.models.parameters.CosmosKeys;
 import org.spongepowered.api.command.parameter.Parameter;
 
 @Singleton
@@ -28,6 +29,7 @@ class Border extends AbstractModule {
                 injector.getInstance(DamageThreshold.class),
                 injector.getInstance(DefaultSettings.class),
                 injector.getInstance(Information.class),
+                injector.getInstance(Operate.class),
                 injector.getInstance(Remove.class),
                 injector.getInstance(Size.class),
                 injector.getInstance(Transpose.class),

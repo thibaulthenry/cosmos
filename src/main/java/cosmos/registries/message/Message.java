@@ -19,7 +19,8 @@ import java.util.function.Supplier;
 public class Message {
 
     private final Template template;
-    private final Map<String, Component> replacements = new HashMap<>();
+    private final Map<String, Component> replacementMap = new HashMap<>();
+    private final Map<String, Boolean> conditionMap = new HashMap<>();
     private final Map<String, HoverEvent<?>> hoverEventMap = new HashMap<>();
     private final Map<String, ClickEvent> clickEventMap = new HashMap<>();
     private TextColor defaultColor = NamedTextColor.WHITE;
@@ -29,7 +30,12 @@ public class Message {
     }
 
     public Message replace(final String key, final Object replacement) {
-        this.replacements.put(key, Cosmos.getServices().format().asText(replacement));
+        this.replacementMap.put(key, Cosmos.getServices().format().asText(replacement));
+        return this;
+    }
+
+    public Message condition(final String key, final boolean condition) {
+        this.conditionMap.put(key, condition);
         return this;
     }
 
@@ -58,7 +64,7 @@ public class Message {
 
     public TextComponent asText() {
         return Optional.ofNullable(this.template)
-                .map(t -> t.toText(this.replacements, this.hoverEventMap, this.clickEventMap).color(this.defaultColor))
+                .map(t -> t.toText(this.replacementMap, this.conditionMap, this.hoverEventMap, this.clickEventMap).color(this.defaultColor))
                 .orElseGet(() -> {
                     Cosmos.getLogger().info("No template found for message result");
                     return Component.empty();
@@ -73,8 +79,8 @@ public class Message {
         return this::asException;
     }
 
-    public void sendTo(Audience audience) {
-        audience.sendMessage(this.asText());
+    public void sendTo(final Audience src) {
+        src.sendMessage(this.asText());
     }
 
 }

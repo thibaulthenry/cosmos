@@ -44,7 +44,7 @@ public class WorldPropertiesServiceImpl implements WorldPropertiesService {
     }
 
     @Override
-    public Optional<WorldProperties> get(final Audience audience) {
-        return Optional.ofNullable(audience instanceof Locatable ? ((Locatable) audience).getServerLocation().getWorld().getProperties() : null);
+    public Optional<WorldProperties> get(final Audience src) {
+        return Optional.ofNullable(src instanceof Locatable ? ((Locatable) src).getServerLocation().getWorld().getProperties() : null);
     }
 }

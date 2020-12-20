@@ -6,6 +6,7 @@ import cosmos.registries.message.Message;
 import cosmos.registries.template.Template;
 import cosmos.services.message.MessageService;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.TextComponent;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
@@ -13,6 +14,14 @@ import java.util.Locale;
 
 @Singleton
 public class MessageServiceImpl implements MessageService {
+
+    public Locale getLocale(final Audience src) {
+        if (src instanceof ServerPlayer) {
+            return ((ServerPlayer) src).getLocale();
+        }
+
+        return Locale.ROOT;
+    }
 
     @Override
     public Message getMessage(final Template template) {
@@ -25,8 +34,8 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Message getMessage(final Audience audience, final String key) {
-        return this.getMessage(getLocale(audience), key);
+    public Message getMessage(final Audience src, final String key) {
+        return this.getMessage(getLocale(src), key);
     }
 
     @Override
@@ -34,11 +43,9 @@ public class MessageServiceImpl implements MessageService {
         return this.getMessage(context.getCause().getAudience(), key);
     }
 
-    public Locale getLocale(final Audience audience) {
-        if (audience instanceof ServerPlayer) {
-            return ((ServerPlayer) audience).getLocale();
-        }
-
-        return Locale.ROOT;
+    @Override
+    public TextComponent getText(final Audience src, final String key) {
+        return this.getMessage(src, key).asText();
     }
+
 }

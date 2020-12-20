@@ -42,36 +42,6 @@ public class Cosmos {
     @Listener
     public void onRegisterCommandEvent(final RegisterCommandEvent<Command.Parameterized> event) {
         event.register(Cosmos.pluginContainer, this.injector.getInstance(Root.class).getParametrized(), "cm");
-
-//        Command.Parameterized center = Command.builder()
-//                .parameter(CosmosParameters.POSITION_XZ)
-//                .setExecutor(new Center())
-//                .build();
-//
-//        Command.Parameterized size = Command.builder()
-//                .parameter(Parameter.integerNumber().setKey("diameter").build())
-//                .setExecutor(new text())
-//                .build();
-//
-//        Command.Parameterized border = Command.builder()
-//                .parameter(Parameter.worldProperties(false).setKey("world").optional().build())
-//                .parameter(Parameter.subcommand(center, "center"))
-//                .setExecutor(new text())
-//                .setTerminal(true)
-//                .build();
-//
-//        Command.Parameterized backup = Command.builder()
-//                .setExecutor(new text())
-//                .setTerminal(true)
-//                .build();
-//
-//        Command.Parameterized root = Command.builder()
-//                .setExecutor(new text())
-//                .child(backup, "backup")
-//                .child(border, "border")
-//                .setTerminal(true)
-//                .build();
-//
-//        event.register(Cosmos.pluginContainer, root, "cm");
+        ;
     }
 }

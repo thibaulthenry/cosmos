@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.services.formatter.FormatterService;
 import cosmos.services.message.MessageService;
+import cosmos.services.pagination.PaginationService;
 import cosmos.services.properties.WorldPropertiesService;
 import cosmos.services.template.TemplateService;
 
@@ -13,6 +14,7 @@ public class ServiceProviderImpl implements ServiceProvider {
 
     private final FormatterService formatService;
     private final MessageService messageService;
+    private final PaginationService paginationService;
     private final TemplateService templateService;
     private final WorldPropertiesService worldPropertiesService;
 
@@ -20,6 +22,7 @@ public class ServiceProviderImpl implements ServiceProvider {
     public ServiceProviderImpl(final Injector injector) {
         this.formatService = injector.getInstance(FormatterService.class);
         this.messageService = injector.getInstance(MessageService.class);
+        this.paginationService = injector.getInstance(PaginationService.class);
         this.templateService = injector.getInstance(TemplateService.class);
         this.worldPropertiesService = injector.getInstance(WorldPropertiesService.class);
     }
@@ -32,6 +35,11 @@ public class ServiceProviderImpl implements ServiceProvider {
     @Override
     public MessageService message() {
         return this.messageService;
+    }
+
+    @Override
+    public PaginationService pagination() {
+        return this.paginationService;
     }
 
     @Override
