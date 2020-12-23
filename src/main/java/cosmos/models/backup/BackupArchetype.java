@@ -3,6 +3,7 @@ package cosmos.models.backup;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.server.ServerWorld;
+import org.spongepowered.api.world.server.ServerWorldProperties;
 import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class BackupArchetype {
     private final String creationDateTimeFormatted;
     private String tag;
 
-    public BackupArchetype(final WorldProperties worldProperties) {
+    public BackupArchetype(final ServerWorldProperties worldProperties) {
         final LocalDateTime creationDateTime = LocalDateTime.now();
         this.creationDateTimeFormatted = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss").format(creationDateTime);
         this.worldKey = worldProperties.getKey();

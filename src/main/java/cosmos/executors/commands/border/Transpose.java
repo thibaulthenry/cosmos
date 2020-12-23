@@ -8,7 +8,7 @@ import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.world.WorldBorder;
-import org.spongepowered.api.world.storage.WorldProperties;
+import org.spongepowered.api.world.server.ServerWorldProperties;
 
 import java.time.temporal.ChronoUnit;
 
@@ -25,7 +25,7 @@ public class Transpose extends AbstractBorderCommand {
     }
 
     @Override
-    protected void run(final Audience src, final CommandContext context, final WorldProperties properties, final WorldBorder border) throws CommandException {
+    protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
         final long duration = context.getOne(CosmosKeys.DURATION)
                 .orElseThrow(this.serviceProvider.message().getMessage(src, "error.invalid.duration").asSupplier());
         final ChronoUnit unit = context.getOne(CosmosParameters.TIME_UNIT_OPTIONAL).orElse(ChronoUnit.SECONDS);
@@ -34,7 +34,7 @@ public class Transpose extends AbstractBorderCommand {
         final double startDiameter = context.getOne(CosmosKeys.START_DIAMETER).orElse(border.getDiameter());
 
         border.setDiameter(startDiameter, endDiameter, duration, unit);
-        //this.serviceProvider.properties().save(properties); TODO Add in 1.16
+        this.serviceProvider.worldProperties().save(properties);
 
         this.serviceProvider.message()
                 .getMessage(src, "success.border.transpose")

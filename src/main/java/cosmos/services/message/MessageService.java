@@ -7,12 +7,16 @@ import cosmos.services.CosmosService;
 import cosmos.services.message.impl.MessageServiceImpl;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.TextComponent;
+import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 
 import java.util.Locale;
+import java.util.function.Supplier;
 
 @ImplementedBy(MessageServiceImpl.class)
 public interface MessageService extends CosmosService {
+
+    Supplier<CommandException> getError(Audience src, String key);
 
     Locale getLocale(Audience src);
 

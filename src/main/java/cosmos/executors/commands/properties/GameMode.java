@@ -5,7 +5,7 @@ import cosmos.models.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
-import org.spongepowered.api.world.storage.WorldProperties;
+import org.spongepowered.api.world.server.ServerWorldProperties;
 
 import java.util.Optional;
 
@@ -17,14 +17,14 @@ public class GameMode extends AbstractPropertiesCommand {
     }
 
     @Override
-    protected void run(final Audience src, final CommandContext context, final WorldProperties properties) throws CommandException {
+    protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties) throws CommandException {
         final Optional<org.spongepowered.api.entity.living.player.gamemode.GameMode> optionalInput = context.getOne(CosmosParameters.GAME_MODE_OPTIONAL);
         org.spongepowered.api.entity.living.player.gamemode.GameMode value = properties.getGameMode();
 
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             properties.setGameMode(value);
-            //this.serviceProvider.properties().save(properties); TODO Add in 1.16
+            this.serviceProvider.worldProperties().save(properties);
         }
 
         this.serviceProvider.message()

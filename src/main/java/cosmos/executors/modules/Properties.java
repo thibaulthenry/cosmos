@@ -5,7 +5,7 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.properties.Difficulty;
 import cosmos.executors.commands.properties.EnableCommandBlocks;
-import cosmos.executors.commands.properties.EnableStructures;
+import cosmos.executors.commands.properties.EnableFeatures;
 import cosmos.executors.commands.properties.GameMode;
 import cosmos.executors.commands.properties.GenerateSpawnOnLoad;
 import cosmos.executors.commands.properties.GeneratorModifierType;
@@ -27,7 +27,7 @@ class Properties extends AbstractModule {
                 Parameter.worldProperties(false).setKey(CosmosKeys.WORLD).optional().build(),
                 injector.getInstance(Difficulty.class),
                 injector.getInstance(EnableCommandBlocks.class),
-                injector.getInstance(EnableStructures.class),
+                injector.getInstance(EnableFeatures.class),
                 injector.getInstance(GameMode.class),
                 injector.getInstance(GenerateSpawnOnLoad.class),
                 injector.getInstance(GeneratorModifierType.class),

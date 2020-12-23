@@ -26,11 +26,11 @@ public class ObjectiveFormatter implements Formatter<Objective> {
         final TextComponent displayedAsText = Component.text("Display as: ", NamedTextColor.GRAY)
                 .append(value.getDisplayName());
 
-        final TextComponent displayModeText = Component.text("Display mode: ", NamedTextColor.GRAY)
-                .append(Component.text(value.getDisplayMode().key().asString(), NamedTextColor.GOLD));
+//        final TextComponent displayModeText = Component.text("Display mode: ", NamedTextColor.GRAY) TODO
+//                .append(Component.text(value.getDisplayMode().key().asString(), NamedTextColor.GOLD));
 
-        final TextComponent criterionText = Component.text("Criterion: ", NamedTextColor.GRAY)
-                .append(Component.text(value.getCriterion().key().asString(), NamedTextColor.GOLD));
+//        final TextComponent criterionText = Component.text("Criterion: ", NamedTextColor.GRAY)
+//                .append(Component.text(value.getCriterion().asString(), NamedTextColor.GOLD));
 
         final TextComponent bestScoreText = optionalBestScore
                 .map(bestScore -> Component.newline()
@@ -47,9 +47,9 @@ public class ObjectiveFormatter implements Formatter<Objective> {
         final TextComponent hoverText = Component.text()
                 .append(displayedAsText)
                 .append(Component.newline())
-                .append(displayModeText)
+                //.append(displayModeText)todo
                 .append(Component.newline())
-                .append(criterionText)
+                //.append(criterionText)
                 .append(Component.newline())
                 .append(registeredScoresText)
                 .append(bestScoreText)

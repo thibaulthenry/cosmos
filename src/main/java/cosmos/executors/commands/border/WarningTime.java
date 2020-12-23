@@ -8,7 +8,7 @@ import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.world.WorldBorder;
-import org.spongepowered.api.world.storage.WorldProperties;
+import org.spongepowered.api.world.server.ServerWorldProperties;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -25,7 +25,7 @@ public class WarningTime extends AbstractBorderCommand {
     }
 
     @Override
-    protected void run(final Audience src, final CommandContext context, final WorldProperties properties, final WorldBorder border) throws CommandException {
+    protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
         final Optional<Long> optionalInput = context.getOne(CosmosKeys.DURATION);
         Duration value = border.getWarningTime();
 
@@ -33,7 +33,7 @@ public class WarningTime extends AbstractBorderCommand {
         if (optionalInput.isPresent()) {
             value = Duration.of(optionalInput.get(), ChronoUnit.SECONDS);
             border.setWarningTime(value);
-            //this.serviceProvider.properties().save(properties); TODO Add in 1.16
+            this.serviceProvider.worldProperties().save(properties);
         }
 
         this.serviceProvider.message()

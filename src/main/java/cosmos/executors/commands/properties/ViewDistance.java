@@ -6,7 +6,7 @@ import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
-import org.spongepowered.api.world.storage.WorldProperties;
+import org.spongepowered.api.world.server.ServerWorldProperties;
 
 import java.util.Optional;
 
@@ -18,14 +18,14 @@ public class ViewDistance extends AbstractPropertiesCommand {
     }
 
     @Override
-    protected void run(final Audience src, final CommandContext context, final WorldProperties properties) throws CommandException {
+    protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties) throws CommandException {
         final Optional<Integer> optionalInput = context.getOne(CosmosKeys.CHUNKS);
         int value = properties.getViewDistance();
 
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             properties.setViewDistance(value);
-            //this.serviceProvider.properties().save(properties); TODO Add in 1.16
+            this.serviceProvider.worldProperties().save(properties);
         }
 
         this.serviceProvider.message()

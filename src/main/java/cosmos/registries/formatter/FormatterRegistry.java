@@ -17,6 +17,7 @@ import net.kyori.adventure.key.Keyed;
 import net.kyori.adventure.text.TextComponent;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.scoreboard.objective.Objective;
+import org.spongepowered.api.world.server.ServerWorldProperties;
 import org.spongepowered.api.world.storage.WorldProperties;
 import org.spongepowered.math.vector.Vector2d;
 import org.spongepowered.math.vector.Vector3d;
@@ -41,7 +42,7 @@ public class FormatterRegistry implements CosmosRegistry<Class<?>, Formatter<?>>
         this.formatterMap.put(TextComponent.class, injector.getInstance(TextComponentFormatter.class));
         this.formatterMap.put(Vector2d.class, injector.getInstance(Vector2dFormatter.class));
         this.formatterMap.put(Vector3d.class, injector.getInstance(Vector3dFormatter.class));
-        this.formatterMap.put(WorldProperties.class, injector.getInstance(WorldPropertiesFormatter.class));
+        this.formatterMap.put(ServerWorldProperties.class, injector.getInstance(WorldPropertiesFormatter.class));
     }
 
     @Override

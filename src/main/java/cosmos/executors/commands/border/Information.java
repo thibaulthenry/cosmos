@@ -9,10 +9,11 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.world.WorldBorder;
-import org.spongepowered.api.world.storage.WorldProperties;
+import org.spongepowered.api.world.server.ServerWorldProperties;
 import org.spongepowered.math.vector.Vector3d;
 
 import java.text.MessageFormat;
@@ -22,21 +23,19 @@ import java.util.concurrent.CompletableFuture;
 public class Information extends AbstractBorderCommand {
 
     @Override
-    protected void run(final Audience src, final CommandContext context, final WorldProperties properties, final WorldBorder border) throws CommandException {
+    protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
         src.sendMessage(CompletableFuture.supplyAsync(() -> getBorderInformation(src, properties, border)).join());
     }
 
-    private TextComponent getBorderInformation(final Audience src, final WorldProperties properties, final WorldBorder border) {
+    private TextComponent getBorderInformation(final Audience src, final ServerWorldProperties properties, final WorldBorder border) {
         final ResourceKey worldKey = properties.getKey();
         final Vector3d center = border.getCenter();
 
-        // final double y = Sponge.getServer().getWorldManager().getWorld(worldKey)
-        // .map(world -> world.getHighestPositionAt(center.toInt()).getY())
-        // .orElse(1);
+        final double y = Sponge.getServer().getWorldManager().getWorld(worldKey)
+                .map(world -> world.getHighestPositionAt(center.toInt()).getY())
+                .orElse(1);
 
-        // TODO Add in 1.16
-
-        final String command = MessageFormat.format("/cm move {0} {1} {2} {3} --safe-only", worldKey.asString(), center.getX(), 1, center.getZ());
+        final String command = MessageFormat.format("/cm move {0} {1} {2} {3} --safe-only", worldKey.asString(), center.getX(), y, center.getZ());
 
         final long secondsRemaining = border.getTimeRemaining().getSeconds();
 

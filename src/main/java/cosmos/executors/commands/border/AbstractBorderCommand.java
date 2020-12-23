@@ -6,7 +6,7 @@ import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.world.WorldBorder;
-import org.spongepowered.api.world.storage.WorldProperties;
+import org.spongepowered.api.world.server.ServerWorldProperties;
 
 abstract class AbstractBorderCommand extends AbstractCommand {
 
@@ -16,9 +16,9 @@ abstract class AbstractBorderCommand extends AbstractCommand {
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
-        final WorldProperties properties = this.serviceProvider.worldProperties().get(context);
+        final ServerWorldProperties properties = this.serviceProvider.worldProperties().get(context);
         this.run(src, context, properties, properties.getWorldBorder());
     }
 
-    protected abstract void run(final Audience src, final CommandContext context, final WorldProperties properties, final WorldBorder border) throws CommandException;
+    protected abstract void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException;
 }

@@ -6,26 +6,26 @@ import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
-import org.spongepowered.api.world.storage.WorldProperties;
+import org.spongepowered.api.world.server.ServerWorldProperties;
 
 import java.util.Optional;
 
 @Singleton
-public class EnableStructures extends AbstractPropertiesCommand {
+public class EnableFeatures extends AbstractPropertiesCommand {
 
-    public EnableStructures() {
+    public EnableFeatures() {
         super(Parameter.bool().setKey(CosmosKeys.STATE).optional().build());
     }
 
     @Override
-    protected void run(final Audience src, final CommandContext context, final WorldProperties properties) throws CommandException {
+    protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties) throws CommandException {
         final Optional<Boolean> optionalInput = context.getOne(CosmosKeys.STATE);
-        boolean value = properties.areStructuresEnabled();
+        boolean value = properties.getWorldGenerationSettings().doFeaturesGenerate();
 
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
-            properties.setStructuresEnabled(value);
-            //this.serviceProvider.properties().save(properties); TODO Add in 1.16
+            properties.getWorldGenerationSettings().setFeaturesGenerate(value);
+            this.serviceProvider.worldProperties().save(properties);
         }
 
         this.serviceProvider.message()

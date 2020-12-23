@@ -10,7 +10,7 @@ import org.spongepowered.api.command.parameter.CommandContext;
 public class Unload extends AbstractCommand {
 
     @Override
-    protected void run(Audience src, CommandContext context) throws CommandException {
+    protected void run(final Audience src, final CommandContext context) throws CommandException {
 
     }
 

@@ -9,7 +9,7 @@ import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.world.WorldBorder;
-import org.spongepowered.api.world.storage.WorldProperties;
+import org.spongepowered.api.world.server.ServerWorldProperties;
 
 import java.time.temporal.ChronoUnit;
 
@@ -26,7 +26,7 @@ public class Operate extends AbstractBorderCommand {
     }
 
     @Override
-    protected void run(final Audience src, final CommandContext context, final WorldProperties properties, final WorldBorder border) throws CommandException {
+    protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
         final Operands operand = context.getOne(CosmosParameters.STANDARD_OPERAND)
                 .orElseThrow(this.serviceProvider.message().getMessage(src, "error.invalid.operand").asSupplier());
         final double value = context.getOne(CosmosKeys.AMOUNT)
@@ -57,7 +57,7 @@ public class Operate extends AbstractBorderCommand {
         }
 
         border.setDiameter(endDiameter, duration, unit);
-        //this.serviceProvider.properties().save(properties); TODO Add in 1.16
+        this.serviceProvider.worldProperties().save(properties);
 
         this.serviceProvider.message()
                 .getMessage(src, "success.border.operate")

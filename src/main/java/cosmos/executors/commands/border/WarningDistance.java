@@ -7,7 +7,7 @@ import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.world.WorldBorder;
-import org.spongepowered.api.world.storage.WorldProperties;
+import org.spongepowered.api.world.server.ServerWorldProperties;
 
 import java.util.Optional;
 
@@ -19,14 +19,14 @@ public class WarningDistance extends AbstractBorderCommand {
     }
 
     @Override
-    protected void run(final Audience src, final CommandContext context, final WorldProperties properties, final WorldBorder border) throws CommandException {
+    protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
         final Optional<Double> optionalInput = context.getOne(CosmosKeys.DISTANCE);
         double value = border.getWarningDistance();
 
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             border.setWarningDistance(value);
-            //this.serviceProvider.properties().save(properties); TODO Add in 1.16
+            this.serviceProvider.worldProperties().save(properties);
         }
 
         this.serviceProvider.message()

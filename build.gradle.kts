@@ -14,6 +14,5 @@ repositories {
 }
 
 dependencies {
-    //implementation("org.spongepowered:spongeapi:8.0.0-SNAPSHOT")
-    implementation("org.spongepowered:spongeapi:8.0.0-20201203.141757-258")
+    implementation("org.spongepowered:spongeapi:8.0.0-SNAPSHOT")
 }
