@@ -29,7 +29,7 @@ public class EnableFeatures extends AbstractPropertiesCommand {
         }
 
         this.serviceProvider.message()
-                .getMessage(src, optionalInput.isPresent() ? "success.properties.enable-structures.set" : "success.properties.enable-structures.get")
+                .getMessage(src, optionalInput.isPresent() ? "success.properties.enable-features.set" : "success.properties.enable-features.get")
                 .replace("world", properties)
                 .condition("value", value)
                 .successColor()

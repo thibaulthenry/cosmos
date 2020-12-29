@@ -12,6 +12,8 @@ import cosmos.executors.commands.time.Midnight;
 import cosmos.executors.commands.time.RealTime;
 import cosmos.executors.commands.time.Set;
 import cosmos.executors.commands.time.Tomorrow;
+import cosmos.models.parameters.CosmosKeys;
+import org.spongepowered.api.command.parameter.Parameter;
 
 @Singleton
 class Time extends AbstractModule {
@@ -19,6 +21,7 @@ class Time extends AbstractModule {
     @Inject
     public Time(final Injector injector) {
         super(
+                Parameter.worldProperties(false).setKey(CosmosKeys.WORLD).optional().build(),
                 injector.getInstance(Calendar.class),
                 injector.getInstance(Dawn.class),
                 injector.getInstance(Dusk.class),

@@ -1,7 +1,17 @@
 package cosmos.executors.commands.time;
 
 import com.google.inject.Singleton;
+import cosmos.models.enums.Units;
+import net.kyori.adventure.audience.Audience;
+import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.util.MinecraftDayTime;
 
 @Singleton
-public class Midnight extends AbstractTimeCommand {
+public class Midnight extends AbstractTimeChangeCommand {
+
+    @Override
+    protected long getNewTime(final Audience src, final CommandContext context, final MinecraftDayTime time) {
+        return this.serviceProvider.time().getNearestTickOccurrence(time.asTicks().getTicks(), Units.MIDNIGHT);
+    }
+
 }

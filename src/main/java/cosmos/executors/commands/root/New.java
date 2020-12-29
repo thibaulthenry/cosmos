@@ -15,11 +15,6 @@ import org.spongepowered.api.world.WorldArchetype;
 import org.spongepowered.api.world.dimension.DimensionType;
 import org.spongepowered.api.world.dimension.DimensionTypes;
 import org.spongepowered.api.world.server.ServerWorldProperties;
-import org.spongepowered.api.world.storage.WorldProperties;
-
-import java.io.IOException;
-import java.time.Instant;
-import java.util.Collection;
 
 @Singleton
 public class New extends AbstractCommand {

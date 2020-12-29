@@ -2,12 +2,9 @@ package cosmos.models.parameters;
 
 import cosmos.models.enums.Operands;
 import io.leangen.geantyref.TypeToken;
-import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.command.parameter.managed.standard.ResourceKeyedValueParameters;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
-import org.spongepowered.api.registry.RegistryRoots;
-import org.spongepowered.api.registry.RegistryType;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.world.difficulty.Difficulty;
 import org.spongepowered.api.world.dimension.DimensionType;
@@ -22,7 +19,7 @@ public class CosmosParameters {
             .optional()
             .build();
 
-    public static final Parameter.Value<DimensionType> DIMENSION_OPTIONAL = Parameter.registryElement(TypeToken.get(DimensionType.class), RegistryType.of(RegistryRoots.SPONGE, ResourceKey.sponge("dimension_type")))
+    public static final Parameter.Value<DimensionType> DIMENSION_OPTIONAL = Parameter.registryElement(TypeToken.get(DimensionType.class), RegistryTypes.DIMENSION_TYPE)
             .setKey(CosmosKeys.DIMENSION)
             .optional()
             .build();
@@ -48,8 +45,13 @@ public class CosmosParameters {
             .setKey(CosmosKeys.OPERAND)
             .build();
 
-    public static final Parameter.Value<ChronoUnit> TIME_UNIT_OPTIONAL = Parameter.builder(ChronoUnit.class, CosmosValueParameters.TIME_UNIT)
+    private static final Parameter.Value<ChronoUnit> TIME_UNIT_OPTIONAL = Parameter.builder(ChronoUnit.class, CosmosValueParameters.TIME_UNIT)
             .setKey(CosmosKeys.TIME_UNIT)
+            .optional()
+            .build();
+
+    public static final Parameter DURATION_WITH_TIME_UNIT_OPTIONAL = Parameter.seqBuilder(Parameter.longNumber().setKey(CosmosKeys.DURATION).build())
+            .then(TIME_UNIT_OPTIONAL)
             .optional()
             .build();
 }

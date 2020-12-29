@@ -6,7 +6,6 @@ import cosmos.models.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
-import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.world.WorldBorder;
 import org.spongepowered.api.world.server.ServerWorldProperties;
 
@@ -18,10 +17,7 @@ import java.util.Optional;
 public class WarningTime extends AbstractBorderCommand {
 
     public WarningTime() {
-        super(
-                Parameter.longNumber().setKey(CosmosKeys.DURATION).optional().build(),
-                CosmosParameters.TIME_UNIT_OPTIONAL
-        );
+        super(CosmosParameters.DURATION_WITH_TIME_UNIT_OPTIONAL);
     }
 
     @Override
@@ -29,9 +25,8 @@ public class WarningTime extends AbstractBorderCommand {
         final Optional<Long> optionalInput = context.getOne(CosmosKeys.DURATION);
         Duration value = border.getWarningTime();
 
-        // TODO TIME UNIT
         if (optionalInput.isPresent()) {
-            value = Duration.of(optionalInput.get(), ChronoUnit.SECONDS);
+            value = Duration.of(optionalInput.get(), context.getOne(CosmosKeys.TIME_UNIT).orElse(ChronoUnit.SECONDS));
             border.setWarningTime(value);
             this.serviceProvider.worldProperties().save(properties);
         }

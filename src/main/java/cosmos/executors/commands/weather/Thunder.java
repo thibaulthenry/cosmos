@@ -1,15 +1,15 @@
 package cosmos.executors.commands.weather;
 
 import com.google.inject.Singleton;
-import cosmos.executors.commands.AbstractCommand;
-import net.kyori.adventure.audience.Audience;
-import org.spongepowered.api.command.exception.CommandException;
-import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.world.weather.Weather;
+import org.spongepowered.api.world.weather.Weathers;
 
 @Singleton
-public class Thunder extends AbstractCommand {
-    @Override
-    protected void run(Audience src, CommandContext context) throws CommandException {
+public class Thunder extends AbstractWeatherChangeCommand {
 
+    @Override
+    protected Weather getNewWeather() {
+        return Weathers.THUNDER.get();
     }
+
 }

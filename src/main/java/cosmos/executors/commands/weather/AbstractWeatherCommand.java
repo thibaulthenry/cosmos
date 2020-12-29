@@ -1,4 +1,4 @@
-package cosmos.executors.commands.properties;
+package cosmos.executors.commands.weather;
 
 import cosmos.executors.commands.AbstractCommand;
 import net.kyori.adventure.audience.Audience;
@@ -6,18 +6,20 @@ import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.weather.Weather;
 
-abstract class AbstractPropertiesCommand extends AbstractCommand {
+public abstract class AbstractWeatherCommand extends AbstractCommand {
 
-    AbstractPropertiesCommand(final Parameter... parameters) {
+    protected AbstractWeatherCommand(final Parameter... parameters) {
         super(parameters);
     }
 
     @Override
     protected final void run(final Audience src, final CommandContext context) throws CommandException {
         final ServerWorldProperties properties = this.serviceProvider.worldProperties().get(context);
-        this.run(src, context, properties);
+        this.run(src, context, properties, properties.getWeather());
     }
 
-    protected abstract void run(final Audience src, final CommandContext context, final ServerWorldProperties properties) throws CommandException;
+    protected abstract void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, Weather weather) throws CommandException;
+
 }

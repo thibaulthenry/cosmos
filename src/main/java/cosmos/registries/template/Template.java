@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 public class Template {
 
-    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{\\{(key:(\\w+))(;value:([^;]+))?(;valueElse:([^;]+))?(;color:(\\w+))?(;style:(\\w+))?}}");
+    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{\\{(key:(\\w+))(;value:([^;}]+))?(;valueElse:([^;}]+))?(;color:(\\w+))?(;style:(\\w+))?}}");
 
     private final Collection<TemplateElement> elements;
 
@@ -29,11 +29,8 @@ public class Template {
         this.elements = parse(rawTemplate);
     }
 
-    public TextComponent toText(final Map<String, Component> replacements, final Map<String, Boolean> conditionMap, final Map<String, HoverEvent<?>> hoverEventMap, final Map<String, ClickEvent> clickEventMap) {
+    public TextComponent toText(final Map<String, Component> replacements, final Map<String, Boolean> conditionMap, final Map<String, HoverEvent<?>> hoverEventMap, final Map<String, ClickEvent> clickEventMap, final TextColor defaultColor) {
         final TextComponent.Builder builder = Component.text();
-
-        final int lastElementIndex = this.elements.size() - 1;
-        int index = 0;
 
         for (TemplateElement element : this.elements) {
             if (element instanceof Placeholder) {
@@ -42,27 +39,14 @@ public class Template {
 
                 if (!conditionMap.getOrDefault(key, true)) {
                     if (placeholder.valueElse != null) {
-                        builder.append(placeholder.toText(true, hoverEventMap.get(key), clickEventMap.get(key)));
+                        builder.append(placeholder.toText(null, true, defaultColor, hoverEventMap.get(key), clickEventMap.get(key)));
                     }
-                    continue;
+                } else {
+                    builder.append(placeholder.toText(replacements.get(key), false, defaultColor, hoverEventMap.get(key), clickEventMap.get(key)));
                 }
-
-                if (replacements.containsKey(key)) {
-                    builder.append(placeholder.toText(replacements.get(key), hoverEventMap.get(key), clickEventMap.get(key)));
-                    continue;
-                }
-
-                if (hoverEventMap.containsKey(key) || clickEventMap.containsKey(key)) {
-                    builder.append(placeholder.toText(hoverEventMap.get(key), clickEventMap.get(key)));
-                    continue;
-                }
-            }
-
-            if (index != lastElementIndex || !element.getValue().trim().isEmpty()) {
+            } else {
                 builder.append(element.toText());
             }
-
-            index++;
         }
 
         return builder.build();
@@ -89,7 +73,7 @@ public class Template {
                             matcher.group(2),
                             matcher.group(4),
                             matcher.group(6),
-                            parseColor(matcher.group(8)).orElse(NamedTextColor.WHITE),
+                            parseColor(matcher.group(8)),
                             parseDecoration(matcher.group(10))
                     )
             );
@@ -104,8 +88,12 @@ public class Template {
         return ImmutableList.copyOf(elements.isEmpty() ? Collections.singletonList(new Flat(rawTemplate)) : elements);
     }
 
-    private Optional<TextColor> parseColor(final String color) {
-        return Optional.ofNullable(color == null ? null : NamedTextColor.NAMES.value(color));
+    private TextColor parseColor(final String color) {
+        if ("default".equals(color)) {
+            return null;
+        }
+
+        return Optional.ofNullable(color == null ? null : NamedTextColor.NAMES.value(color)).orElse(NamedTextColor.WHITE);
     }
 
     private TextDecoration[] parseDecoration(final String decoration) {
@@ -134,39 +122,30 @@ public class Template {
             this.decorations = decorations == null ? new TextDecoration[0] : decorations;
         }
 
-        public TextComponent toText(final boolean useElse) {
-            final String usedValue = useElse ? this.valueElse : this.value;
+        public TextComponent toText(@Nullable final Component replacement, final boolean useElse, @Nullable final TextColor defaultColor, @Nullable final HoverEvent<?> hoverEvent, @Nullable final ClickEvent clickEvent) {
+            final TextComponent.Builder builder = Component.text();
 
-            return Component.text()
-                    .content(usedValue == null ? this.key : usedValue)
-                    .color(this.color)
+            if (useElse && this.valueElse != null) {
+                builder.content(this.valueElse);
+            } else if (this.value != null) {
+                builder.content(this.value);
+            } else if (replacement != null) {
+                builder.append(replacement);
+            } else {
+                builder.content(this.key);
+            }
+
+            return builder
+                    .color(this.color == null ? defaultColor : this.color)
                     .decorate(this.decorations)
+                    .hoverEvent(hoverEvent)
+                    .clickEvent(clickEvent)
                     .build();
         }
 
         @Override
         public TextComponent toText() {
-            return this.toText(false);
-        }
-
-        public TextComponent toText(final Component replacement) {
-            return (this.value == null ? Component.text().append(replacement).build() : Component.text(this.value))
-                    .toBuilder()
-                    .color(this.color)
-                    .decorate(this.decorations)
-                    .build();
-        }
-
-        public TextComponent toText(@Nullable final HoverEvent<?> hoverEvent, @Nullable final ClickEvent clickEvent) {
-            return this.toText().hoverEvent(hoverEvent).clickEvent(clickEvent);
-        }
-
-        public TextComponent toText(final boolean valueElse, @Nullable final HoverEvent<?> hoverEvent, @Nullable final ClickEvent clickEvent) {
-            return this.toText(valueElse).hoverEvent(hoverEvent).clickEvent(clickEvent);
-        }
-
-        public TextComponent toText(final Component replacement, @Nullable final HoverEvent<?> hoverEvent, @Nullable final ClickEvent clickEvent) {
-            return this.toText(replacement).hoverEvent(hoverEvent).clickEvent(clickEvent);
+            return this.toText(null, false, null, null, null);
         }
 
         @Override

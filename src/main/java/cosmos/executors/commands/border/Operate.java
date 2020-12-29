@@ -20,8 +20,7 @@ public class Operate extends AbstractBorderCommand {
         super(
                 CosmosParameters.STANDARD_OPERAND,
                 Parameter.doubleNumber().setKey(CosmosKeys.AMOUNT).build(),
-                Parameter.longNumber().setKey(CosmosKeys.DURATION).build(),
-                CosmosParameters.TIME_UNIT_OPTIONAL
+                CosmosParameters.DURATION_WITH_TIME_UNIT_OPTIONAL
         );
     }
 
@@ -32,7 +31,7 @@ public class Operate extends AbstractBorderCommand {
         final double value = context.getOne(CosmosKeys.AMOUNT)
                 .orElseThrow(this.serviceProvider.message().getMessage(src, "error.invalid.value").asSupplier());
         final long duration = context.getOne(CosmosKeys.DURATION).orElse(0L);
-        final ChronoUnit unit = context.getOne(CosmosParameters.TIME_UNIT_OPTIONAL).orElse(ChronoUnit.SECONDS);
+        final ChronoUnit unit = context.getOne(CosmosKeys.TIME_UNIT).orElse(ChronoUnit.SECONDS);
 
         final double startDiameter = border.getDiameter();
         final double endDiameter;

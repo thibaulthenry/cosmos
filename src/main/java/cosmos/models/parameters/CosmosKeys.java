@@ -27,6 +27,7 @@ public class CosmosKeys {
     public static final Parameter.Key<Operands> OPERAND = Parameter.key("operand", Operands.class);
     public static final Parameter.Key<Double> START_DIAMETER = Parameter.key("start-diameter", Double.class);
     public static final Parameter.Key<Boolean> STATE = Parameter.key("state", Boolean.class);
+    public static final Parameter.Key<Long> TICKS = Parameter.key("ticks", Long.class);
     public static final Parameter.Key<ChronoUnit> TIME_UNIT = Parameter.key("unit", ChronoUnit.class);
     public static final Parameter.Key<Vector2d> XZ = Parameter.key("x> <z", Vector2d.class);
     public static final Parameter.Key<Vector3d> XYZ = Parameter.key("x> <y> <z", Vector3d.class);

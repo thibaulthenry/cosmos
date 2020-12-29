@@ -9,6 +9,11 @@ import org.spongepowered.api.command.parameter.CommandContext;
 @Singleton
 public class Unload extends AbstractCommand {
 
+    public Unload() {
+        super();
+    }
+
+
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
 
