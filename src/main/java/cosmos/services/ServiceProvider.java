@@ -8,6 +8,7 @@ import cosmos.services.message.MessageService;
 import cosmos.services.pagination.PaginationService;
 import cosmos.services.template.TemplateService;
 import cosmos.services.time.TimeService;
+import cosmos.services.validation.ValidationService;
 import cosmos.services.world.WorldPropertiesService;
 import cosmos.services.world.WorldService;
 
@@ -27,6 +28,8 @@ public interface ServiceProvider {
     TemplateService template();
 
     TimeService time();
+
+    ValidationService validation();
 
     WorldPropertiesService worldProperties();
 

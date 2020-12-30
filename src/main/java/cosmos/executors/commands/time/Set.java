@@ -17,7 +17,7 @@ public class Set extends AbstractTimeChangeCommand {
 
     @Override
     protected long getNewTime(final Audience src, final CommandContext context, final MinecraftDayTime time) throws CommandException {
-        return context.getOne(CosmosKeys.TICKS).orElseThrow(this.serviceProvider.message().getError(src, "error.invalid.duration.ticks"));
+        return context.getOne(CosmosKeys.TICKS).orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.duration.ticks"));
     }
 
 }

@@ -30,7 +30,7 @@ public class New extends AbstractCommand {
     protected void run(final Audience src, final CommandContext context) throws CommandException {
         final ResourceKey worldKey = context.getOne(CosmosKeys.NAME)
                 .map(name -> ResourceKey.of(Cosmos.NAMESPACE, name))
-                .orElseThrow(this.serviceProvider.message().getError(src, "error.invalid.value")); // TODO
+                .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.value")); // TODO
 
         if (Sponge.getServer().getWorldManager().getWorld(worldKey).isPresent()) {
             //throw Outputs.EXISTING_WORLD.asException(worldName);

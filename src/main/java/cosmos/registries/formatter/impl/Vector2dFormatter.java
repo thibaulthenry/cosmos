@@ -12,7 +12,7 @@ import org.spongepowered.math.vector.Vector2d;
 public class Vector2dFormatter implements Formatter<Vector2d> {
 
     @Override
-    public TextComponent asText(Vector2d value) {
+    public TextComponent asText(final Vector2d value) {
         return Component.text()
                 .append(Component.text("<x: "))
                 .append(Component.text(GenericMath.round(value.getX(), 2), NamedTextColor.GOLD))

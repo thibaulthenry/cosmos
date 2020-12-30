@@ -3,7 +3,9 @@ package cosmos.registries.formatter;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.models.backup.BackupArchetype;
 import cosmos.registries.CosmosRegistry;
+import cosmos.registries.formatter.impl.BackupArchetypeFormatter;
 import cosmos.registries.formatter.impl.DefaultFormatter;
 import cosmos.registries.formatter.impl.KeyedFormatter;
 import cosmos.registries.formatter.impl.ObjectiveFormatter;
@@ -35,6 +37,7 @@ public class FormatterRegistry implements CosmosRegistry<Class<?>, Formatter<?>>
     @Inject
     public FormatterRegistry(final Injector injector) {
         this.defaultFormatter = injector.getInstance(DefaultFormatter.class);
+        this.formatterMap.put(BackupArchetype.class, injector.getInstance(BackupArchetypeFormatter.class));
         this.formatterMap.put(Keyed.class, injector.getInstance(KeyedFormatter.class));
         this.formatterMap.put(Objective.class, injector.getInstance(ObjectiveFormatter.class));
         this.formatterMap.put(String.class, injector.getInstance(StringFormatter.class));

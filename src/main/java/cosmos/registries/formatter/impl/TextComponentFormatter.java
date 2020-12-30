@@ -8,7 +8,7 @@ import net.kyori.adventure.text.TextComponent;
 public class TextComponentFormatter implements Formatter<TextComponent> {
 
     @Override
-    public TextComponent asText(TextComponent value) {
+    public TextComponent asText(final TextComponent value) {
         return value;
     }
 

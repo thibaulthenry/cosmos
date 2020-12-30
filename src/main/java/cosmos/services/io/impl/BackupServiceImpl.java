@@ -6,6 +6,7 @@ import cosmos.models.backup.BackupArchetype;
 import cosmos.models.enums.Directories;
 import cosmos.services.io.BackupService;
 import cosmos.services.io.FinderService;
+import org.spongepowered.api.ResourceKey;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -16,9 +17,10 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,25 +34,44 @@ public class BackupServiceImpl implements BackupService {
 
     @Override
     public List<BackupArchetype> getBackups() {
+        return this.stream().collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, BackupArchetype> getBackupMap() {
+        return this.stream().distinct().collect(Collectors.toMap(BackupArchetype::getName, Function.identity(), (e1, e2) -> e1));
+    }
+
+    @Override
+    public List<ResourceKey> getBackupWorlds() {
+        return this.stream().map(BackupArchetype::getWorldKey).collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, ResourceKey> getBackupWorldMap() {
+        return this.stream().map(BackupArchetype::getWorldKey).distinct().collect(Collectors.toMap(ResourceKey::getFormatted, Function.identity(), (e1, e2) -> e1));
+    }
+
+    private Stream<BackupArchetype> stream() {
         return this.finderService.getCosmosPath(Directories.BACKUPS_DIRECTORY_NAME).map(backupDirectory -> {
             try (final Stream<Path> paths = Files.walk(backupDirectory)) {
                 return paths
                         .filter(this::isBackup)
                         .map(BackupArchetype::fromDirectory)
                         .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .collect(Collectors.toList());
+                        .map(Optional::get);
             } catch (final Exception ignored) {
-                return Collections.<BackupArchetype>emptyList();
+                // TODO LOG ERROR ON IGNORED EXCEPTION
+                return Stream.<BackupArchetype>empty();
             }
-        }).orElse(Collections.emptyList());
+        }).orElse(Stream.empty());
     }
 
     @Override
     public boolean hasBackup(final String uuid) {
         return this.getBackups()
                 .stream()
-                .map(BackupArchetype::getWorldUUID)
+                .map(BackupArchetype::getUuid)
                 .anyMatch(backupWorldUUID -> backupWorldUUID.equals(uuid));
     }
 
@@ -140,6 +161,7 @@ public class BackupServiceImpl implements BackupService {
                                 .allMatch(backupDirectory -> backupPath.resolve(backupDirectory).toFile().exists());
                         return isDirectory && isInBackupsDirectory && hasBackupDirectories;
                     } catch (final Exception ignored) {
+                        // TODO LOG ERROR ON IGNORED EXCEPTION
                         return false;
                     }
                 }).orElse(false);

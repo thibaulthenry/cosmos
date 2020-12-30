@@ -1,18 +1,17 @@
 package cosmos.registries.formatter.impl;
 
 import com.google.inject.Singleton;
+import cosmos.models.backup.BackupArchetype;
 import cosmos.registries.formatter.Formatter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 
-import java.util.Locale;
-
 @Singleton
-public class DefaultFormatter implements Formatter<Object> {
+public class BackupArchetypeFormatter implements Formatter<BackupArchetype> {
 
     @Override
-    public TextComponent asText(final Object value) {
-        return Component.text(value.toString().toLowerCase(Locale.ROOT));
+    public TextComponent asText(final BackupArchetype value) {
+        return Component.text(value.getName());
     }
 
 }

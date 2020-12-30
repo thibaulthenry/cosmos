@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 @ImplementedBy(MessageServiceImpl.class)
 public interface MessageService extends CosmosService {
 
-    Supplier<CommandException> getError(Audience src, String key);
+    CommandException getError(Audience src, String key);
 
     Locale getLocale(Audience src);
 
@@ -30,4 +30,5 @@ public interface MessageService extends CosmosService {
 
     TextComponent getText(Audience src, String key);
 
+    Supplier<CommandException> supplyError(Audience src, String key);
 }

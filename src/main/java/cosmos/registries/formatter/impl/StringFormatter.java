@@ -11,12 +11,12 @@ public class StringFormatter implements Formatter<String> {
     private static final int MAX_TEXT_LENGTH = 24;
 
     @Override
-    public TextComponent asText(String value) {
-        return Component.text(this.substring(value, MAX_TEXT_LENGTH));
+    public TextComponent asText(final String value) {
+        return Component.text(this.substring(value));
     }
 
-    private String substring(String value, int maxLength) {
-        return (value.length() > maxLength) ? value.substring(0, maxLength) + ".." : value;
+    private String substring(final String value) {
+        return (value.length() > MAX_TEXT_LENGTH) ? value.substring(0, MAX_TEXT_LENGTH) + ".." : value;
     }
 
 }

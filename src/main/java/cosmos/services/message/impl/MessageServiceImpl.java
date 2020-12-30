@@ -1,10 +1,12 @@
 package cosmos.services.message.impl;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
 import cosmos.registries.message.Message;
 import cosmos.registries.template.Template;
 import cosmos.services.message.MessageService;
+import cosmos.services.template.TemplateService;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.TextComponent;
 import org.spongepowered.api.command.exception.CommandException;
@@ -17,7 +19,15 @@ import java.util.function.Supplier;
 @Singleton
 public class MessageServiceImpl implements MessageService {
 
-    public Supplier<CommandException> getError(final Audience src, final String key) {
+    @Inject
+    private TemplateService templateService;
+
+    public CommandException getError(final Audience src, final String key) {
+        return this.getMessage(src, key).asException();
+    }
+
+
+    public Supplier<CommandException> supplyError(final Audience src, final String key) {
         return this.getMessage(src, key).asSupplier();
     }
 
@@ -36,7 +46,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Message getMessage(final Locale locale, final String key) {
-        return this.getMessage(Cosmos.getServices().template().getTemplateRegistry(locale).get(key));
+        return this.getMessage(this.templateService.getTemplateRegistry(locale).get(key));
     }
 
     @Override

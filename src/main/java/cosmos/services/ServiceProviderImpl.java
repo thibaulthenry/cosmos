@@ -10,6 +10,7 @@ import cosmos.services.message.MessageService;
 import cosmos.services.pagination.PaginationService;
 import cosmos.services.template.TemplateService;
 import cosmos.services.time.TimeService;
+import cosmos.services.validation.ValidationService;
 import cosmos.services.world.WorldPropertiesService;
 import cosmos.services.world.WorldService;
 
@@ -23,6 +24,7 @@ public class ServiceProviderImpl implements ServiceProvider {
     private final PaginationService paginationService;
     private final TemplateService templateService;
     private final TimeService timeService;
+    private final ValidationService validationService;
     private final WorldPropertiesService worldPropertiesService;
     private final WorldService worldService;
 
@@ -35,6 +37,7 @@ public class ServiceProviderImpl implements ServiceProvider {
         this.paginationService = injector.getInstance(PaginationService.class);
         this.templateService = injector.getInstance(TemplateService.class);
         this.timeService = injector.getInstance(TimeService.class);
+        this.validationService = injector.getInstance(ValidationService.class);
         this.worldPropertiesService = injector.getInstance(WorldPropertiesService.class);
         this.worldService = injector.getInstance(WorldService.class);
     }
@@ -72,6 +75,11 @@ public class ServiceProviderImpl implements ServiceProvider {
     @Override
     public TimeService time() {
         return this.timeService;
+    }
+
+    @Override
+    public ValidationService validation() {
+        return this.validationService;
     }
 
     @Override

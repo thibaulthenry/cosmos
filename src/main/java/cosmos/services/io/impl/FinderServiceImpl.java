@@ -84,7 +84,7 @@ public class FinderServiceImpl implements FinderService {
     public Optional<Path> getBackupPath(final BackupArchetype backupArchetype, final boolean useTag) {
         String directory = backupArchetype.getWorldKey().getFormatted() + "_"
                 + backupArchetype.getCreationDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + "_"
-                + backupArchetype.getWorldUUID();
+                + backupArchetype.getUuid();
 
         final Optional<String> optionalTag = backupArchetype.getTag();
 

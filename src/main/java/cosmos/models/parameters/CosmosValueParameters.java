@@ -16,13 +16,13 @@ class CosmosValueParameters {
             .build();
 
     static final ValueParameter<ChronoUnit> TIME_UNIT = VariableValueParameters.staticChoicesBuilder(ChronoUnit.class)
-            .choice(ChronoUnit.MILLIS.toString(), ChronoUnit.MILLIS)
-            .choice(ChronoUnit.SECONDS.toString(), ChronoUnit.SECONDS)
-            .choice(ChronoUnit.MINUTES.toString(), ChronoUnit.MINUTES)
-            .choice(ChronoUnit.HOURS.toString(), ChronoUnit.HOURS)
-            .choice(ChronoUnit.DAYS.toString(), ChronoUnit.DAYS)
-            .choice(ChronoUnit.WEEKS.toString(), ChronoUnit.WEEKS)
-            .choice(ChronoUnit.MONTHS.toString(), ChronoUnit.MONTHS)
-            .choice(ChronoUnit.YEARS.toString(), ChronoUnit.YEARS)
+            .choice("milliseconds", ChronoUnit.MILLIS)
+            .choice("seconds", ChronoUnit.SECONDS)
+            .choice("minutes", ChronoUnit.MINUTES)
+            .choice("hours", ChronoUnit.HOURS)
+            .choice("days", ChronoUnit.DAYS)
+            .choice("weeks", ChronoUnit.WEEKS)
+            .choice("months", ChronoUnit.MONTHS)
+            .choice("years", ChronoUnit.YEARS)
             .build();
 }

@@ -1,6 +1,8 @@
 package cosmos.models.parameters;
 
+import cosmos.models.backup.BackupArchetype;
 import cosmos.models.enums.Operands;
+import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.world.difficulty.Difficulty;
@@ -14,6 +16,7 @@ import java.time.temporal.ChronoUnit;
 public class CosmosKeys {
 
     public static final Parameter.Key<Double> AMOUNT = Parameter.key("amount", Double.class);
+    public static final Parameter.Key<BackupArchetype> BACKUP = Parameter.key("backup", BackupArchetype.class);
     public static final Parameter.Key<Integer> CHUNKS = Parameter.key("chunks", Integer.class);
     public static final Parameter.Key<Double> DIAMETER = Parameter.key("end-diameter", Double.class);
     public static final Parameter.Key<Difficulty> DIFFICULTY = Parameter.key("difficulty", Difficulty.class);
@@ -27,10 +30,13 @@ public class CosmosKeys {
     public static final Parameter.Key<Operands> OPERAND = Parameter.key("operand", Operands.class);
     public static final Parameter.Key<Double> START_DIAMETER = Parameter.key("start-diameter", Double.class);
     public static final Parameter.Key<Boolean> STATE = Parameter.key("state", Boolean.class);
+    public static final Parameter.Key<String> TAG = Parameter.key("tag", String.class);
     public static final Parameter.Key<Long> TICKS = Parameter.key("ticks", Long.class);
     public static final Parameter.Key<ChronoUnit> TIME_UNIT = Parameter.key("unit", ChronoUnit.class);
     public static final Parameter.Key<Vector2d> XZ = Parameter.key("x> <z", Vector2d.class);
     public static final Parameter.Key<Vector3d> XYZ = Parameter.key("x> <y> <z", Vector3d.class);
     public static final Parameter.Key<ServerWorldProperties> WORLD = Parameter.key("world", ServerWorldProperties.class);
+    public static final Parameter.Key<ResourceKey> WORLD_KEY = Parameter.key("world", ResourceKey.class);
+
 
 }

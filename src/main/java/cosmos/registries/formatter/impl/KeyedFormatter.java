@@ -10,7 +10,7 @@ import net.kyori.adventure.text.TextComponent;
 public class KeyedFormatter implements Formatter<Keyed> {
 
     @Override
-    public TextComponent asText(Keyed value) {
+    public TextComponent asText(final Keyed value) {
         return Component.text(value.key().asString());
     }
 
