@@ -22,7 +22,7 @@ public abstract class AbstractTimeChangeCommand extends AbstractTimeCommand {
 
         properties.setDayTime(newTime);
 
-        this.serviceProvider.worldProperties().save(properties);
+        this.serviceProvider.world().saveProperties(src, properties);
 
         this.serviceProvider.message()
                 .getMessage(src, "success.time.set")

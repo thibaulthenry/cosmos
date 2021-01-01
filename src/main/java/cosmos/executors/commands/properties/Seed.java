@@ -15,6 +15,6 @@ public class Seed extends AbstractPropertiesCommand{
 
     @Override
     protected void run(Audience src, CommandContext context, ServerWorldProperties properties) throws CommandException {
-
+//todo
     }
 }

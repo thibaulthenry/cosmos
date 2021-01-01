@@ -8,8 +8,8 @@ import cosmos.services.message.MessageService;
 import cosmos.services.pagination.PaginationService;
 import cosmos.services.template.TemplateService;
 import cosmos.services.time.TimeService;
+import cosmos.services.transportation.TransportationService;
 import cosmos.services.validation.ValidationService;
-import cosmos.services.world.WorldPropertiesService;
 import cosmos.services.world.WorldService;
 
 @ImplementedBy(ServiceProviderImpl.class)
@@ -29,9 +29,9 @@ public interface ServiceProvider {
 
     TimeService time();
 
-    ValidationService validation();
+    TransportationService transportation();
 
-    WorldPropertiesService worldProperties();
+    ValidationService validation();
 
     WorldService world();
 

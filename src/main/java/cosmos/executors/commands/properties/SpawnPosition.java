@@ -26,7 +26,7 @@ public class SpawnPosition extends AbstractPropertiesCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get().floor();
             properties.setSpawnPosition(value.toInt());
-            this.serviceProvider.worldProperties().save(properties);
+            this.serviceProvider.world().saveProperties(src, properties);
         }
 
         this.serviceProvider.message()

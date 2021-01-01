@@ -56,7 +56,7 @@ public class Operate extends AbstractBorderCommand {
         }
 
         border.setDiameter(endDiameter, duration, unit);
-        this.serviceProvider.worldProperties().save(properties);
+        this.serviceProvider.world().saveProperties(src, properties);
 
         this.serviceProvider.message()
                 .getMessage(src, "success.border.operate")

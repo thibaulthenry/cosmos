@@ -30,12 +30,12 @@ public class Reset extends AbstractCommand {
         final Optional<ServerWorld> optionalLinkedWorld = backupArchetype.getLinkedWorld();
 
         if (optionalLinkedWorld.isPresent()) {
-            // todo Unload.unload(optionalLoadedWorld.get().getProperties(), false);
+            this.serviceProvider.world().unload(src, optionalLinkedWorld.get().getProperties(), false);
         }
 
         this.serviceProvider.world().restore(src, backupArchetype, true);
 
-        // todo Load.load(backupArchetype.getWorldName(), true);
+        this.serviceProvider.world().load(src, backupArchetype.getWorldKey(), true);
 
         this.serviceProvider.message()
                 .getMessage(src, "success.backup.reset")

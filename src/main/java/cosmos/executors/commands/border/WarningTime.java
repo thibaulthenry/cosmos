@@ -28,7 +28,7 @@ public class WarningTime extends AbstractBorderCommand {
         if (optionalInput.isPresent()) {
             value = Duration.of(optionalInput.get(), context.getOne(CosmosKeys.TIME_UNIT).orElse(ChronoUnit.SECONDS));
             border.setWarningTime(value);
-            this.serviceProvider.worldProperties().save(properties);
+            this.serviceProvider.world().saveProperties(src, properties);
         }
 
         this.serviceProvider.message()

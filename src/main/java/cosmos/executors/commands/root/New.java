@@ -58,7 +58,7 @@ public class New extends AbstractCommand {
         //worldProperties.setGeneratorType(generatorType);
         //worldProperties.setGeneratorModifiers(worldGeneratorModifiers);
 
-        this.serviceProvider.worldProperties().save(properties);
+        this.serviceProvider.world().saveProperties(src, properties);
 
         // todo src.sendMessage(Outputs.CREATE_WORLD.asText(worldProperties));
     }

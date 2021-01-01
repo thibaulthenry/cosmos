@@ -167,8 +167,8 @@ public class FinderServiceImpl implements FinderService {
             if (optionalLevelSpongeDatOldPath.isPresent()) {
                 Files.deleteIfExists(optionalLevelSpongeDatOldPath.get());
             }
-        } catch (final IOException ignored) {
-            // TODO LOG ERROR
+        } catch (final Exception e) {
+            Cosmos.getLogger().warn("An unexpected error occurred while exporting world", e);
         }
     }
 

@@ -25,7 +25,7 @@ public class ViewDistance extends AbstractPropertiesCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             properties.setViewDistance(value);
-            this.serviceProvider.worldProperties().save(properties);
+            this.serviceProvider.world().saveProperties(src, properties);
         }
 
         this.serviceProvider.message()

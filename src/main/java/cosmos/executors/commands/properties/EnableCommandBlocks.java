@@ -25,7 +25,7 @@ public class EnableCommandBlocks extends AbstractPropertiesCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             properties.setCommandsEnabled(value);
-            this.serviceProvider.worldProperties().save(properties);
+            this.serviceProvider.world().saveProperties(src, properties);
         }
 
         this.serviceProvider.message()

@@ -25,7 +25,7 @@ public class Pvp extends AbstractPropertiesCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             properties.setPVPEnabled(value);
-            this.serviceProvider.worldProperties().save(properties);
+            this.serviceProvider.world().saveProperties(src, properties);
         }
 
         this.serviceProvider.message()

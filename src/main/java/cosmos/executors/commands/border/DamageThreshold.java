@@ -26,7 +26,7 @@ public class DamageThreshold extends AbstractBorderCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             border.setDamageThreshold(value);
-            this.serviceProvider.worldProperties().save(properties);
+            this.serviceProvider.world().saveProperties(src, properties);
         }
 
         this.serviceProvider.message()

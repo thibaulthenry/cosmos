@@ -34,7 +34,7 @@ public abstract class AbstractWeatherChangeCommand extends AbstractWeatherComman
             properties.setWeather(newWeather, properties.getRemainingWeatherDuration());
         }
 
-        this.serviceProvider.worldProperties().save(properties);
+        this.serviceProvider.world().saveProperties(src, properties);
 
         this.serviceProvider.message()
                 .getMessage(src, "success.weather.set")

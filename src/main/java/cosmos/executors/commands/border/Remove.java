@@ -13,7 +13,7 @@ public class Remove extends AbstractBorderCommand {
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
         border.setDiameter(Double.POSITIVE_INFINITY);
-        this.serviceProvider.worldProperties().save(properties);
+        this.serviceProvider.world().saveProperties(src, properties);
 
         this.serviceProvider.message()
                 .getMessage(src, "success.border.remove")

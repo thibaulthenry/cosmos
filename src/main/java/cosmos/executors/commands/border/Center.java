@@ -26,7 +26,7 @@ public class Center extends AbstractBorderCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             border.setCenter(value.getX(), value.getY());
-            this.serviceProvider.worldProperties().save(properties);
+            this.serviceProvider.world().saveProperties(src, properties);
         }
 
         this.serviceProvider.message()

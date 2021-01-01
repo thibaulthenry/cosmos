@@ -1,8 +1,11 @@
 package cosmos.models.backup;
 
+import cosmos.Cosmos;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.server.ServerWorld;
@@ -13,6 +16,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.FormatStyle;
 import java.util.Optional;
 
 public class BackupArchetype {
@@ -38,7 +42,7 @@ public class BackupArchetype {
             throw new IOException("Invalid backup folder name");
         }
 
-        this.worldKey = ResourceKey.minecraft(parts[0]); // TODO
+        this.worldKey = ResourceKey.resolve(parts[0]);
         this.creationDateTime = LocalDateTime.parse(parts[1] + parts[2], DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         this.uuid = parts[3];
         this.creationDateTimeFormatted = parts[1] + "_" + parts[2];
@@ -51,8 +55,8 @@ public class BackupArchetype {
     public static Optional<BackupArchetype> fromDirectory(final Path backupDirectory) {
         try {
             return Optional.of(new BackupArchetype(backupDirectory));
-        } catch (final Exception ignored) {
-            // TODO LOG ON IGNORED EX
+        } catch (final Exception e) {
+            Cosmos.getLogger().warn("An expected error occurred while reading backup data", e);
             return Optional.empty();
         }
     }
@@ -85,31 +89,31 @@ public class BackupArchetype {
         this.tag = tag;
     }
 
-    public TextComponent toText(final Audience src) {
-//        Text bulletPoint = Text.of(TextColors.WHITE, " • ");
-//        Text breakLine = Text.of(Text.NEW_LINE, Text.NEW_LINE);
-//
-//        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale);
-//
-//        String name = getName();
-//
-//        Text.Builder hoverTextBuilder = Text.builder().append(
-//                Text.of(
-//                        TextColors.WHITE, name, breakLine, bulletPoint,
-//                        TextColors.GRAY, "World name: ", TextColors.GREEN, worldName, breakLine, bulletPoint,
-//                        TextColors.GRAY, "World UUID: ", TextColors.GREEN, worldUUID, breakLine, bulletPoint,
-//                        TextColors.GRAY, "Creation date: ", TextColors.GREEN, dateTimeFormatter.format(creationDateTime),
-//                        breakLine, bulletPoint, tag == null ?
-//                                Text.of(TextColors.RED, "Not tagged") :
-//                                Text.of(TextColors.GRAY, "Tag: ", TextColors.GREEN, tag)
-//                )
-//        );
-//
-//        return Text.builder()
-//                .append(Text.of(TextColors.GREEN, name))
-//                .onHover(TextActions.showText(hoverTextBuilder.build()))
-//                .build();
-        return Component.empty();
+    public TextComponent toText(final Audience src) { // todo move to formatter and add translation
+        final TextComponent bulletPoint = Component.text(" • ");
+        final TextComponent breakLine = Component.newline().append(Component.newline());
+
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+                .withLocale(Cosmos.getServices().message().getLocale(src));
+
+        final String name = this.getName();
+
+        final TextComponent hoverText = Component.text().append(
+                Component.text(name),
+                breakLine, bulletPoint,
+                Component.text("World name: ", NamedTextColor.GRAY),
+                Component.text(this.worldKey.getFormatted(), NamedTextColor.GREEN),
+                breakLine, bulletPoint,
+                Component.text("World UUID: ", NamedTextColor.GRAY),
+                Component.text(this.uuid, NamedTextColor.GREEN),
+                breakLine, bulletPoint,
+                Component.text("Creation date: ", NamedTextColor.GRAY),
+                Component.text(dateTimeFormatter.format(this.creationDateTime), NamedTextColor.GREEN),
+                breakLine, bulletPoint,
+                tag == null ? Component.text("Not tagged", NamedTextColor.RED) : Component.text("Tag: ", NamedTextColor.RED).append(Component.text(this.tag, NamedTextColor.GREEN))
+        ).build();
+
+        return Component.text(name, NamedTextColor.GREEN).hoverEvent(HoverEvent.showText(hoverText));
     }
 
     public Optional<ServerWorld> getLinkedWorld() {

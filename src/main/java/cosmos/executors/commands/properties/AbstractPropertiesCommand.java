@@ -15,7 +15,7 @@ abstract class AbstractPropertiesCommand extends AbstractCommand {
 
     @Override
     protected final void run(final Audience src, final CommandContext context) throws CommandException {
-        final ServerWorldProperties properties = this.serviceProvider.worldProperties().get(context);
+        final ServerWorldProperties properties = this.serviceProvider.world().getProperties(context);
         this.run(src, context, properties);
     }
 

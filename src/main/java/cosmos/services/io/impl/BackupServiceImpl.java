@@ -2,6 +2,7 @@ package cosmos.services.io.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import cosmos.Cosmos;
 import cosmos.models.backup.BackupArchetype;
 import cosmos.models.enums.Directories;
 import cosmos.services.io.BackupService;
@@ -60,8 +61,8 @@ public class BackupServiceImpl implements BackupService {
                         .map(BackupArchetype::fromDirectory)
                         .filter(Optional::isPresent)
                         .map(Optional::get);
-            } catch (final Exception ignored) {
-                // TODO LOG ERROR ON IGNORED EXCEPTION
+            } catch (final Exception e) {
+                Cosmos.getLogger().warn("An unexpected error occurred while looking for existing backups", e);
                 return Stream.<BackupArchetype>empty();
             }
         }).orElse(Stream.empty());
@@ -160,8 +161,8 @@ public class BackupServiceImpl implements BackupService {
                                 .stream()
                                 .allMatch(backupDirectory -> backupPath.resolve(backupDirectory).toFile().exists());
                         return isDirectory && isInBackupsDirectory && hasBackupDirectories;
-                    } catch (final Exception ignored) {
-                        // TODO LOG ERROR ON IGNORED EXCEPTION
+                    } catch (final Exception e) {
+                        Cosmos.getLogger().warn("An expected error occurred while checking backup", e);
                         return false;
                     }
                 }).orElse(false);

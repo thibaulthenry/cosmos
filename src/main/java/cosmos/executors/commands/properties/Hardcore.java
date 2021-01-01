@@ -25,7 +25,7 @@ public class Hardcore extends AbstractPropertiesCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             properties.setHardcore(value);
-            this.serviceProvider.worldProperties().save(properties);
+            this.serviceProvider.world().saveProperties(src, properties);
         }
 
         this.serviceProvider.message()

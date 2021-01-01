@@ -33,7 +33,7 @@ public class Transpose extends AbstractBorderCommand {
         final double startDiameter = context.getOne(CosmosKeys.START_DIAMETER).orElse(border.getDiameter());
 
         border.setDiameter(startDiameter, endDiameter, duration, unit);
-        this.serviceProvider.worldProperties().save(properties);
+        this.serviceProvider.world().saveProperties(src, properties);
 
         this.serviceProvider.message()
                 .getMessage(src, "success.border.transpose")

@@ -2,7 +2,6 @@ package cosmos.services.message.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import cosmos.Cosmos;
 import cosmos.registries.message.Message;
 import cosmos.registries.template.Template;
 import cosmos.services.message.MessageService;
@@ -51,7 +50,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Message getMessage(final Audience src, final String key) {
-        return this.getMessage(getLocale(src), key);
+        return this.getMessage(this.getLocale(src), key);
     }
 
     @Override

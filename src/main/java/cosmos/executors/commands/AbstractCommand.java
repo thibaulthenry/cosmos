@@ -9,20 +9,27 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.command.parameter.managed.Flag;
 
 public abstract class AbstractCommand extends AbstractExecutor {
 
     protected final ServiceProvider serviceProvider;
     private final String permission;
     private final Parameter[] parameters;
+    private final Flag[] flags;
     private Command.Parameterized parameterized;
 
     protected AbstractCommand(final Parameter... parameters) {
         final String commandName = this.getClass().getSimpleName().toLowerCase();
 
         this.parameters = parameters;
+        this.flags = this.flags();
         this.permission = this.getClass().getPackage().getName() + "." + commandName;
         this.serviceProvider = Cosmos.getServices();
+    }
+
+    protected Flag[] flags() {
+        return new Flag[0];
     }
 
     @Override
@@ -40,11 +47,16 @@ public abstract class AbstractCommand extends AbstractExecutor {
             return this.parameterized;
         }
 
-        this.parameterized = Command.builder()
+        final Command.Builder builder = Command.builder()
                 .parameters(this.parameters)
                 .setPermission(this.permission)
-                .setExecutor(this)
-                .build();
+                .setExecutor(this);
+
+        for (Flag flag : this.flags) {
+            builder.flag(flag);
+        }
+
+        this.parameterized = builder.build();
 
         return parameterized;
     }

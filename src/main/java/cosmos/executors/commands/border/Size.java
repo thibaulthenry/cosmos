@@ -26,7 +26,7 @@ public class Size extends AbstractBorderCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             border.setDiameter(value);
-            this.serviceProvider.worldProperties().save(properties);
+            this.serviceProvider.world().saveProperties(src, properties);
         }
 
         this.serviceProvider.message()

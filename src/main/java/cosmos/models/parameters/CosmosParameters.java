@@ -4,6 +4,7 @@ import cosmos.models.enums.Operands;
 import io.leangen.geantyref.TypeToken;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.command.parameter.managed.standard.ResourceKeyedValueParameters;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.world.difficulty.Difficulty;
@@ -11,6 +12,8 @@ import org.spongepowered.api.world.dimension.DimensionType;
 import org.spongepowered.math.vector.Vector2d;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.List;
 
 public class CosmosParameters {
 
@@ -22,6 +25,12 @@ public class CosmosParameters {
     public static final Parameter.Value<DimensionType> DIMENSION_OPTIONAL = Parameter.registryElement(TypeToken.get(DimensionType.class), RegistryTypes.DIMENSION_TYPE)
             .setKey(CosmosKeys.DIMENSION)
             .optional()
+            .build();
+
+    public static final Parameter.Value<List<Entity>> ENTITIES = Parameter.builder(new TypeToken<List<Entity>>() {
+    }, ResourceKeyedValueParameters.MANY_ENTITIES)
+            .setKey(CosmosKeys.ENTITIES)
+            .orDefault(cause -> cause.getCause().root() instanceof Entity ? Collections.singletonList((Entity) cause.getCause().root()) : null)
             .build();
 
     public static final Parameter.Value<GameMode> GAME_MODE_OPTIONAL = Parameter.registryElement(TypeToken.get(GameMode.class), RegistryTypes.GAME_MODE)
