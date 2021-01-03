@@ -29,6 +29,11 @@ public class TransportationServiceImpl implements TransportationService {
     }
 
     @Override
+    public boolean isSelf(final Identifiable src, final Identifiable target) {
+        return target != null && src.getUniqueId().equals(target.getUniqueId());
+    }
+
+    @Override
     public boolean mustNotify(final Audience src, final Identifiable target) {
         if (!(src instanceof Identifiable) || !(target instanceof Audience)) {
             return false;
@@ -38,7 +43,7 @@ public class TransportationServiceImpl implements TransportationService {
     }
 
     @Override
-    public boolean teleport(final Entity target, final ServerLocation location, final @Nullable Vector3d rotation, final boolean safeOnly) {
+    public boolean teleport(final Entity target, final ServerLocation location, @Nullable final Vector3d rotation, final boolean safeOnly) {
         if (rotation != null) {
             target.setRotation(rotation);
         }

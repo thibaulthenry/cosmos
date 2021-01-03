@@ -2,15 +2,10 @@ package cosmos;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import cosmos.executors.commands.backup.List;
-import cosmos.executors.commands.border.Center;
-import cosmos.executors.commands.border.Size;
 import cosmos.executors.modules.Root;
 import cosmos.services.ServiceProvider;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.api.command.Command;
-import org.spongepowered.api.command.parameter.CommonParameters;
-import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.plugin.PluginContainer;

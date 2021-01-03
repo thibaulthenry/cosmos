@@ -15,6 +15,8 @@ public interface TransportationService extends CosmosService {
 
     boolean isSelf(Audience src, Identifiable target);
 
+    boolean isSelf(Identifiable src, Identifiable target);
+
     boolean mustNotify(Audience src, Identifiable target);
 
     boolean teleport(Entity target, ServerLocation location, @Nullable Vector3d rotation, boolean safeOnly);

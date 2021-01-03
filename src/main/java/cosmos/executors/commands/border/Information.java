@@ -17,6 +17,8 @@ import org.spongepowered.api.world.server.ServerWorldProperties;
 import org.spongepowered.math.vector.Vector3d;
 
 import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Singleton
@@ -25,6 +27,11 @@ public class Information extends AbstractBorderCommand {
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
         src.sendMessage(CompletableFuture.supplyAsync(() -> getBorderInformation(src, properties, border)).join());
+    }
+
+    @Override
+    protected List<String> aliases() {
+        return Collections.singletonList("info");
     }
 
     private TextComponent getBorderInformation(final Audience src, final ServerWorldProperties properties, final WorldBorder border) {
@@ -39,12 +46,12 @@ public class Information extends AbstractBorderCommand {
 
         final long secondsRemaining = border.getTimeRemaining().getSeconds();
 
-        final TextComponent contractingTextDetails = secondsRemaining > 0 ?
-                this.serviceProvider.message().getMessage(src, "success.border.information.contracting.details")
-                        .replace("time", secondsRemaining)
-                        .replace("diameter", border.getNewDiameter())
-                        .defaultColor(NamedTextColor.GRAY)
-                        .asText() :
+        final TextComponent contractingTextDetails = secondsRemaining > 0
+                ? this.serviceProvider.message().getMessage(src, "success.border.information.contracting.details")
+                .replace("time", secondsRemaining)
+                .replace("diameter", border.getNewDiameter())
+                .defaultColor(NamedTextColor.GRAY)
+                .asText() :
                 Component.empty();
 
         return this.serviceProvider.message().getMessage(src, "success.border.information")
@@ -53,8 +60,8 @@ public class Information extends AbstractBorderCommand {
                 .hoverEvent("center", HoverEvent.showText(this.serviceProvider.message().getText(src, "success.border.information.center.hover")))
                 .clickEvent("center", ClickEvent.suggestCommand(command))
                 .replace("diameter", border.getDiameter())
-                .replace("contracting", secondsRemaining > 0 ?
-                        Component.text("✓", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true) :
+                .replace("contracting", secondsRemaining > 0
+                        ? Component.text("✓", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true) :
                         Component.text("✗", NamedTextColor.RED).decoration(TextDecoration.BOLD, true)
                 )
                 .replace("details", contractingTextDetails)

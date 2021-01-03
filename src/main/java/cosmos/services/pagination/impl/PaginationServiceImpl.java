@@ -30,6 +30,8 @@ public class PaginationServiceImpl implements PaginationService {
             return;
         }
 
+        // TODO Sort
+
         if (flattenSingle && Iterables.size(contents) == 1) {
             contents.forEach(src::sendMessage);
         } else {

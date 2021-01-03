@@ -16,6 +16,9 @@ import org.spongepowered.api.world.dimension.DimensionType;
 import org.spongepowered.api.world.dimension.DimensionTypes;
 import org.spongepowered.api.world.server.ServerWorldProperties;
 
+import java.util.Collections;
+import java.util.List;
+
 @Singleton
 public class New extends AbstractCommand {
 
@@ -24,6 +27,11 @@ public class New extends AbstractCommand {
                 Parameter.string().setKey(CosmosKeys.NAME).build(),
                 CosmosParameters.DIMENSION_OPTIONAL
         );
+    }
+
+    @Override
+    protected List<String> aliases() {
+        return Collections.singletonList("create");
     }
 
     @Override

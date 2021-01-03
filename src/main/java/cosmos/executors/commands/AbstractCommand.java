@@ -24,7 +24,7 @@ public abstract class AbstractCommand extends AbstractExecutor {
 
         this.parameters = parameters;
         this.flags = this.flags();
-        this.permission = this.getClass().getPackage().getName() + "." + commandName;
+        this.permission = this.getClass().getPackage().getName().replace(".executors", "") + "." + commandName;
         this.serviceProvider = Cosmos.getServices();
     }
 

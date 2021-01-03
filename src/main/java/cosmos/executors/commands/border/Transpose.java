@@ -11,6 +11,8 @@ import org.spongepowered.api.world.WorldBorder;
 import org.spongepowered.api.world.server.ServerWorldProperties;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.List;
 
 @Singleton
 public class Transpose extends AbstractBorderCommand {
@@ -21,6 +23,11 @@ public class Transpose extends AbstractBorderCommand {
                 Parameter.doubleNumber().setKey(CosmosKeys.END_DIAMETER).build(),
                 Parameter.doubleNumber().setKey(CosmosKeys.START_DIAMETER).optional().build()
         );
+    }
+
+    @Override
+    protected List<String> aliases() {
+        return Collections.singletonList("move");
     }
 
     @Override

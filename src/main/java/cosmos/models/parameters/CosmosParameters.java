@@ -12,7 +12,6 @@ import org.spongepowered.api.world.dimension.DimensionType;
 import org.spongepowered.math.vector.Vector2d;
 
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.List;
 
 public class CosmosParameters {
@@ -27,10 +26,10 @@ public class CosmosParameters {
             .optional()
             .build();
 
-    public static final Parameter.Value<List<Entity>> ENTITIES = Parameter.builder(new TypeToken<List<Entity>>() {
+    public static final Parameter.Value<List<Entity>> ENTITY_TARGETS = Parameter.builder(new TypeToken<List<Entity>>() {
     }, ResourceKeyedValueParameters.MANY_ENTITIES)
-            .setKey(CosmosKeys.ENTITIES)
-            .orDefault(cause -> cause.getCause().root() instanceof Entity ? Collections.singletonList((Entity) cause.getCause().root()) : null)
+            .setKey(CosmosKeys.ENTITY_TARGETS)
+            .optional()
             .build();
 
     public static final Parameter.Value<GameMode> GAME_MODE_OPTIONAL = Parameter.registryElement(TypeToken.get(GameMode.class), RegistryTypes.GAME_MODE)

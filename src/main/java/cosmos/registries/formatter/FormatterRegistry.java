@@ -20,7 +20,6 @@ import net.kyori.adventure.text.TextComponent;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.scoreboard.objective.Objective;
 import org.spongepowered.api.world.server.ServerWorldProperties;
-import org.spongepowered.api.world.storage.WorldProperties;
 import org.spongepowered.math.vector.Vector2d;
 import org.spongepowered.math.vector.Vector3d;
 

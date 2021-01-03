@@ -27,8 +27,6 @@ public class CosmosKeys {
     public static final Parameter.Key<Double> DISTANCE = Parameter.key("distance", Double.class);
     public static final Parameter.Key<Long> DURATION = Parameter.key("duration", Long.class);
     public static final Parameter.Key<Double> END_DIAMETER = Parameter.key("end-diameter", Double.class);
-    public static final Parameter.Key<List<Entity>> ENTITIES = Parameter.key("entities", new TypeToken<List<Entity>>() {
-    });
     public static final Parameter.Key<GameMode> GAME_MODE = Parameter.key("game-mode", GameMode.class);
     // public static final Parameter.Key<GeneratorModifierType> GENERATOR_MODIFIER = Parameter.key("generator-modifier", GeneratorModifierType.class);
     public static final Parameter.Key<String> NAME = Parameter.key("name", String.class);
@@ -36,7 +34,11 @@ public class CosmosKeys {
     public static final Parameter.Key<Vector3d> PITCH_YAW_ROLL = Parameter.key("pitch> <yaw> <roll", Vector3d.class);
     public static final Parameter.Key<Double> START_DIAMETER = Parameter.key("start-diameter", Double.class);
     public static final Parameter.Key<Boolean> STATE = Parameter.key("state", Boolean.class);
+    public static final Parameter.Key<Long> SEED = Parameter.key("seed", Long.class);
     public static final Parameter.Key<String> TAG = Parameter.key("tag", String.class);
+    public static final Parameter.Key<Entity> ENTITY_DESTINATION = Parameter.key("destination", Entity.class);
+    public static final Parameter.Key<List<Entity>> ENTITY_TARGETS = Parameter.key("targets", new TypeToken<List<Entity>>() {
+    });
     public static final Parameter.Key<Long> TICKS = Parameter.key("ticks", Long.class);
     public static final Parameter.Key<ChronoUnit> TIME_UNIT = Parameter.key("unit", ChronoUnit.class);
     public static final Parameter.Key<Vector2d> XZ = Parameter.key("x> <z", Vector2d.class);
