@@ -1,12 +1,12 @@
 package cosmos.executors.commands.properties;
 
 import com.google.inject.Singleton;
-import cosmos.models.parameters.CosmosKeys;
+import cosmos.executors.parameters.CosmosKeys;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
-import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 import java.util.Optional;
 
@@ -20,11 +20,11 @@ public class EnableCommandBlocks extends AbstractPropertiesCommand {
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties) throws CommandException {
         final Optional<Boolean> optionalInput = context.getOne(CosmosKeys.STATE);
-        boolean value = properties.areCommandsEnabled();
+        boolean value = properties.commands();
 
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
-            properties.setCommandsEnabled(value);
+            properties.setCommands(value);
             this.serviceProvider.world().saveProperties(src, properties);
         }
 
@@ -32,7 +32,7 @@ public class EnableCommandBlocks extends AbstractPropertiesCommand {
                 .getMessage(src, optionalInput.isPresent() ? "success.properties.enable-command-blocks.set" : "success.properties.enable-command-blocks.get")
                 .replace("world", properties)
                 .condition("value", value)
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 }

@@ -5,7 +5,7 @@ import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.util.MinecraftDayTime;
-import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 @Singleton
 public class Calendar extends AbstractTimeCommand {
@@ -20,7 +20,7 @@ public class Calendar extends AbstractTimeCommand {
                 .replace("value", ticks)
                 .replace("day", this.serviceProvider.time().fromWorldTimeToDayNumber(ticks))
                 .replace("hour", this.serviceProvider.time().fromWorldTimeToDayWatch(ticks))
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 }

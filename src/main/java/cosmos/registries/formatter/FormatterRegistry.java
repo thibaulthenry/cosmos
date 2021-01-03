@@ -3,8 +3,8 @@ package cosmos.registries.formatter;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import cosmos.models.backup.BackupArchetype;
 import cosmos.registries.CosmosRegistry;
+import cosmos.registries.backup.BackupArchetype;
 import cosmos.registries.formatter.impl.BackupArchetypeFormatter;
 import cosmos.registries.formatter.impl.DefaultFormatter;
 import cosmos.registries.formatter.impl.KeyedFormatter;
@@ -14,12 +14,10 @@ import cosmos.registries.formatter.impl.TeamFormatter;
 import cosmos.registries.formatter.impl.TextComponentFormatter;
 import cosmos.registries.formatter.impl.Vector2dFormatter;
 import cosmos.registries.formatter.impl.Vector3dFormatter;
-import cosmos.registries.formatter.impl.WorldPropertiesFormatter;
 import net.kyori.adventure.key.Keyed;
 import net.kyori.adventure.text.TextComponent;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.scoreboard.objective.Objective;
-import org.spongepowered.api.world.server.ServerWorldProperties;
 import org.spongepowered.math.vector.Vector2d;
 import org.spongepowered.math.vector.Vector3d;
 
@@ -44,7 +42,6 @@ public class FormatterRegistry implements CosmosRegistry<Class<?>, Formatter<?>>
         this.formatterMap.put(TextComponent.class, injector.getInstance(TextComponentFormatter.class));
         this.formatterMap.put(Vector2d.class, injector.getInstance(Vector2dFormatter.class));
         this.formatterMap.put(Vector3d.class, injector.getInstance(Vector3dFormatter.class));
-        this.formatterMap.put(ServerWorldProperties.class, injector.getInstance(WorldPropertiesFormatter.class));
     }
 
     @Override

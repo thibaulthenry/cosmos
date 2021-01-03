@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.AbstractCommand;
-import cosmos.models.parameters.CosmosKeys;
-import cosmos.models.parameters.impl.backup.BackupWorldChoices;
+import cosmos.executors.parameters.CosmosKeys;
+import cosmos.executors.parameters.impl.backup.BackupWorld;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -22,7 +22,7 @@ public class List extends AbstractCommand {
 
     @Inject
     public List(final Injector injector) {
-        super(injector.getInstance(BackupWorldChoices.class).builder().optional().build());
+        super(injector.getInstance(BackupWorld.class).builder().optional().build());
     }
 
     @Override
@@ -41,15 +41,17 @@ public class List extends AbstractCommand {
                         .getMessage(src, "success.backup.list.world")
                         .replace("number", contents.size())
                         .replace("world", worldKey)
-                        .successColor().asText()
+                        .green()
+                        .asText()
                 )
                 .orElseGet(() -> this.serviceProvider.message()
                         .getMessage(src, "success.backup.list.all")
                         .replace("number", contents.size())
-                        .successColor().asText()
+                        .green()
+                        .asText()
                 );
 
-        this.serviceProvider.pagination().sendPagination(src, title, contents, false);
+        this.serviceProvider.pagination().send(src, title, contents, false);
     }
 
 }

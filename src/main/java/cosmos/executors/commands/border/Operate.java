@@ -1,15 +1,15 @@
 package cosmos.executors.commands.border;
 
 import com.google.inject.Singleton;
-import cosmos.models.enums.Operands;
-import cosmos.models.parameters.CosmosKeys;
-import cosmos.models.parameters.CosmosParameters;
+import cosmos.constants.Operands;
+import cosmos.executors.parameters.CosmosKeys;
+import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.world.WorldBorder;
-import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 import java.time.temporal.ChronoUnit;
 
@@ -19,7 +19,7 @@ public class Operate extends AbstractBorderCommand {
     public Operate() {
         super(
                 CosmosParameters.STANDARD_OPERAND,
-                Parameter.doubleNumber().setKey(CosmosKeys.AMOUNT).build(),
+                Parameter.doubleNumber().setKey(CosmosKeys.AMOUNT_DOUBLE).build(),
                 CosmosParameters.DURATION_WITH_TIME_UNIT_OPTIONAL
         );
     }
@@ -28,7 +28,7 @@ public class Operate extends AbstractBorderCommand {
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
         final Operands operand = context.getOne(CosmosParameters.STANDARD_OPERAND)
                 .orElseThrow(this.serviceProvider.message().getMessage(src, "error.invalid.operand").asSupplier());
-        final double value = context.getOne(CosmosKeys.AMOUNT)
+        final double value = context.getOne(CosmosKeys.AMOUNT_DOUBLE)
                 .orElseThrow(this.serviceProvider.message().getMessage(src, "error.invalid.value").asSupplier());
         final long duration = context.getOne(CosmosKeys.DURATION).orElse(0L);
         final ChronoUnit unit = context.getOne(CosmosKeys.TIME_UNIT).orElse(ChronoUnit.SECONDS);
@@ -65,7 +65,7 @@ public class Operate extends AbstractBorderCommand {
                 .replace("end_diameter", endDiameter)
                 .replace("duration", duration)
                 .replace("unit", unit)
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 }

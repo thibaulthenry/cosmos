@@ -11,9 +11,9 @@ import org.spongepowered.api.service.pagination.PaginationList;
 @ImplementedBy(PaginationServiceImpl.class)
 public interface PaginationService extends CosmosService {
 
-    PaginationList generatePagination(Component title, Iterable<Component> contents);
+    PaginationList generate(Component title, Iterable<Component> contents);
 
-    void sendPagination(Audience src, Component title, Iterable<Component> contents, boolean flattenSingle) throws CommandException;
+    void send(Audience src, Component title, Iterable<Component> contents, boolean flattenSingle) throws CommandException;
 
-    void sendPagination(Audience src, PaginationList pagination, boolean flattenSingle) throws CommandException;
+    void send(Audience src, PaginationList pagination, boolean flattenSingle) throws CommandException;
 }

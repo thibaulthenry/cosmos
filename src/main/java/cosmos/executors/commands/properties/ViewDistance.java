@@ -1,12 +1,12 @@
 package cosmos.executors.commands.properties;
 
 import com.google.inject.Singleton;
-import cosmos.models.parameters.CosmosKeys;
+import cosmos.executors.parameters.CosmosKeys;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
-import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 import java.util.Optional;
 
@@ -20,7 +20,7 @@ public class ViewDistance extends AbstractPropertiesCommand {
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties) throws CommandException {
         final Optional<Integer> optionalInput = context.getOne(CosmosKeys.CHUNKS);
-        int value = properties.getViewDistance();
+        int value = properties.viewDistance();
 
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
@@ -32,7 +32,7 @@ public class ViewDistance extends AbstractPropertiesCommand {
                 .getMessage(src, optionalInput.isPresent() ? "success.properties.view-distance.set" : "success.properties.view-distance.get")
                 .replace("world", properties)
                 .replace("value", value)
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 }

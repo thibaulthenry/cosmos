@@ -2,11 +2,10 @@ package cosmos.services.io.impl;
 
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
-import cosmos.models.backup.BackupArchetype;
-import cosmos.models.enums.Directories;
+import cosmos.constants.Directories;
+import cosmos.registries.backup.BackupArchetype;
 import cosmos.services.io.FinderService;
 import org.spongepowered.api.ResourceKey;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.data.persistence.DataView;
@@ -83,8 +82,7 @@ public class FinderServiceImpl implements FinderService {
     @Override
     public Optional<Path> getBackupPath(final BackupArchetype backupArchetype, final boolean useTag) {
         String directory = backupArchetype.getWorldKey().getFormatted() + "_"
-                + backupArchetype.getCreationDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + "_"
-                + backupArchetype.getUuid();
+                + backupArchetype.getCreationDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
 
         final Optional<String> optionalTag = backupArchetype.getTag();
 
@@ -97,7 +95,7 @@ public class FinderServiceImpl implements FinderService {
 
     @Override
     public Optional<Path> getDefaultWorldPath() {
-        return this.getPath(Sponge.getGame().getGameDirectory().toString(), Sponge.getServer().getDefaultWorldKey().getFormatted());
+        return Optional.empty(); //this.getPath(SpongegetGame().getGameDirectory().toString(), Sponge.getServer().getDefaultWorldKey().getFormatted()); // todo issue for dimension folder path
     }
 
     @Override
@@ -202,8 +200,8 @@ public class FinderServiceImpl implements FinderService {
 
         try (OutputStream outputStream = Files.newOutputStream(path)) {
             DataFormats.NBT.get().writeTo(outputStream, dataContainer);
-        } catch (final Exception ignored) {
-            Cosmos.getLogger().error("An error occurred while saving data container at " + path);
+        } catch (final Exception e) {
+            Cosmos.getLogger().warn("An error occurred while saving data container at " + path, e);
         }
     }
 
@@ -217,8 +215,8 @@ public class FinderServiceImpl implements FinderService {
             }
 
             return Optional.of(dataContainer);
-        } catch (final Exception ignored) {
-            Cosmos.getLogger().error("An error occurred while reading data container at " + path);
+        } catch (final Exception e) {
+            Cosmos.getLogger().warn("An error occurred while reading data container at " + path, e);
             return Optional.empty();
         }
     }

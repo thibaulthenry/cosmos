@@ -49,7 +49,7 @@ public class AbstractModule extends AbstractExecutor {
                 .replace("module", this.moduleName)
                 .hoverEvent("help", HoverEvent.showText(hoverHelpText))
                 .clickEvent("help", ClickEvent.suggestCommand("/cm help"))
-                .successColor()
+                .green()
                 .asText();
 
         final Comparator<TextComponent> comparator = (t1, t2) -> {

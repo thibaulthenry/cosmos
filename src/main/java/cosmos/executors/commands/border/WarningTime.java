@@ -1,13 +1,13 @@
 package cosmos.executors.commands.border;
 
 import com.google.inject.Singleton;
-import cosmos.models.parameters.CosmosKeys;
-import cosmos.models.parameters.CosmosParameters;
+import cosmos.executors.parameters.CosmosKeys;
+import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.world.WorldBorder;
-import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -35,7 +35,7 @@ public class WarningTime extends AbstractBorderCommand {
                 .getMessage(src, optionalInput.isPresent() ? "success.border.warning-time.set" : "success.border.warning-time.get")
                 .replace("world", properties)
                 .replace("value", value)
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 }

@@ -39,7 +39,7 @@ public abstract class AbstractCommand extends AbstractExecutor {
         return CommandResult.success();
     }
 
-    protected abstract void run(final Audience src, final CommandContext context) throws CommandException;
+    protected abstract void run(Audience src, CommandContext context) throws CommandException;
 
     @Override
     public Command.Parameterized getParametrized() {

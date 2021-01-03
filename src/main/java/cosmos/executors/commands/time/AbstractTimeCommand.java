@@ -6,7 +6,7 @@ import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.util.MinecraftDayTime;
-import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 public abstract class AbstractTimeCommand extends AbstractCommand {
 
@@ -16,10 +16,10 @@ public abstract class AbstractTimeCommand extends AbstractCommand {
 
     @Override
     protected final void run(final Audience src, final CommandContext context) throws CommandException {
-        final ServerWorldProperties properties = this.serviceProvider.world().getProperties(context);
-        this.run(src, context, properties, properties.getDayTime());
+        final ServerWorldProperties properties = this.serviceProvider.world().getPropertiesOrSource(context);
+        this.run(src, context, properties, properties.dayTime());
     }
 
-    protected abstract void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final MinecraftDayTime time) throws CommandException;
+    protected abstract void run(Audience src, CommandContext context, ServerWorldProperties properties, MinecraftDayTime time) throws CommandException;
 
 }

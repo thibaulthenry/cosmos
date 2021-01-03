@@ -1,11 +1,11 @@
 package cosmos.executors.commands.properties;
 
 import com.google.inject.Singleton;
-import cosmos.models.parameters.CosmosParameters;
+import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
-import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 import java.util.Optional;
 
@@ -19,7 +19,7 @@ public class Difficulty extends AbstractPropertiesCommand {
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties) throws CommandException {
         final Optional<org.spongepowered.api.world.difficulty.Difficulty> optionalInput = context.getOne(CosmosParameters.DIFFICULTY_OPTIONAL);
-        org.spongepowered.api.world.difficulty.Difficulty value = properties.getDifficulty();
+        org.spongepowered.api.world.difficulty.Difficulty value = properties.difficulty();
 
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
@@ -31,7 +31,7 @@ public class Difficulty extends AbstractPropertiesCommand {
                 .getMessage(src, optionalInput.isPresent() ? "success.properties.difficulty.set" : "success.properties.difficulty.get")
                 .replace("world", properties)
                 .replace("value", value)
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 }

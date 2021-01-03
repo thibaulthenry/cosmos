@@ -1,13 +1,14 @@
 package cosmos.executors.commands.properties;
 
 import com.google.inject.Singleton;
-import cosmos.models.parameters.CosmosKeys;
+import cosmos.executors.parameters.CosmosKeys;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
-import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 import org.spongepowered.math.vector.Vector3d;
+import org.spongepowered.math.vector.Vector3i;
 
 import java.util.Optional;
 
@@ -21,11 +22,11 @@ public class SpawnPosition extends AbstractPropertiesCommand {
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties) throws CommandException {
         final Optional<Vector3d> optionalInput = context.getOne(CosmosKeys.XYZ);
-        Vector3d value = properties.getSpawnPosition().toDouble();
+        Vector3i value = properties.spawnPosition();
 
         if (optionalInput.isPresent()) {
-            value = optionalInput.get().floor();
-            properties.setSpawnPosition(value.toInt());
+            value = optionalInput.get().toInt();
+            properties.setSpawnPosition(value);
             this.serviceProvider.world().saveProperties(src, properties);
         }
 
@@ -33,7 +34,7 @@ public class SpawnPosition extends AbstractPropertiesCommand {
                 .getMessage(src, optionalInput.isPresent() ? "success.properties.spawn-position.set" : "success.properties.spawn-position.get")
                 .replace("world", properties)
                 .replace("value", value)
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 }

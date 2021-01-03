@@ -7,6 +7,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.scoreboard.Team;
 
 @Singleton
@@ -23,19 +24,19 @@ public class TeamFormatter implements Formatter<Team> {
                 .append(Component.text("Options: "))
                 .append(Component.newline())
                 .append(Component.text("   • Collision rule - "))
-                //.append(Component.text(value.getCollisionRule().getKey().asString(), NamedTextColor.GOLD)) todo
+                .append(Component.text(value.getCollisionRule().key(RegistryTypes.COLLISION_RULE).getValue(), NamedTextColor.GOLD))
                 .append(Component.newline())
                 .append(Component.text("   • Color - "))
                 .append(Component.text(value.getColor().toString(), value.getColor()))
                 .append(Component.newline())
                 .append(Component.text("   • Death message visibility - "))
-                //.append(Component.text(value.getDeathMessageVisibility().getKey().asString(), NamedTextColor.GOLD))
+                .append(Component.text(value.getDeathMessageVisibility().key(RegistryTypes.VISIBILITY).getValue(), NamedTextColor.GOLD))
                 .append(Component.newline())
                 .append(Component.text("   • Allow friendly fire - "))
                 .append(Component.text(value.allowFriendlyFire(), NamedTextColor.GOLD))
                 .append(Component.newline())
                 .append(Component.text("   • Nametag visibility - "))
-                //.append(Component.text(value.getNameTagVisibility().getKey().asString(), NamedTextColor.GOLD))
+                .append(Component.text(value.getNameTagVisibility().key(RegistryTypes.VISIBILITY).getValue(), NamedTextColor.GOLD))
                 .append(Component.newline())
                 .append(Component.text("   • Can see friendly invisibles - "))
                 .append(Component.text(value.canSeeFriendlyInvisibles(), NamedTextColor.GOLD));

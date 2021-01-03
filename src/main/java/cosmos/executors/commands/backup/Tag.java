@@ -4,11 +4,11 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
+import cosmos.constants.Units;
 import cosmos.executors.commands.AbstractCommand;
-import cosmos.models.backup.BackupArchetype;
-import cosmos.models.enums.Units;
-import cosmos.models.parameters.CosmosKeys;
-import cosmos.models.parameters.impl.backup.BackupChoices;
+import cosmos.executors.parameters.CosmosKeys;
+import cosmos.executors.parameters.impl.backup.Backup;
+import cosmos.registries.backup.BackupArchetype;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -20,7 +20,7 @@ public class Tag extends AbstractCommand {
     @Inject
     public Tag(final Injector injector) {
         super(
-                injector.getInstance(BackupChoices.class).builder().build(),
+                injector.getInstance(Backup.class).builder().build(),
                 Parameter.string().setKey(CosmosKeys.TAG).build()
         );
     }
@@ -38,7 +38,6 @@ public class Tag extends AbstractCommand {
             throw this.serviceProvider.message()
                     .getMessage(src, "error.overflow.tag")
                     .replace("tag", tag)
-                    .errorColor()
                     .asException();
         }
 
@@ -51,7 +50,6 @@ public class Tag extends AbstractCommand {
             throw this.serviceProvider.message()
                     .getMessage(src, "error.backup.tag")
                     .replace("backup", backupArchetype)
-                    .errorColor()
                     .asException();
         }
 
@@ -59,7 +57,7 @@ public class Tag extends AbstractCommand {
                 .getMessage(src, "success.backup.tag")
                 .replace("backup", backupArchetype)
                 .replace("tag", tag)
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 

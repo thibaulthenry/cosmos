@@ -1,7 +1,7 @@
 package cosmos.services.io;
 
 import com.google.inject.ImplementedBy;
-import cosmos.models.backup.BackupArchetype;
+import cosmos.registries.backup.BackupArchetype;
 import cosmos.services.CosmosService;
 import cosmos.services.io.impl.BackupServiceImpl;
 import org.spongepowered.api.ResourceKey;
@@ -21,7 +21,7 @@ public interface BackupService extends CosmosService {
 
     Map<String, ResourceKey> getBackupWorldMap();
 
-    boolean hasBackup(String uuid);
+    boolean hasBackup(ResourceKey key);
 
     void tag(BackupArchetype backupArchetype) throws IOException;
 

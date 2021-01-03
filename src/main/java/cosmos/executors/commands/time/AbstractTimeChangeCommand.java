@@ -7,7 +7,7 @@ import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.util.MinecraftDayTime;
 import org.spongepowered.api.util.Ticks;
-import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 public abstract class AbstractTimeChangeCommand extends AbstractTimeCommand {
 
@@ -30,9 +30,9 @@ public abstract class AbstractTimeChangeCommand extends AbstractTimeCommand {
                 .replace("value", ticks)
                 .replace("day", this.serviceProvider.time().fromWorldTimeToDayNumber(ticks))
                 .replace("hour", this.serviceProvider.time().fromWorldTimeToDayWatch(ticks))
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 
-    protected abstract long getNewTime(final Audience src, final CommandContext context, final MinecraftDayTime time) throws CommandException;
+    protected abstract long getNewTime(Audience src, CommandContext context, MinecraftDayTime time) throws CommandException;
 }

@@ -27,4 +27,5 @@ public class TemplateRegistry implements CosmosRegistry<String, Template> {
     public boolean has(final String key) {
         return this.resourceBundle.containsKey(key);
     }
+
 }

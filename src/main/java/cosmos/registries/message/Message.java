@@ -54,11 +54,11 @@ public class Message {
         return this;
     }
 
-    public Message successColor() {
+    public Message green() {
         return this.defaultColor(NamedTextColor.GREEN);
     }
 
-    public Message errorColor() {
+    public Message red() {
         return this.defaultColor(NamedTextColor.RED);
     }
 
@@ -72,7 +72,7 @@ public class Message {
     }
 
     public CommandException asException() {
-        return new CommandException(this.errorColor().asText());
+        return new CommandException(this.red().asText());
     }
 
     public Supplier<CommandException> asSupplier() {

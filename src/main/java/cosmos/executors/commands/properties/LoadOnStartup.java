@@ -1,12 +1,12 @@
 package cosmos.executors.commands.properties;
 
 import com.google.inject.Singleton;
-import cosmos.models.parameters.CosmosKeys;
+import cosmos.executors.parameters.CosmosKeys;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
-import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 import java.util.Optional;
 
@@ -20,7 +20,7 @@ public class LoadOnStartup extends AbstractPropertiesCommand {
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties) throws CommandException {
         final Optional<Boolean> optionalInput = context.getOne(CosmosKeys.STATE);
-        boolean value = properties.doesLoadOnStartup();
+        boolean value = properties.loadOnStartup();
 
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
@@ -33,7 +33,7 @@ public class LoadOnStartup extends AbstractPropertiesCommand {
                 .replace("world", properties)
                 .condition("value", value)
                 .condition("tip", value)
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 }

@@ -14,8 +14,7 @@ import cosmos.executors.commands.border.Size;
 import cosmos.executors.commands.border.Transpose;
 import cosmos.executors.commands.border.WarningDistance;
 import cosmos.executors.commands.border.WarningTime;
-import cosmos.models.parameters.CosmosKeys;
-import org.spongepowered.api.command.parameter.Parameter;
+import cosmos.executors.parameters.impl.world.WorldAll;
 
 @Singleton
 class Border extends AbstractModule {
@@ -23,7 +22,7 @@ class Border extends AbstractModule {
     @Inject
     Border(final Injector injector) {
         super(
-                Parameter.worldProperties(false).setKey(CosmosKeys.WORLD).optional().build(),
+                injector.getInstance(WorldAll.class).builder().optional().build(),
                 injector.getInstance(Center.class),
                 injector.getInstance(DamageAmount.class),
                 injector.getInstance(DamageThreshold.class),

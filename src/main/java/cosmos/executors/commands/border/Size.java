@@ -1,13 +1,13 @@
 package cosmos.executors.commands.border;
 
 import com.google.inject.Singleton;
-import cosmos.models.parameters.CosmosKeys;
+import cosmos.executors.parameters.CosmosKeys;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.world.WorldBorder;
-import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 import java.util.Optional;
 
@@ -33,7 +33,7 @@ public class Size extends AbstractBorderCommand {
                 .getMessage(src, optionalInput.isPresent() ? "success.border.size.set" : "success.border.size.get")
                 .replace("world", properties)
                 .replace("value", value)
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 }

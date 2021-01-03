@@ -1,7 +1,7 @@
 package cosmos.services.time.impl;
 
 import com.google.inject.Singleton;
-import cosmos.models.enums.Units;
+import cosmos.constants.Units;
 import cosmos.services.time.TimeService;
 
 @Singleton

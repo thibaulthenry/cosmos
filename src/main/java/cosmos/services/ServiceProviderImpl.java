@@ -3,11 +3,15 @@ package cosmos.services;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.services.data.builder.DataBuilderService;
 import cosmos.services.formatter.FormatterService;
 import cosmos.services.io.BackupService;
 import cosmos.services.io.FinderService;
+import cosmos.services.listener.ListenerService;
 import cosmos.services.message.MessageService;
 import cosmos.services.pagination.PaginationService;
+import cosmos.services.perworld.PerWorldProvider;
+import cosmos.services.serializer.SerializerProvider;
 import cosmos.services.template.TemplateService;
 import cosmos.services.time.TimeService;
 import cosmos.services.transportation.TransportationService;
@@ -18,10 +22,14 @@ import cosmos.services.world.WorldService;
 public class ServiceProviderImpl implements ServiceProvider {
 
     private final BackupService backupService;
+    private final DataBuilderService dataBuilderService;
     private final FinderService finderService;
     private final FormatterService formatService;
+    private final ListenerService listenerService;
     private final MessageService messageService;
     private final PaginationService paginationService;
+    private final PerWorldProvider perWorldProvider;
+    private final SerializerProvider serializerProvider;
     private final TemplateService templateService;
     private final TimeService timeService;
     private final TransportationService transportationService;
@@ -31,10 +39,14 @@ public class ServiceProviderImpl implements ServiceProvider {
     @Inject
     public ServiceProviderImpl(final Injector injector) {
         this.backupService = injector.getInstance(BackupService.class);
+        this.dataBuilderService = injector.getInstance(DataBuilderService.class);
         this.finderService = injector.getInstance(FinderService.class);
         this.formatService = injector.getInstance(FormatterService.class);
+        this.listenerService = injector.getInstance(ListenerService.class);
         this.messageService = injector.getInstance(MessageService.class);
         this.paginationService = injector.getInstance(PaginationService.class);
+        this.perWorldProvider = injector.getInstance(PerWorldProvider.class);
+        this.serializerProvider = injector.getInstance(SerializerProvider.class);
         this.templateService = injector.getInstance(TemplateService.class);
         this.timeService = injector.getInstance(TimeService.class);
         this.transportationService = injector.getInstance(TransportationService.class);
@@ -48,6 +60,11 @@ public class ServiceProviderImpl implements ServiceProvider {
     }
 
     @Override
+    public DataBuilderService dataBuilder() {
+        return this.dataBuilderService;
+    }
+
+    @Override
     public FinderService finder() {
         return this.finderService;
     }
@@ -58,6 +75,11 @@ public class ServiceProviderImpl implements ServiceProvider {
     }
 
     @Override
+    public ListenerService listener() {
+        return this.listenerService;
+    }
+
+    @Override
     public MessageService message() {
         return this.messageService;
     }
@@ -65,6 +87,16 @@ public class ServiceProviderImpl implements ServiceProvider {
     @Override
     public PaginationService pagination() {
         return this.paginationService;
+    }
+
+    @Override
+    public PerWorldProvider perWorld() {
+        return this.perWorldProvider;
+    }
+
+    @Override
+    public SerializerProvider serializer() {
+        return serializerProvider;
     }
 
     @Override

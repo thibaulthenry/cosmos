@@ -7,6 +7,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.scoreboard.Score;
 import org.spongepowered.api.scoreboard.objective.Objective;
 
@@ -26,11 +27,11 @@ public class ObjectiveFormatter implements Formatter<Objective> {
         final TextComponent displayedAsText = Component.text("Display as: ", NamedTextColor.GRAY)
                 .append(value.getDisplayName());
 
-//        final TextComponent displayModeText = Component.text("Display mode: ", NamedTextColor.GRAY) TODO
-//                .append(Component.text(value.getDisplayMode().key().asString(), NamedTextColor.GOLD));
+        final TextComponent displayModeText = Component.text("Display mode: ", NamedTextColor.GRAY)
+                .append(Component.text(value.getDisplayMode().key(RegistryTypes.OBJECTIVE_DISPLAY_MODE).getValue(), NamedTextColor.GOLD));
 
-//        final TextComponent criterionText = Component.text("Criterion: ", NamedTextColor.GRAY)
-//                .append(Component.text(value.getCriterion().asString(), NamedTextColor.GOLD));
+        final TextComponent criterionText = Component.text("Criterion: ", NamedTextColor.GRAY)
+                .append(Component.text(value.getCriterion().key(RegistryTypes.CRITERION).getValue(), NamedTextColor.GOLD));
 
         final TextComponent bestScoreText = optionalBestScore
                 .map(bestScore -> Component.newline()
@@ -47,9 +48,9 @@ public class ObjectiveFormatter implements Formatter<Objective> {
         final TextComponent hoverText = Component.text()
                 .append(displayedAsText)
                 .append(Component.newline())
-                //.append(displayModeText)todo
+                .append(displayModeText)
                 .append(Component.newline())
-                //.append(criterionText)
+                .append(criterionText)
                 .append(Component.newline())
                 .append(registeredScoresText)
                 .append(bestScoreText)

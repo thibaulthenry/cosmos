@@ -5,7 +5,7 @@ import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.world.WorldBorder;
-import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 import java.time.temporal.ChronoUnit;
 
@@ -13,7 +13,7 @@ import java.time.temporal.ChronoUnit;
 public class DefaultSettings extends AbstractBorderCommand {
 
     @Override
-    protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, WorldBorder border) throws CommandException {
+    protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
         border.setCenter(0, 0);
         border.setDamageAmount(0.2);
         border.setDamageThreshold(5);
@@ -26,7 +26,7 @@ public class DefaultSettings extends AbstractBorderCommand {
         this.serviceProvider.message()
                 .getMessage(src, "success.border.default-settings")
                 .replace("world", properties)
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 }

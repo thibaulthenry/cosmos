@@ -5,9 +5,9 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
 import cosmos.executors.commands.AbstractCommand;
-import cosmos.models.backup.BackupArchetype;
-import cosmos.models.parameters.CosmosKeys;
-import cosmos.models.parameters.impl.backup.BackupChoices;
+import cosmos.executors.parameters.CosmosKeys;
+import cosmos.executors.parameters.impl.backup.Backup;
+import cosmos.registries.backup.BackupArchetype;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -17,7 +17,7 @@ public class Delete extends AbstractCommand {
 
     @Inject
     public Delete(final Injector injector) {
-        super(injector.getInstance(BackupChoices.class).builder().build());
+        super(injector.getInstance(Backup.class).builder().build());
     }
 
     @Override
@@ -32,14 +32,13 @@ public class Delete extends AbstractCommand {
             throw this.serviceProvider.message()
                     .getMessage(src, "error.backup.delete")
                     .replace("backup", backupArchetype)
-                    .errorColor()
                     .asException();
         }
 
         this.serviceProvider.message()
                 .getMessage(src, "success.backup.delete")
                 .replace("backup", backupArchetype)
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 

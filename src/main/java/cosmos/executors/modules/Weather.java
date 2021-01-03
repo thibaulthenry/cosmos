@@ -7,8 +7,7 @@ import cosmos.executors.commands.weather.Forecast;
 import cosmos.executors.commands.weather.Rain;
 import cosmos.executors.commands.weather.Sun;
 import cosmos.executors.commands.weather.Thunder;
-import cosmos.models.parameters.CosmosKeys;
-import org.spongepowered.api.command.parameter.Parameter;
+import cosmos.executors.parameters.impl.world.WorldAll;
 
 @Singleton
 class Weather extends AbstractModule {
@@ -16,7 +15,7 @@ class Weather extends AbstractModule {
     @Inject
     public Weather(final Injector injector) {
         super(
-                Parameter.worldProperties(false).setKey(CosmosKeys.WORLD).optional().build(),
+                injector.getInstance(WorldAll.class).builder().optional().build(),
                 injector.getInstance(Forecast.class),
                 injector.getInstance(Rain.class),
                 injector.getInstance(Sun.class),

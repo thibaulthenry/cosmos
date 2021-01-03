@@ -1,21 +1,24 @@
 package cosmos.executors.commands.root;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.AbstractCommand;
-import cosmos.models.parameters.CosmosKeys;
-import cosmos.models.parameters.CosmosParameters;
+import cosmos.executors.parameters.CosmosKeys;
+import cosmos.executors.parameters.CosmosParameters;
+import cosmos.executors.parameters.impl.world.WorldOnline;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.command.parameter.managed.Flag;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Tamer;
-import org.spongepowered.api.world.ServerLocation;
+import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.api.world.server.ServerWorld;
-import org.spongepowered.api.world.server.ServerWorldProperties;
 import org.spongepowered.math.vector.Vector3d;
 
 import java.util.Arrays;
@@ -28,10 +31,11 @@ import java.util.stream.Collectors;
 @Singleton
 public class Move extends AbstractCommand {
 
-    public Move() {
+    @Inject
+    public Move(final Injector injector) {
         super(
-                CosmosParameters.ENTITY_TARGETS,
-                Parameter.worldProperties().setKey(CosmosKeys.WORLD).optional().build(),
+                CosmosParameters.ENTITY_TARGETS_OPTIONAL,
+                injector.getInstance(WorldOnline.class).builder().optional().build(),
                 Parameter.vector3d().setKey(CosmosKeys.XYZ).optional().build(),
                 Parameter.vector3d().setKey(CosmosKeys.PITCH_YAW_ROLL).optional().build()
         );
@@ -49,21 +53,10 @@ public class Move extends AbstractCommand {
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
-        final ServerWorldProperties properties = context.getOne(CosmosKeys.WORLD)
-                .orElse(this.serviceProvider.world().getProperties(context));
+        final ServerWorld world = Sponge.getServer().getWorldManager().world(this.serviceProvider.world().getKeyOrSource(context))
+                .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.world"));
 
-        if (!properties.getWorld().isPresent()) {
-            this.serviceProvider.world().load(src, properties, false);
-        }
-
-        if (!properties.getWorld().isPresent()) {
-            throw this.serviceProvider.message()
-                    .getMessage(src, "error.root.move.unloaded")
-                    .replace("world", properties)
-                    .asException();
-        }
-
-        final Optional<List<Entity>> optionalEntities = context.getOne(CosmosParameters.ENTITY_TARGETS);
+        final Optional<List<Entity>> optionalEntities = context.getOne(CosmosParameters.ENTITY_TARGETS_OPTIONAL);
 
         if (optionalEntities.isPresent() && optionalEntities.get().isEmpty()) {
             throw this.serviceProvider.message().getError(src, "error.invalid.entity");
@@ -73,14 +66,14 @@ public class Move extends AbstractCommand {
             throw this.serviceProvider.message().getError(src, "error.missing.entities");
         }
 
-        final ServerWorld world = properties.getWorld().get();
         final Optional<Vector3d> optionalPosition = context.getOne(CosmosKeys.XYZ);
-        final ServerLocation location = optionalPosition.map(world::getLocation).orElse(world.getLocation(world.getProperties().getSpawnPosition()));
+        final ServerLocation location = optionalPosition.map(world::getLocation).orElse(world.getLocation(world.getProperties().spawnPosition()));
         final Vector3d position = location.getPosition();
         final Vector3d rotation = context.getOne(CosmosKeys.PITCH_YAW_ROLL).orElse(null);
         final boolean safeOnly = context.hasFlag(CosmosKeys.FLAG_SAFE_ONLY);
 
-        final Collection<Component> contents = context.getOne(CosmosParameters.ENTITY_TARGETS).orElse(Collections.singletonList((Entity) src))
+        final Collection<Component> contents = context.getOne(CosmosParameters.ENTITY_TARGETS_OPTIONAL)
+                .orElse(Collections.singletonList((Entity) src))
                 .stream()
                 .map(target -> {
                     final boolean other = !this.serviceProvider.transportation().isSelf(src, target);
@@ -90,12 +83,12 @@ public class Move extends AbstractCommand {
                         return this.serviceProvider.message()
                                 .getMessage(src, "error.root.move")
                                 .replace("target", targetName)
-                                .replace("world", properties)
+                                .replace("world", world)
                                 .replace("position", position)
                                 .condition("target", other)
                                 .condition("verb", other)
                                 .condition("safe", safeOnly)
-                                .errorColor()
+                                .red()
                                 .asText();
                     }
 
@@ -104,24 +97,24 @@ public class Move extends AbstractCommand {
 
                         this.serviceProvider.message()
                                 .getMessage(targetAudience, "success.root.move")
-                                .replace("world", properties)
+                                .replace("world", world)
                                 .replace("position", position)
                                 .condition("target", false)
                                 .condition("verb", false)
                                 .condition("safe", safeOnly)
-                                .successColor()
+                                .green()
                                 .sendTo(targetAudience);
                     }
 
                     return this.serviceProvider.message()
                             .getMessage(src, "success.root.move")
                             .replace("target", targetName)
-                            .replace("world", properties)
+                            .replace("world", world)
                             .replace("position", position)
                             .condition("target", other)
                             .condition("verb", other)
                             .condition("safe", safeOnly)
-                            .successColor()
+                            .green()
                             .asText();
                 })
                 .collect(Collectors.toList());
@@ -129,10 +122,10 @@ public class Move extends AbstractCommand {
         final TextComponent title = this.serviceProvider.message()
                 .getMessage(src, "success.root.move.list")
                 .replace("number", contents.size())
-                .successColor()
+                .green()
                 .asText();
 
-        this.serviceProvider.pagination().sendPagination(src, title, contents, true);
+        this.serviceProvider.pagination().send(src, title, contents, true);
     }
 
 }

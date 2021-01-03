@@ -5,7 +5,7 @@ import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.world.WorldBorder;
-import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 @Singleton
 public class Remove extends AbstractBorderCommand {
@@ -18,7 +18,7 @@ public class Remove extends AbstractBorderCommand {
         this.serviceProvider.message()
                 .getMessage(src, "success.border.remove")
                 .replace("world", properties)
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 }

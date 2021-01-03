@@ -4,9 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.root.Delete;
-import cosmos.executors.commands.root.Disable;
-import cosmos.executors.commands.root.Duplicate;
-import cosmos.executors.commands.root.Enable;
+import cosmos.executors.commands.root.Copy;
 import cosmos.executors.commands.root.Help;
 import cosmos.executors.commands.root.Import;
 import cosmos.executors.commands.root.Information;
@@ -25,12 +23,10 @@ public class Root extends AbstractModule {
     @Inject
     public Root(final Injector injector) {
         super(
+                injector.getInstance(Copy.class),
                 injector.getInstance(Backup.class),
                 injector.getInstance(Border.class),
                 injector.getInstance(Delete.class),
-                injector.getInstance(Disable.class),
-                injector.getInstance(Duplicate.class),
-                injector.getInstance(Enable.class),
                 injector.getInstance(Help.class),
                 injector.getInstance(Import.class),
                 injector.getInstance(Information.class),
@@ -42,6 +38,7 @@ public class Root extends AbstractModule {
                 injector.getInstance(Position.class),
                 injector.getInstance(Properties.class),
                 injector.getInstance(Rename.class),
+                injector.getInstance(Scoreboard.class),
                 injector.getInstance(Time.class),
                 injector.getInstance(Unload.class),
                 injector.getInstance(Weather.class)

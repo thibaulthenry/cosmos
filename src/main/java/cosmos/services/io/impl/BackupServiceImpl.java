@@ -3,8 +3,8 @@ package cosmos.services.io.impl;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
-import cosmos.models.backup.BackupArchetype;
-import cosmos.models.enums.Directories;
+import cosmos.constants.Directories;
+import cosmos.registries.backup.BackupArchetype;
 import cosmos.services.io.BackupService;
 import cosmos.services.io.FinderService;
 import org.spongepowered.api.ResourceKey;
@@ -69,15 +69,15 @@ public class BackupServiceImpl implements BackupService {
     }
 
     @Override
-    public boolean hasBackup(final String uuid) {
+    public boolean hasBackup(final ResourceKey key) {
         return this.getBackups()
                 .stream()
-                .map(BackupArchetype::getUuid)
-                .anyMatch(backupWorldUUID -> backupWorldUUID.equals(uuid));
+                .map(BackupArchetype::getWorldKey)
+                .anyMatch(backupWorldKey -> backupWorldKey.equals(key));
     }
 
     @Override
-    public void tag(BackupArchetype backupArchetype) throws IOException {
+    public void tag(final BackupArchetype backupArchetype) throws IOException {
         final Path untaggedBackupPath = this.finderService.getBackupPath(backupArchetype, false)
                 .orElseThrow(() -> new IOException("Unable to find world backup directory while tagging backup"));
         final Path taggedBackupPath = this.finderService.getBackupPath(backupArchetype, true)

@@ -1,0 +1,26 @@
+package cosmos.executors.modules.scoreboard;
+
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
+import cosmos.executors.commands.scoreboard.objectives.Add;
+import cosmos.executors.commands.scoreboard.objectives.List;
+import cosmos.executors.commands.scoreboard.objectives.Modify;
+import cosmos.executors.commands.scoreboard.objectives.Remove;
+import cosmos.executors.commands.scoreboard.objectives.SetDisplay;
+import cosmos.executors.modules.AbstractModule;
+
+@Singleton
+public class Objectives extends AbstractModule {
+
+    @Inject
+    public Objectives(final Injector injector) {
+        super(
+                injector.getInstance(Add.class),
+                injector.getInstance(List.class),
+                injector.getInstance(Modify.class),
+                injector.getInstance(Remove.class),
+                injector.getInstance(SetDisplay.class)
+        );
+    }
+}

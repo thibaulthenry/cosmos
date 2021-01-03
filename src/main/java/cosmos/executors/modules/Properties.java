@@ -7,16 +7,13 @@ import cosmos.executors.commands.properties.Difficulty;
 import cosmos.executors.commands.properties.EnableCommandBlocks;
 import cosmos.executors.commands.properties.EnableFeatures;
 import cosmos.executors.commands.properties.GameMode;
-import cosmos.executors.commands.properties.GenerateSpawnOnLoad;
-import cosmos.executors.commands.properties.GeneratorModifierType;
 import cosmos.executors.commands.properties.Hardcore;
 import cosmos.executors.commands.properties.KeepSpawnLoaded;
 import cosmos.executors.commands.properties.LoadOnStartup;
 import cosmos.executors.commands.properties.Pvp;
 import cosmos.executors.commands.properties.SpawnPosition;
 import cosmos.executors.commands.properties.ViewDistance;
-import cosmos.models.parameters.CosmosKeys;
-import org.spongepowered.api.command.parameter.Parameter;
+import cosmos.executors.parameters.impl.world.WorldAll;
 
 @Singleton
 class Properties extends AbstractModule {
@@ -24,13 +21,11 @@ class Properties extends AbstractModule {
     @Inject
     Properties(final Injector injector) {
         super(
-                Parameter.worldProperties(false).setKey(CosmosKeys.WORLD).optional().build(),
+                injector.getInstance(WorldAll.class).builder().optional().build(),
                 injector.getInstance(Difficulty.class),
                 injector.getInstance(EnableCommandBlocks.class),
                 injector.getInstance(EnableFeatures.class),
                 injector.getInstance(GameMode.class),
-                injector.getInstance(GenerateSpawnOnLoad.class),
-                injector.getInstance(GeneratorModifierType.class),
                 injector.getInstance(Hardcore.class),
                 injector.getInstance(KeepSpawnLoaded.class),
                 injector.getInstance(LoadOnStartup.class),

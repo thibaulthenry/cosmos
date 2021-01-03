@@ -13,7 +13,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.world.WorldBorder;
-import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 import org.spongepowered.math.vector.Vector3d;
 
 import java.text.MessageFormat;
@@ -38,7 +38,7 @@ public class Information extends AbstractBorderCommand {
         final ResourceKey worldKey = properties.getKey();
         final Vector3d center = border.getCenter();
 
-        final double y = Sponge.getServer().getWorldManager().getWorld(worldKey)
+        final double y = Sponge.getServer().getWorldManager().world(worldKey)
                 .map(world -> world.getHighestPositionAt(center.toInt()).getY())
                 .orElse(1);
 

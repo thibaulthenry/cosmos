@@ -2,8 +2,8 @@ package cosmos.executors.commands.root;
 
 import com.google.inject.Singleton;
 import cosmos.executors.commands.AbstractCommand;
-import cosmos.models.parameters.CosmosKeys;
-import cosmos.models.parameters.CosmosParameters;
+import cosmos.executors.parameters.CosmosKeys;
+import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -13,7 +13,7 @@ import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.command.parameter.managed.Flag;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Tamer;
-import org.spongepowered.api.world.ServerLocation;
+import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.math.vector.Vector3d;
 
 import java.util.Arrays;
@@ -29,7 +29,7 @@ public class MoveTo extends AbstractCommand {
     public MoveTo() {
         super(
                 Parameter.entity().setKey(CosmosKeys.ENTITY_DESTINATION).build(),
-                CosmosParameters.ENTITY_TARGETS
+                CosmosParameters.ENTITY_TARGETS_OPTIONAL
         );
     }
 
@@ -48,7 +48,7 @@ public class MoveTo extends AbstractCommand {
         final Entity destination = context.getOne(CosmosKeys.ENTITY_DESTINATION)
                 .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.entity"));
 
-        final Optional<List<Entity>> optionalEntities = context.getOne(CosmosParameters.ENTITY_TARGETS);
+        final Optional<List<Entity>> optionalEntities = context.getOne(CosmosParameters.ENTITY_TARGETS_OPTIONAL);
 
         if (!(optionalEntities.isPresent() || src instanceof Entity)) {
             throw this.serviceProvider.message().getError(src, "error.missing.entities");
@@ -62,7 +62,8 @@ public class MoveTo extends AbstractCommand {
         final Vector3d rotation = destination.getRotation();
         final boolean safeOnly = context.hasFlag(CosmosKeys.FLAG_SAFE_ONLY);
 
-        final Collection<Component> contents = context.getOne(CosmosParameters.ENTITY_TARGETS).orElse(Collections.singletonList((Entity) src))
+        final Collection<Component> contents = context.getOne(CosmosParameters.ENTITY_TARGETS_OPTIONAL)
+                .orElse(Collections.singletonList((Entity) src))
                 .stream()
                 .map(target -> {
                     final boolean sourceIsTarget = this.serviceProvider.transportation().isSelf(src, target);
@@ -82,7 +83,7 @@ public class MoveTo extends AbstractCommand {
                                 .condition("safe", safeOnly)
                                 .condition("target", !sourceIsTarget)
                                 .condition("verb", !sourceIsTarget)
-                                .errorColor()
+                                .red()
                                 .asText();
                     }
 
@@ -98,7 +99,7 @@ public class MoveTo extends AbstractCommand {
                                 .condition("safe", safeOnly)
                                 .condition("target", false)
                                 .condition("verb", false)
-                                .successColor()
+                                .green()
                                 .sendTo(targetAudience);
                     }
 
@@ -112,7 +113,7 @@ public class MoveTo extends AbstractCommand {
                             .condition("safe", safeOnly)
                             .condition("target", !sourceIsTarget)
                             .condition("verb", !sourceIsTarget)
-                            .successColor()
+                            .green()
                             .asText();
                 })
                 .collect(Collectors.toList());
@@ -121,10 +122,10 @@ public class MoveTo extends AbstractCommand {
         final TextComponent title = this.serviceProvider.message()
                 .getMessage(src, "success.root.move.list")
                 .replace("number", contents.size())
-                .successColor()
+                .green()
                 .asText();
 
-        this.serviceProvider.pagination().sendPagination(src, title, contents, true);
+        this.serviceProvider.pagination().send(src, title, contents, true);
     }
 
 }

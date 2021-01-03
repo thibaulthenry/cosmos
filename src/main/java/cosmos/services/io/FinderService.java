@@ -1,7 +1,7 @@
 package cosmos.services.io;
 
 import com.google.inject.ImplementedBy;
-import cosmos.models.backup.BackupArchetype;
+import cosmos.registries.backup.BackupArchetype;
 import cosmos.services.CosmosService;
 import cosmos.services.io.impl.FinderServiceImpl;
 import org.spongepowered.api.ResourceKey;

@@ -4,16 +4,30 @@ import com.google.inject.Singleton;
 import cosmos.services.transportation.TransportationService;
 import net.kyori.adventure.audience.Audience;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.util.Identifiable;
-import org.spongepowered.api.world.ServerLocation;
+import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.math.vector.Vector3d;
 
+import java.text.MessageFormat;
 import java.util.Optional;
 
 @Singleton
 public class TransportationServiceImpl implements TransportationService {
+
+    @Override
+    public String buildCommand(@Nullable final String target, @Nullable final ResourceKey worldKey, @Nullable final Vector3d position, @Nullable final Vector3d rotation, final boolean safeOnly) {
+        return MessageFormat.format(
+                "/cm move{0}{1}{2}{3}{4}",
+                safeOnly ? " --safe-only" : "",
+                target == null ? "" : " " + target,
+                worldKey == null ? "" : worldKey.getFormatted(),
+                position == null ? "" : " " + position.getX() + " " + position.getY() + " " + position.getZ(),
+                rotation == null ? "" : " " + rotation.getX() + " " + rotation.getY() + " " + rotation.getZ()
+        );
+    }
 
     @Override
     public boolean isSelf(final Audience src, final Identifiable target) {

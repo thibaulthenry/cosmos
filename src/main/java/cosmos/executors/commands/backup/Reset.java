@@ -4,9 +4,9 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.AbstractCommand;
-import cosmos.models.backup.BackupArchetype;
-import cosmos.models.parameters.CosmosKeys;
-import cosmos.models.parameters.impl.backup.BackupChoices;
+import cosmos.executors.parameters.CosmosKeys;
+import cosmos.executors.parameters.impl.backup.Backup;
+import cosmos.registries.backup.BackupArchetype;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -19,7 +19,7 @@ public class Reset extends AbstractCommand {
 
     @Inject
     public Reset(final Injector injector) {
-        super(injector.getInstance(BackupChoices.class).builder().build());
+        super(injector.getInstance(Backup.class).builder().build());
     }
 
     @Override
@@ -30,7 +30,7 @@ public class Reset extends AbstractCommand {
         final Optional<ServerWorld> optionalLinkedWorld = backupArchetype.getLinkedWorld();
 
         if (optionalLinkedWorld.isPresent()) {
-            this.serviceProvider.world().unload(src, optionalLinkedWorld.get().getProperties(), false);
+            this.serviceProvider.world().unload(src, optionalLinkedWorld.get());
         }
 
         this.serviceProvider.world().restore(src, backupArchetype, true);
@@ -41,7 +41,7 @@ public class Reset extends AbstractCommand {
                 .getMessage(src, "success.backup.reset")
                 .replace("world", backupArchetype.getWorldKey())
                 .replace("backup", backupArchetype)
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 

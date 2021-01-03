@@ -1,14 +1,15 @@
 package cosmos.executors.commands.weather;
 
-import cosmos.models.parameters.CosmosKeys;
-import cosmos.models.parameters.CosmosParameters;
+import cosmos.executors.parameters.CosmosKeys;
+import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.util.Ticks;
-import org.spongepowered.api.world.server.ServerWorldProperties;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 import org.spongepowered.api.world.weather.Weather;
+import org.spongepowered.api.world.weather.WeatherType;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -25,13 +26,13 @@ public abstract class AbstractWeatherChangeCommand extends AbstractWeatherComman
         final boolean hasInput = optionalInput.isPresent();
         final ChronoUnit unit = context.getOne(CosmosKeys.TIME_UNIT).orElse(ChronoUnit.SECONDS);
 
-        final Weather newWeather = this.getNewWeather();
+        final WeatherType newWeather = this.getNewWeather();
 
         if (hasInput) {
             final Ticks ticks = Ticks.ofWallClockTime(Sponge.getServer(), optionalInput.get(), unit);
             properties.setWeather(newWeather, ticks);
         } else {
-            properties.setWeather(newWeather, properties.getRemainingWeatherDuration());
+            properties.setWeather(newWeather, properties.weather().remainingDuration()); // tdo test
         }
 
         this.serviceProvider.world().saveProperties(src, properties);
@@ -45,9 +46,9 @@ public abstract class AbstractWeatherChangeCommand extends AbstractWeatherComman
                 .condition("for", hasInput)
                 .condition("duration", hasInput)
                 .condition("unit", hasInput)
-                .successColor()
+                .green()
                 .sendTo(src);
     }
 
-    protected abstract Weather getNewWeather();
+    protected abstract WeatherType getNewWeather();
 }
