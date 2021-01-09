@@ -20,6 +20,7 @@ import cosmos.commands.border.WarningDistance;
 import cosmos.commands.border.WarningTime;
 import cosmos.commands.properties.AllowCommandBlocks;
 import cosmos.commands.properties.Difficulty;
+import cosmos.commands.properties.EnableStructures;
 import cosmos.commands.properties.GameMode;
 import cosmos.commands.properties.GenerateSpawnOnLoad;
 import cosmos.commands.properties.GeneratorType;
@@ -334,6 +335,15 @@ public enum Helps {
             Pair.of(Outputs.EX_PROPERTIES_DIFFICULTY_1.asText(Difficulties.PEACEFUL), Outputs.DESC_PROPERTIES_DIFFICULTY_1.asText(Difficulties.PEACEFUL)),
             Pair.of(Outputs.EX_PROPERTIES_DIFFICULTY_2.asText("MyWorld"), Outputs.DESC_PROPERTIES_DIFFICULTY_2.asText("MyWorld")),
             Pair.of(Outputs.EX_PROPERTIES_DIFFICULTY_3.asText(), Outputs.DESC_PROPERTIES_DIFFICULTY_3.asText())
+    ),
+
+    PROPERTIES_ENABLE_STRUCTURES(
+            EnableStructures.class,
+            Outputs.USAGE_PROPERTIES_ENABLE_STRUCTURES.asText(ArgKeys.WORLD, ArgKeys.STATE),
+            Pair.of(Outputs.EX_PROPERTIES_ENABLE_STRUCTURES_0.asText("MyWorld", true), Outputs.DESC_PROPERTIES_ENABLE_STRUCTURES_0.asText("MyWorld", true)),
+            Pair.of(Outputs.EX_PROPERTIES_ENABLE_STRUCTURES_1.asText(false), Outputs.DESC_PROPERTIES_ENABLE_STRUCTURES_1.asText(false)),
+            Pair.of(Outputs.EX_PROPERTIES_ENABLE_STRUCTURES_2.asText("MyWorld"), Outputs.DESC_PROPERTIES_ENABLE_STRUCTURES_2.asText("MyWorld")),
+            Pair.of(Outputs.EX_PROPERTIES_ENABLE_STRUCTURES_3.asText(), Outputs.DESC_PROPERTIES_ENABLE_STRUCTURES_3.asText())
     ),
 
     PROPERTIES_GAME_MODE(

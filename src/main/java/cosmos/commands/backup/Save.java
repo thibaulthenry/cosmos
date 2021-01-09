@@ -41,7 +41,7 @@ public class Save extends AbstractCommand {
                         args.<String>getOne(ArgKeys.DISABLED_WORLD.t)
                                 .flatMap(FinderWorldProperties::getDisabledWorldProperties)
                 )
-                .orElseThrow(Outputs.INVALID_UNLOADED_DISABLED_EXPORTED_WORLD_CHOICE.asSupplier());
+                .orElseThrow(Outputs.INVALID_UNLOADED_DISABLED_WORLD_CHOICE.asSupplier());
 
         BackupArchetype backupArchetype = new BackupArchetype(worldProperties);
         args.<String>getOne(ArgKeys.TAG.t).ifPresent(backupArchetype::setTag);

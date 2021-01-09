@@ -2,6 +2,7 @@ package cosmos.modules;
 
 import cosmos.commands.properties.AllowCommandBlocks;
 import cosmos.commands.properties.Difficulty;
+import cosmos.commands.properties.EnableStructures;
 import cosmos.commands.properties.GameMode;
 import cosmos.commands.properties.GenerateSpawnOnLoad;
 import cosmos.commands.properties.GeneratorType;
@@ -28,6 +29,7 @@ class Properties extends AbstractModule {
         );
         addChild(new AllowCommandBlocks());
         addChild(new Difficulty());
+        addChild(new EnableStructures());
         addChild(new GameMode());
         addChild(new GenerateSpawnOnLoad());
         addChild(new GeneratorType());
