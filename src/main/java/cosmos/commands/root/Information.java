@@ -65,6 +65,7 @@ public class Information extends AbstractCommand {
                 node("Loads on startup", worldProperties.loadOnStartup() ? yes : no),
                 node("Keeps spawn loaded", worldProperties.doesKeepSpawnLoaded() ? yes : no),
                 node("Generates spawn on load", worldProperties.doesGenerateSpawnOnLoad() ? yes : no),
+                node("Structures", worldProperties.usesMapFeatures() ? yes : no),
                 node("PvP", worldProperties.isPVPEnabled() ? yes : no),
                 node("Hardcore", worldProperties.isHardcore() ? yes : no),
                 node("Command blocks", worldProperties.areCommandsAllowed() ? yes : no)

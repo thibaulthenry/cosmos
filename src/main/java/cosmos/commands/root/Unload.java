@@ -55,11 +55,7 @@ public class Unload extends AbstractCommand {
                 "You", mutableText, defaultWorld.getName(), defaultSpawnLocation.getPosition()
         );
 
-        world.getEntities()
-                .stream()
-                .filter(entity -> entity instanceof Player)
-                .map(entity -> (Player) entity)
-                .forEach(player -> Move.move(player, defaultSpawnLocation, player.getRotation(), successFunction, errorFunction, false));
+        world.getPlayers().forEach(player -> Move.move(player, defaultSpawnLocation, player.getRotation(), successFunction, errorFunction, false));
 
         if (!Sponge.getServer().unloadWorld(world)) {
             throw Outputs.UNLOADING_WORLD.asException(worldProperties);
