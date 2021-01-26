@@ -4,12 +4,9 @@ import cosmos.constants.Queries;
 import cosmos.registries.data.serializable.ShareableSerializable;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.data.persistence.DataContainer;
-import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
-public class ExperienceData implements DataSerializable, ShareableSerializable<ServerPlayer> {
-
-    // TODO Builder
+public class ExperienceData implements ShareableSerializable<ServerPlayer> {
 
     private final int experience;
     private final int experienceFromStartOfLevel;
@@ -23,11 +20,18 @@ public class ExperienceData implements DataSerializable, ShareableSerializable<S
         this.experienceSinceLevel = player.get(Keys.EXPERIENCE_SINCE_LEVEL).orElse(0);
     }
 
+    public ExperienceData(final int experience, final int experienceFromStartOfLevel, final int experienceLevel, final int experienceSinceLevel) {
+        this.experience = experience;
+        this.experienceFromStartOfLevel = experienceFromStartOfLevel;
+        this.experienceLevel = experienceLevel;
+        this.experienceSinceLevel = experienceSinceLevel;
+    }
+
     public ExperienceData() {
         this.experience = 0;
         this.experienceFromStartOfLevel = 0;
         this.experienceLevel = 0;
-        this.experienceSinceLevel = -1;
+        this.experienceSinceLevel = 7;
     }
 
     @Override
@@ -36,7 +40,7 @@ public class ExperienceData implements DataSerializable, ShareableSerializable<S
     }
 
     @Override
-    public void offer(final ServerPlayer data) {
+    public void share(final ServerPlayer data) {
         data.offer(Keys.EXPERIENCE, this.experience);
         data.offer(Keys.EXPERIENCE_FROM_START_OF_LEVEL, this.experienceFromStartOfLevel);
         data.offer(Keys.EXPERIENCE_LEVEL, this.experienceLevel);
@@ -51,4 +55,5 @@ public class ExperienceData implements DataSerializable, ShareableSerializable<S
                 .set(Queries.Experiences.EXPERIENCE_LEVEL, this.experienceLevel)
                 .set(Queries.Experiences.EXPERIENCE_SINCE_LEVEL, this.experienceSinceLevel);
     }
+
 }

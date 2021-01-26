@@ -46,16 +46,16 @@ public class MoveTo extends AbstractCommand {
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
         final Entity destination = context.getOne(CosmosKeys.ENTITY_DESTINATION)
-                .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.entity"));
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.ENTITY_DESTINATION));
 
         final Optional<List<Entity>> optionalEntities = context.getOne(CosmosParameters.ENTITY_TARGETS_OPTIONAL);
 
         if (!(optionalEntities.isPresent() || src instanceof Entity)) {
-            throw this.serviceProvider.message().getError(src, "error.missing.entities");
+            throw super.serviceProvider.message().getError(src, "error.missing.entities");
         }
 
         if (optionalEntities.isPresent() && optionalEntities.get().isEmpty()) {
-            throw this.serviceProvider.message().getError(src, "error.invalid.entity");
+            throw super.serviceProvider.message().getError(src, "error.empty-output");
         }
 
         final ServerLocation location = destination.getServerLocation();
@@ -66,14 +66,14 @@ public class MoveTo extends AbstractCommand {
                 .orElse(Collections.singletonList((Entity) src))
                 .stream()
                 .map(target -> {
-                    final boolean sourceIsTarget = this.serviceProvider.transportation().isSelf(src, target);
-                    final boolean sourceIsDestination = this.serviceProvider.transportation().isSelf(src, destination);
-                    final boolean targetIsDestination = this.serviceProvider.transportation().isSelf(target, destination);
+                    final boolean sourceIsTarget = super.serviceProvider.validation().isSelf(src, target);
+                    final boolean sourceIsDestination = super.serviceProvider.validation().isSelf(src, destination);
+                    final boolean targetIsDestination = super.serviceProvider.validation().isSelf(target, destination);
                     final String targetName = target instanceof Tamer ? ((Tamer) target).getName() : target.getUniqueId().toString();
                     final String destinationName = destination instanceof Tamer ? ((Tamer) destination).getName() : destination.getUniqueId().toString();
 
-                    if (!this.serviceProvider.transportation().teleport(target, location, rotation, safeOnly)) {
-                        return this.serviceProvider.message()
+                    if (!super.serviceProvider.transportation().teleport(target, location, rotation, safeOnly)) {
+                        return super.serviceProvider.message()
                                 .getMessage(src, "error.root.move-to")
                                 .replace("dest1", destinationName)
                                 .replace("target", targetName)
@@ -87,10 +87,10 @@ public class MoveTo extends AbstractCommand {
                                 .asText();
                     }
 
-                    if (this.serviceProvider.transportation().mustNotify(src, target)) {
+                    if (super.serviceProvider.transportation().mustNotify(src, target)) {
                         final Audience targetAudience = (Audience) target;
 
-                        this.serviceProvider.message()
+                        super.serviceProvider.message()
                                 .getMessage(targetAudience, "success.root.move-to")
                                 .replace("dest1", destinationName)
                                 .condition("dest1", !targetIsDestination)
@@ -103,7 +103,7 @@ public class MoveTo extends AbstractCommand {
                                 .sendTo(targetAudience);
                     }
 
-                    return this.serviceProvider.message()
+                    return super.serviceProvider.message()
                             .getMessage(src, "success.root.move-to")
                             .replace("dest1", destinationName)
                             .replace("target", targetName)
@@ -119,13 +119,13 @@ public class MoveTo extends AbstractCommand {
                 .collect(Collectors.toList());
 
 
-        final TextComponent title = this.serviceProvider.message()
+        final TextComponent title = super.serviceProvider.message()
                 .getMessage(src, "success.root.move.list")
                 .replace("number", contents.size())
-                .green()
+                .gray()
                 .asText();
 
-        this.serviceProvider.pagination().send(src, title, contents, true);
+        super.serviceProvider.pagination().send(src, title, contents, true);
     }
 
 }

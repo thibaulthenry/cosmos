@@ -8,15 +8,15 @@ import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.util.MinecraftDayTime;
 import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
-public abstract class AbstractTimeCommand extends AbstractCommand {
+abstract class AbstractTimeCommand extends AbstractCommand {
 
-    protected AbstractTimeCommand(Parameter... parameters) {
+    AbstractTimeCommand(Parameter... parameters) {
         super(parameters);
     }
 
     @Override
     protected final void run(final Audience src, final CommandContext context) throws CommandException {
-        final ServerWorldProperties properties = this.serviceProvider.world().getPropertiesOrSource(context);
+        final ServerWorldProperties properties = super.serviceProvider.world().getPropertiesOrSource(context);
         this.run(src, context, properties, properties.dayTime());
     }
 

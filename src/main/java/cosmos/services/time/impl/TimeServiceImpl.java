@@ -78,5 +78,4 @@ public class TimeServiceImpl implements TimeService {
         return pastTick <= 0 ? pastTick : pastTick - Units.DAY_DURATION_IN_TICKS;
     }
 
-
 }

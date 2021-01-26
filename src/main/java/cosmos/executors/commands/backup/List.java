@@ -22,36 +22,27 @@ public class List extends AbstractCommand {
 
     @Inject
     public List(final Injector injector) {
-        super(injector.getInstance(BackupWorld.class).builder().optional().build());
+        super(injector.getInstance(BackupWorld.class).optional().build());
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
-        final Optional<ResourceKey> optionalWorldName = context.getOne(CosmosKeys.WORLD_KEY);
+        final Optional<ResourceKey> optionalWorldKey = context.getOne(CosmosKeys.WORLD);
 
-        final Collection<Component> contents = this.serviceProvider.backup().getBackups()
+        final Collection<Component> contents = super.serviceProvider.backup().getBackups()
                 .stream()
-                .filter(backupArchetype -> !optionalWorldName.isPresent()
-                        || optionalWorldName.get().equals(backupArchetype.getWorldKey()))
-                .map(backupArchetype -> backupArchetype.toText(src))
+                .filter(backupArchetype -> !optionalWorldKey.isPresent() || optionalWorldKey.get().equals(backupArchetype.getWorldKey()))
+                .map(backupArchetype -> super.serviceProvider.format().asText(backupArchetype, super.serviceProvider.message().getLocale(src)))
                 .collect(Collectors.toList());
 
-        final TextComponent title = optionalWorldName
-                .map(worldKey -> this.serviceProvider.message()
-                        .getMessage(src, "success.backup.list.world")
-                        .replace("number", contents.size())
-                        .replace("world", worldKey)
-                        .green()
-                        .asText()
-                )
-                .orElseGet(() -> this.serviceProvider.message()
-                        .getMessage(src, "success.backup.list.all")
-                        .replace("number", contents.size())
-                        .green()
-                        .asText()
-                );
+        final TextComponent title = super.serviceProvider.message()
+                .getMessage(src, optionalWorldKey.isPresent() ? "success.backup.header.world" : "success.backup.header.all")
+                .replace("number", contents.size())
+                .replace("world", optionalWorldKey.isPresent() ? optionalWorldKey.get() : "")
+                .gray()
+                .asText();
 
-        this.serviceProvider.pagination().send(src, title, contents, false);
+        super.serviceProvider.pagination().send(src, title, contents, false);
     }
 
 }

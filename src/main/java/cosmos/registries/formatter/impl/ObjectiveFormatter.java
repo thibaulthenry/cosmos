@@ -1,7 +1,12 @@
 package cosmos.registries.formatter.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.registries.formatter.Formatter;
+import cosmos.registries.formatter.LocaleFormatter;
+import cosmos.services.message.MessageService;
+import cosmos.services.transportation.TransportationService;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -12,53 +17,43 @@ import org.spongepowered.api.scoreboard.Score;
 import org.spongepowered.api.scoreboard.objective.Objective;
 
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.Optional;
 
 @Singleton
-public class ObjectiveFormatter implements Formatter<Objective> {
+public class ObjectiveFormatter implements LocaleFormatter<Objective> {
+
+    private final MessageService messageService;
+
+    @Inject
+    public ObjectiveFormatter(final Injector injector) {
+        this.messageService = injector.getInstance(MessageService.class);
+    }
 
     @Override
-    public TextComponent asText(final Objective value) {
+    public TextComponent asText(final Objective value, final Locale locale) {
         final Optional<Score> optionalBestScore = value.getScores()
                 .values()
                 .stream()
                 .max(Comparator.comparingInt(Score::getScore));
 
-        final TextComponent displayedAsText = Component.text("Display as: ", NamedTextColor.GRAY)
-                .append(value.getDisplayName());
+        final boolean hasBestScore = optionalBestScore.isPresent();
 
-        final TextComponent displayModeText = Component.text("Display mode: ", NamedTextColor.GRAY)
-                .append(Component.text(value.getDisplayMode().key(RegistryTypes.OBJECTIVE_DISPLAY_MODE).getValue(), NamedTextColor.GOLD));
+        final TextComponent hoverText = this.messageService.getMessage(locale, "formatter.objective.hover")
+                .replace("best1", hasBestScore ? optionalBestScore.get().getScore() : "none")
+                .replace("best3", optionalBestScore.map(Score::getName).orElse(Component.empty()))
+                .replace("criterion", value.getCriterion().key(RegistryTypes.CRITERION).getValue())
+                .replace("display", value.getDisplayName())
+                .replace("mode", value.getDisplayMode().key(RegistryTypes.OBJECTIVE_DISPLAY_MODE).getValue())
+                .replace("scores", value.getScores().size())
+                .condition("best2", hasBestScore)
+                .condition("best3", hasBestScore)
+                .gray()
+                .asText();
 
-        final TextComponent criterionText = Component.text("Criterion: ", NamedTextColor.GRAY)
-                .append(Component.text(value.getCriterion().key(RegistryTypes.CRITERION).getValue(), NamedTextColor.GOLD));
+        // todo add display slot
 
-        final TextComponent bestScoreText = optionalBestScore
-                .map(bestScore -> Component.newline()
-                        .append(Component.text("Best score: ", NamedTextColor.GRAY))
-                        .append(Component.text(bestScore.getScore(), NamedTextColor.GOLD))
-                        .append(Component.text(" from ", NamedTextColor.GRAY))
-                        .append(bestScore.getName())
-                )
-                .orElse(Component.empty());
-
-        final TextComponent registeredScoresText = Component.text("Registered scores: ", NamedTextColor.GRAY)
-                .append(Component.text(value.getScores().size(), NamedTextColor.GOLD));
-
-        final TextComponent hoverText = Component.text()
-                .append(displayedAsText)
-                .append(Component.newline())
-                .append(displayModeText)
-                .append(Component.newline())
-                .append(criterionText)
-                .append(Component.newline())
-                .append(registeredScoresText)
-                .append(bestScoreText)
-                .build();
-
-        return Component.text(value.getName())
-                .hoverEvent(HoverEvent.showText(hoverText))
-                .decoration(TextDecoration.UNDERLINED, true);
+        return Component.text(value.getName()).hoverEvent(HoverEvent.showText(hoverText));
     }
 
 }

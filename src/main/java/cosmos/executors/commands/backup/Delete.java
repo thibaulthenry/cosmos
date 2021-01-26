@@ -17,25 +17,22 @@ public class Delete extends AbstractCommand {
 
     @Inject
     public Delete(final Injector injector) {
-        super(injector.getInstance(Backup.class).builder().build());
+        super(injector.getInstance(Backup.class).build());
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
         final BackupArchetype backupArchetype = context.getOne(CosmosKeys.BACKUP)
-                .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.choices.backup"));
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.backup", "param", CosmosKeys.BACKUP));
 
         try {
-            this.serviceProvider.backup().delete(backupArchetype);
+            super.serviceProvider.backup().delete(backupArchetype);
         } catch (final Exception e) {
             Cosmos.getLogger().warn("An unexpected error occurred while deleting backup", e);
-            throw this.serviceProvider.message()
-                    .getMessage(src, "error.backup.delete")
-                    .replace("backup", backupArchetype)
-                    .asException();
+            throw super.serviceProvider.message().getError(src, "error.backup.delete", "backup", backupArchetype);
         }
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, "success.backup.delete")
                 .replace("backup", backupArchetype)
                 .green()

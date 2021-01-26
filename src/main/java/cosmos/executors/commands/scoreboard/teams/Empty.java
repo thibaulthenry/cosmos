@@ -21,23 +21,39 @@ public class Empty extends AbstractScoreboardCommand {
 
     @Inject
     public Empty(final Injector injector) {
-        super(injector.getInstance(TeamAll.class).builder().build());
+        super(injector.getInstance(TeamAll.class).build());
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Scoreboard scoreboard) throws CommandException {
         final Team team = context.getOne(CosmosKeys.TEAM)
-                .orElseThrow(() -> new CommandException(Component.empty())); // todo .orElseThrow(Outputs.INVALID_TEAM_CHOICE.asSupplier());
+                .orElseThrow(
+                        super.serviceProvider.message()
+                                .getMessage(src, "error.invalid.team")
+                                .replace("param", CosmosKeys.TEAM)
+                                .replace("world", worldKey)
+                                .asSupplier()
+                );
 
         final Collection<Component> members = team.getMembers();
 
         if (members.isEmpty()) {
-            throw new CommandException(Component.empty()); // todo throw Outputs.EMPTY_TEAM.asException(team);
+            throw super.serviceProvider.message()
+                    .getMessage(src, "error.scoreboard.teams.empty.already-empty")
+                    .replace("team", team)
+                    .replace("world", worldKey)
+                    .asError();
         }
 
         members.forEach(team::removeMember);
 
-        // todo src.sendMessage(Outputs.REMOVE_ALL_PLAYERS_FROM_TEAM.asText(members.size(), team, worldName));
+        super.serviceProvider.message()
+                .getMessage(src, "success.scoreboard.teams.empty")
+                .replace("number", members.size())
+                .replace("team", team)
+                .replace("world", worldKey)
+                .green()
+                .sendTo(src);
     }
 
 }

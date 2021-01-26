@@ -25,32 +25,57 @@ public class Join extends AbstractMultiTargetCommand {
     @Inject
     public Join(final Injector injector) {
         super(
-                injector.getInstance(TeamAll.class).builder().build(),
-                injector.getInstance(Targets.class).get() // todo return source
+                true,
+                injector.getInstance(TeamAll.class).build(),
+                injector.getInstance(Targets.class).optional().build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Collection<Component> targets) throws CommandException {
         final Team team = context.getOne(CosmosKeys.TEAM)
-                .orElseThrow(() -> new CommandException(Component.empty())); // todo .orElseThrow(Outputs.INVALID_TEAM_CHOICE.asSupplier());
+                .orElseThrow(
+                        super.serviceProvider.message()
+                                .getMessage(src, "error.invalid.team")
+                                .replace("param", CosmosKeys.TEAM)
+                                .replace("world", worldKey)
+                                .asSupplier()
+                );
 
         final Collection<Component> contents = targets
                 .stream()
                 .map(target -> {
-                    if (this.serviceProvider.validation().doesOverflowMaxLength(target, Units.PLAYER_NAME_MAX_LENGTH)) {
-                        return Component.empty(); // todo return Outputs.TOO_LONG_PLAYER_NAME.asText(target);
+                    if (super.serviceProvider.validation().doesOverflowMaxLength(target, Units.SCORE_HOLDER_MAX_LENGTH)) {
+                        return super.serviceProvider.message()
+                                .getMessage(src, "error.invalid.score-holder.overflow")
+                                .replace("name", target)
+                                .red()
+                                .asText();
                     }
 
+                    final boolean sourceIsNotTarget = !super.serviceProvider.validation().isSelf(src, target);
                     team.addMember(target);
-                    // todo addSuccess();
+                    super.success();
 
-                    return Component.empty(); //  todo return Outputs.JOIN_TEAM.asText(target, team, worldName);
+                    return super.serviceProvider.message()
+                            .getMessage(src, "success.scoreboard.teams.join")
+                            .replace("target", target)
+                            .replace("team", team)
+                            .condition("target", sourceIsNotTarget)
+                            .condition("verb", sourceIsNotTarget)
+                            .green()
+                            .asText();
                 })
                 .collect(Collectors.toList());
 
-        final TextComponent title = Component.empty(); //  todo Outputs.SHOW_TEAM_OPERATIONS.asText(contents.size(), "registration(s)", worldName);
+        final TextComponent title = super.serviceProvider.message()
+                .getMessage(src, "success.scoreboard.teams.processing.header")
+                .replace("number", contents.size())
+                .replace("world", worldKey)
+                .gray()
+                .asText();
 
-        this.serviceProvider.pagination().send(src, title, contents, true);
+        super.serviceProvider.pagination().send(src, title, contents, true);
     }
+
 }

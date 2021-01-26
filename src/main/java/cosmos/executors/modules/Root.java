@@ -3,8 +3,9 @@ package cosmos.executors.modules;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import cosmos.executors.commands.root.Delete;
+import cosmos.executors.commands.root.Back;
 import cosmos.executors.commands.root.Copy;
+import cosmos.executors.commands.root.Delete;
 import cosmos.executors.commands.root.Help;
 import cosmos.executors.commands.root.Import;
 import cosmos.executors.commands.root.Information;
@@ -23,9 +24,10 @@ public class Root extends AbstractModule {
     @Inject
     public Root(final Injector injector) {
         super(
-                injector.getInstance(Copy.class),
+                injector.getInstance(Back.class),
                 injector.getInstance(Backup.class),
                 injector.getInstance(Border.class),
+                injector.getInstance(Copy.class),
                 injector.getInstance(Delete.class),
                 injector.getInstance(Help.class),
                 injector.getInstance(Import.class),
@@ -35,6 +37,8 @@ public class Root extends AbstractModule {
                 injector.getInstance(Move.class),
                 injector.getInstance(MoveTo.class),
                 injector.getInstance(New.class),
+                injector.getInstance(PerWorld.class),
+                //injector.getInstance(Portal.class),
                 injector.getInstance(Position.class),
                 injector.getInstance(Properties.class),
                 injector.getInstance(Rename.class),
@@ -44,4 +48,5 @@ public class Root extends AbstractModule {
                 injector.getInstance(Weather.class)
         );
     }
+
 }

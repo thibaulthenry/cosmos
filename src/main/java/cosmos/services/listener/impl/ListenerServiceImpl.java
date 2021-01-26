@@ -1,9 +1,16 @@
 package cosmos.services.listener.impl;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
-import cosmos.registries.listener.*;
+import cosmos.constants.ConfigurationNodes;
+import cosmos.registries.listener.Listener;
+import cosmos.registries.listener.ListenerRegistry;
+import cosmos.registries.listener.ScheduledAsyncSaveListener;
+import cosmos.registries.listener.ScheduledSaveListener;
+import cosmos.registries.listener.ToggleListener;
+import cosmos.services.io.ConfigurationService;
 import cosmos.services.listener.ListenerService;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.scheduler.ScheduledTask;
@@ -15,12 +22,14 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class ListenerServiceImpl implements ListenerService {
 
+    private final ConfigurationService configurationService;
     private final ListenerRegistry listenerRegistry;
     private UUID saveTaskUuid;
 
     @Inject
-    public ListenerServiceImpl(final ListenerRegistry listenerRegistry) {
-        this.listenerRegistry = listenerRegistry;
+    public ListenerServiceImpl(final Injector injector) {
+        this.configurationService = injector.getInstance(ConfigurationService.class);
+        this.listenerRegistry = injector.getInstance(ListenerRegistry.class);
     }
 
     @Override
@@ -33,13 +42,25 @@ public class ListenerServiceImpl implements ListenerService {
 
     @Override
     public void initializeAll() {
-//        if (!Config.isLoaded()) {
-//            Cosmos.sendConsole(Text.of(TextColors.RED, "Configuration file not loaded. All listeners disabled !"));
-//            return;
-//        }
+        if (!this.configurationService.isLoaded()) {
+            Cosmos.getLogger().error("Configuration file not loaded. All listeners disabled !");
+            return;
+        }
 
-        this.listenerRegistry.entries().forEach(entry -> this.register(entry.getKey()));
-        //.filter(entry -> Config.isListenerEnabled(entry.getKey()))
+        this.listenerRegistry.entries()
+                .stream()
+                .filter(entry -> {
+                    if (!entry.getValue().isConfigurable()) {
+                        return true;
+                    }
+
+                    final String listenerNode = this.configurationService.formatListener(entry.getKey());
+
+                    return this.configurationService.getNode(ConfigurationNodes.PER_WORLD, listenerNode)
+                            .map(this.configurationService::isEnabled)
+                            .orElse(false);
+                })
+                .forEach(entry -> this.register(entry.getKey()));
     }
 
     @Override

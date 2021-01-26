@@ -1,22 +1,25 @@
 package cosmos.registries.formatter.impl;
 
 import com.google.inject.Singleton;
-import cosmos.registries.formatter.Formatter;
+import cosmos.registries.formatter.OverflowFormatter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 @Singleton
-public class StringFormatter implements Formatter<String> {
+public class StringFormatter implements OverflowFormatter<String> {
 
-    private static final int MAX_TEXT_LENGTH = 24;
+    private static final int MAX_TEXT_LENGTH = 14;
 
     @Override
-    public TextComponent asText(final String value) {
-        return Component.text(this.substring(value));
-    }
+    public TextComponent asText(final String value, boolean keepOverflow) {
+        if (!keepOverflow && value.length() > StringFormatter.MAX_TEXT_LENGTH) {
+            return Component.text(value.substring(0, StringFormatter.MAX_TEXT_LENGTH) + "…")
+                    .hoverEvent(HoverEvent.showText(Component.text(value)));
+        }
 
-    private String substring(final String value) {
-        return (value.length() > MAX_TEXT_LENGTH) ? value.substring(0, MAX_TEXT_LENGTH) + ".." : value;
+        return Component.text(value);
     }
 
 }

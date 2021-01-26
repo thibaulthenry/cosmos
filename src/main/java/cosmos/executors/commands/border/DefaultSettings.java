@@ -21,12 +21,13 @@ public class DefaultSettings extends AbstractBorderCommand {
         border.setWarningDistance(5);
         border.setWarningTime(15, ChronoUnit.SECONDS);
 
-        this.serviceProvider.world().saveProperties(src, properties);
+        super.serviceProvider.world().saveProperties(src, properties);
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, "success.border.default-settings")
                 .replace("world", properties)
                 .green()
                 .sendTo(src);
     }
+
 }

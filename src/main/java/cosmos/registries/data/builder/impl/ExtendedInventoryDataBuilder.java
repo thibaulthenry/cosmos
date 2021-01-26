@@ -46,4 +46,5 @@ public class ExtendedInventoryDataBuilder extends AbstractDataBuilder<ExtendedIn
 
         return Optional.of(new ExtendedInventoryData(playerInventoryData, enderChestInventoryData, craftingInventoryData, pickedItem));
     }
+
 }

@@ -1,6 +1,7 @@
 package cosmos.services.world.impl;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
 import cosmos.executors.parameters.CosmosKeys;
@@ -14,6 +15,7 @@ import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.world.Locatable;
 import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.api.world.server.ServerWorld;
@@ -27,27 +29,27 @@ import java.util.stream.Collectors;
 @Singleton
 public class WorldServiceImpl implements WorldService {
 
-    @Inject
-    private BackupService backupService;
+    private final BackupService backupService;
+    private final MessageService messageService;
+    private final TransportationService transportationService;
 
     @Inject
-    private MessageService messageService;
-
-    @Inject
-    private TransportationService transportationService;
+    public WorldServiceImpl(final Injector injector) {
+        this.backupService = injector.getInstance(BackupService.class);
+        this.messageService = injector.getInstance(MessageService.class);
+        this.transportationService = injector.getInstance(TransportationService.class);
+    }
 
     @Override
     public void copy(final Audience src, final ResourceKey worldKey, final ResourceKey copyKey, final boolean checkNonexistent) throws CommandException {
         if (checkNonexistent && Sponge.getServer().getWorldManager().worldExists(copyKey)) {
-            throw this.messageService.getMessage(src, "error.world.already-existing")
-                    .replace("world", copyKey)
-                    .asException();
+            throw this.messageService.getError(src, "error.world.already-existing", "world", copyKey);
         }
 
         final CommandException errorException = this.messageService.getMessage(src, "error.root.copy")
                 .replace("copy", copyKey)
                 .replace("world", worldKey)
-                .asException();
+                .asError();
 
         try {
             if (!Sponge.getServer().getWorldManager().copyWorld(worldKey, copyKey).join()) {
@@ -62,14 +64,10 @@ public class WorldServiceImpl implements WorldService {
     @Override
     public void delete(final Audience src, final ResourceKey worldKey, final boolean checkOffline) throws CommandException {
         if (checkOffline && this.isOnline(worldKey)) {
-            throw this.messageService.getMessage(src, "error.world.already-loaded")
-                    .replace("world", worldKey)
-                    .asException();
+            throw this.messageService.getError(src, "error.world.already-loaded", "world", worldKey);
         }
 
-        final CommandException errorException = this.messageService.getMessage(src, "error.root.delete")
-                .replace("world", worldKey)
-                .asException();
+        final CommandException errorException = this.messageService.getError(src, "error.root.delete", "world", worldKey);
 
         try {
             if (!Sponge.getServer().getWorldManager().deleteWorld(worldKey).join()) {
@@ -83,20 +81,30 @@ public class WorldServiceImpl implements WorldService {
 
     @Override
     public Optional<ResourceKey> findKeyOrSource(final CommandContext context) {
-        return context.getOne(CosmosKeys.WORLD_KEY)
+        return this.findKeyOrSource(context, CosmosKeys.WORLD);
+    }
+
+    @Override
+    public Optional<ResourceKey> findKeyOrSource(final CommandContext context, final Parameter.Key<ResourceKey> worldKey) {
+        return context.getOne(worldKey)
                 .map(Optional::of)
                 .orElse(this.locateSourceKey(context.getCause().getAudience()));
     }
 
     @Override
     public ResourceKey getKeyOrSource(final CommandContext context) throws CommandException {
-        return this.findKeyOrSource(context)
+        return this.getKeyOrSource(context, CosmosKeys.WORLD);
+    }
+
+    @Override
+    public ResourceKey getKeyOrSource(final CommandContext context, final Parameter.Key<ResourceKey> worldKey) throws CommandException {
+        return this.findKeyOrSource(context, worldKey)
                 .orElseThrow(this.messageService.getMessage(context, "error.missing.world.key").asSupplier());
     }
 
     @Override
     public ServerWorldProperties getPropertiesOrSource(final CommandContext context) throws CommandException {
-        return context.getOne(CosmosKeys.WORLD_KEY)
+        return context.getOne(CosmosKeys.WORLD)
                 .map(this::loadProperties)
                 .orElse(this.locateSourceProperties(context.getCause().getAudience()))
                 .orElseThrow(this.messageService.getMessage(context, "error.missing.world.properties").asSupplier());
@@ -104,7 +112,7 @@ public class WorldServiceImpl implements WorldService {
 
     @Override
     public boolean isImported(final ResourceKey worldKey) {
-        return Sponge.getServer().getWorldManager().templateExists(worldKey);
+        return true; //Sponge.getServer().getWorldManager().templateExists(worldKey);
     }
 
     @Override
@@ -121,18 +129,14 @@ public class WorldServiceImpl implements WorldService {
     @Override
     public void load(final Audience src, final ResourceKey worldKey, final boolean checkOffline) throws CommandException {
         if (checkOffline && this.isOnline(worldKey)) {
-            throw this.messageService.getMessage(src, "error.world.already-loaded")
-                    .replace("world", worldKey)
-                    .asException();
+            throw this.messageService.getError(src, "error.world.already-loaded", "world", worldKey);
         }
 
         try {
             Sponge.getServer().getWorldManager().loadWorld(worldKey).join().getProperties().setLoadOnStartup(true);
         } catch (final Exception e) {
             Cosmos.getLogger().warn("An unexpected error occurred while loading world", e);
-            throw this.messageService.getMessage(src, "error.root.load")
-                    .replace("world", worldKey)
-                    .asException();
+            throw this.messageService.getError(src, "error.root.load", "world", worldKey);
         }
     }
 
@@ -163,15 +167,13 @@ public class WorldServiceImpl implements WorldService {
     @Override
     public void rename(final Audience src, final ResourceKey worldKey, final ResourceKey renameKey, final boolean checkNonexistent) throws CommandException {
         if (checkNonexistent && Sponge.getServer().getWorldManager().worldExists(renameKey)) {
-            throw this.messageService.getMessage(src, "error.world.already-existing")
-                    .replace("world", renameKey)
-                    .asException();
+            throw this.messageService.getError(src, "error.world.already-existing", "world", renameKey);
         }
 
         final CommandException errorException = this.messageService.getMessage(src, "error.root.rename")
                 .replace("rename", renameKey)
                 .replace("world", worldKey)
-                .asException();
+                .asError();
 
         try {
             if (!Sponge.getServer().getWorldManager().moveWorld(worldKey, renameKey).join()) {
@@ -189,36 +191,26 @@ public class WorldServiceImpl implements WorldService {
         final ResourceKey worldKey = backupArchetype.getWorldKey();
 
         if (defaultWorldKey.equals(worldKey)) {
-            throw this.messageService.getMessage(src, "error.backup.restore.default")
-                    .replace("world", defaultWorldKey)
-                    .asException();
+            throw this.messageService.getError(src, "error.backup.restore.default", "world", defaultWorldKey);
         }
 
         if (!this.isImported(worldKey)) {
-            throw this.messageService.getMessage(src, "error.backup.restore.exported")
-                    .replace("world", worldKey)
-                    .asException();
+            throw this.messageService.getError(src, "error.backup.restore.exported", "world", worldKey);
         }
 
         if (this.isOnline(worldKey)) {
-            throw this.messageService.getMessage(src, "error.backup.restore.loaded")
-                    .replace("world", worldKey)
-                    .asException();
+            throw this.messageService.getError(src, "error.backup.restore.loaded", "world", worldKey);
         }
 
         if (checkExistent && !this.backupService.hasBackup(backupArchetype.getWorldKey())) {
-            throw this.messageService.getMessage(src, "error.missing.backup")
-                    .replace("backup", backupArchetype)
-                    .asException();
+            throw this.messageService.getError(src, "error.missing.backup", "backup", backupArchetype);
         }
 
         try {
             this.backupService.restore(backupArchetype);
         } catch (final Exception e) {
             Cosmos.getLogger().warn("An unexpected error occurred while restoring backup", e);
-            throw this.messageService.getMessage(src, "error.backup.restore")
-                    .replace("backup", backupArchetype)
-                    .asException();
+            throw this.messageService.getError(src, "error.backup.restore", "backup", backupArchetype);
         }
     }
 
@@ -237,27 +229,18 @@ public class WorldServiceImpl implements WorldService {
         }
 
         if (!success) {
-            throw this.messageService
-                    .getMessage(src, "error.properties.save")
-                    .replace("world", properties)
-                    .asException();
+            throw this.messageService.getError(src, "error.properties.save", "world", properties);
         }
     }
 
     @Override
     public void unload(final Audience src, final ResourceKey worldKey, final boolean checkOnline) throws CommandException {
         if (checkOnline && this.isOffline(worldKey)) {
-            throw this.messageService.getMessage(src, "error.world.already-unloaded")
-                    .replace("world", worldKey)
-                    .asException();
+            throw this.messageService.getError(src, "error.world.already-unloaded", "world", worldKey);
         }
 
         final ServerWorld world = Sponge.getServer().getWorldManager().world(worldKey)
-                .orElseThrow(
-                        this.messageService.getMessage(src, "error.missing.world")
-                                .replace("world", worldKey)
-                                .asSupplier()
-                );
+                .orElseThrow(this.messageService.supplyError(src, "error.missing.world", "world", worldKey));
 
         this.unload(src, world);
     }
@@ -267,17 +250,13 @@ public class WorldServiceImpl implements WorldService {
         final ServerWorld defaultWorld = Sponge.getServer().getWorldManager().defaultWorld();
 
         if (defaultWorld.getKey().equals(world.getKey())) {
-            throw this.messageService.getMessage(src, "error.root.unload.default")
-                    .replace("world", world)
-                    .asException();
+            throw this.messageService.getError(src, "error.root.unload.default", "world", world);
         }
 
         final ServerLocation defaultSpawnLocation = defaultWorld.getLocation(defaultWorld.getProperties().spawnPosition());
 
         if (!world.getPlayers().stream().allMatch(player -> this.transportationService.teleport(player, defaultSpawnLocation, false))) {
-            throw this.messageService.getMessage(src, "error.root.unload.remaining-players")
-                    .replace("world", world)
-                    .asException();
+            throw this.messageService.getError(src, "error.root.unload.remaining-players", "world", world);
         }
 
         final ServerWorldProperties properties = world.getProperties();
@@ -289,9 +268,7 @@ public class WorldServiceImpl implements WorldService {
         } catch (final Exception e) {
             properties.setLoadOnStartup(loadOnStartupFallback);
             Cosmos.getLogger().warn("An unexpected error occurred while unloading world", e);
-            throw this.messageService.getMessage(src, "error.root.unload")
-                    .replace("world", world)
-                    .asException();
+            throw this.messageService.getError(src, "error.root.unload", "world", world);
         }
     }
 
@@ -302,4 +279,5 @@ public class WorldServiceImpl implements WorldService {
                 .filter(this::isOffline)
                 .collect(Collectors.toList());
     }
+
 }

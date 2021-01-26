@@ -1,6 +1,7 @@
 package cosmos.registries.serializer.impl;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.registries.data.serializable.impl.HealthData;
 import cosmos.registries.serializer.Serializer;
@@ -14,12 +15,16 @@ import java.util.Optional;
 @Singleton
 public class HealthsSerializer implements Serializer<HealthData> {
 
+    private final FinderService finderService;
+
     @Inject
-    private FinderService finderService;
+    public HealthsSerializer(final Injector injector) {
+        this.finderService = injector.getInstance(FinderService.class);
+    }
 
     @Override
     public void serialize(final Path path, final HealthData data) {
-        this.finderService.writeToFile(data.toContainer(), path);
+        this.finderService.writeToFile(data, path);
     }
 
     @Override
@@ -32,4 +37,5 @@ public class HealthsSerializer implements Serializer<HealthData> {
 
         return Sponge.getDataManager().deserialize(HealthData.class, dataContainer);
     }
+
 }

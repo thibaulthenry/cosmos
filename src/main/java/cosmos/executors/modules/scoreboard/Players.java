@@ -33,4 +33,5 @@ public class Players extends AbstractModule {
                 injector.getInstance(Test.class)
         );
     }
+
 }

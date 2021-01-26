@@ -9,6 +9,7 @@ import cosmos.executors.parameters.impl.scoreboard.TeamAll;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -26,39 +27,60 @@ public class List extends AbstractScoreboardCommand {
 
     @Inject
     public List(final Injector injector) {
-        super(injector.getInstance(TeamAll.class).builder().optional().build());
+        super(injector.getInstance(TeamAll.class).optional().build());
     }
 
-    private PaginationList getRegisteredTeamsText(final ResourceKey worldKey) {
-        final Collection<Component> contents = super.getScoreboard(worldKey).getTeams()
+    private PaginationList getRegisteredTeamsText(final Audience src, final ResourceKey worldKey) {
+        final Collection<Component> contents = super.serviceProvider.perWorld().scoreboards()
+                .getOrCreateScoreboard(worldKey)
+                .getTeams()
                 .stream()
-                .map(team -> Component.empty() /* todo Outputs.SHOW_TRACKED_TEAM.asText(team, team.getDisplayName(), team.getMembers().size())*/)
+                .map(team -> super.serviceProvider.message()
+                        .getMessage(src, "success.scoreboard.teams.list")
+                        .replace("number", team.getMembers().size())
+                        .replace("team", team)
+                        .green()
+                        .asText()
+                )
                 .collect(Collectors.toList());
 
-        final TextComponent title = Component.empty(); // todo Outputs.SHOW_ALL_TRACKED_TEAMS.asText(contents.size(), worldName);
+        final TextComponent title = super.serviceProvider.message()
+                .getMessage(src, "success.scoreboard.teams.list.header.teams")
+                .replace("number", contents.size())
+                .replace("world", worldKey)
+                .gray()
+                .asText();
 
-        return this.serviceProvider.pagination().generate(title, contents);
+        return super.serviceProvider.pagination().generate(title, contents);
     }
 
-    private PaginationList getTeamMembers(final ResourceKey worldKey, final Team team) {
+    private PaginationList getTeamMembers(final Audience src, final ResourceKey worldKey, final Team team) {
         final Set<Component> contents = team.getMembers();
-        final TextComponent title = Component.empty(); // todo Outputs.SHOW_TEAM_MEMBERS.asText(contents.size(), team, worldKey);
-        return this.serviceProvider.pagination().generate(title, contents);
+
+        final TextComponent title = super.serviceProvider.message()
+                .getMessage(src, "success.scoreboard.teams.list.header.members")
+                .replace("number", contents.size())
+                .replace("team", team)
+                .replace("world", worldKey)
+                .gray()
+                .asText();
+
+        return super.serviceProvider.pagination().generate(title, contents);
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Scoreboard scoreboard) throws CommandException {
-        if (this.getScoreboard(worldKey).getTeams().isEmpty()) {
-            throw new CommandException(Component.empty()); // todo throw Outputs.MISSING_TEAM.asException(worldName);
+        if (super.serviceProvider.perWorld().scoreboards().getOrCreateScoreboard(worldKey).getTeams().isEmpty()) {
+            throw super.serviceProvider.message().getError(src, "error.scoreboard.teams.list.empty", "world", worldKey);
         }
 
         final Optional<Team> optionalTeam = context.getOne(CosmosKeys.TEAM);
 
         final PaginationList paginationList = optionalTeam
-                .map(team -> getTeamMembers(worldKey, team))
-                .orElseGet(() -> getRegisteredTeamsText(worldKey));
+                .map(team -> this.getTeamMembers(src, worldKey, team))
+                .orElse(this.getRegisteredTeamsText(src, worldKey));
 
-        this.serviceProvider.pagination().send(src, paginationList, false);
+        super.serviceProvider.pagination().send(src, paginationList, false);
     }
 
 }

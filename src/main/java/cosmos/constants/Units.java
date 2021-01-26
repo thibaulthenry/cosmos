@@ -17,5 +17,6 @@ public class Units {
 
     public static final int NAME_MAX_LENGTH = 16;
     public static final int DISPLAY_NAME_MAX_LENGTH = 32;
-    public static final int PLAYER_NAME_MAX_LENGTH = 40;
+    public static final int SCORE_HOLDER_MAX_LENGTH = 40;
+
 }

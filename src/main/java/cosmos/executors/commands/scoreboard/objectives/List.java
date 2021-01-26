@@ -8,6 +8,7 @@ import net.kyori.adventure.text.TextComponent;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.scoreboard.Scoreboard;
 
 import java.util.Collection;
@@ -19,17 +20,29 @@ public class List extends AbstractScoreboardCommand {
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Scoreboard scoreboard) throws CommandException {
         if (scoreboard.getObjectives().isEmpty()) {
-            // todo throw Outputs.MISSING_OBJECTIVE.asException(worldName);
+            throw super.serviceProvider.message().getError(src, "error.scoreboard.objectives.list.empty", "world", worldKey);
         }
 
         final Collection<Component> contents = scoreboard.getObjectives()
                 .stream()
-                .map(objective -> Component.empty()/* todo Outputs.SHOW_TRACKED_OBJECTIVE.asText(objective, objective.getDisplayName(), objective.getCriterion()) */)
+                .map(objective -> super.serviceProvider.message()
+                        .getMessage(src, "success.scoreboard.objectives.list")
+                        .replace("criterion", objective.getCriterion().key(RegistryTypes.CRITERION))
+                        .replace("display", objective.getDisplayName())
+                        .replace("obj", objective)
+                        .green()
+                        .asText()
+                )
                 .collect(Collectors.toList());
 
-        final TextComponent title = Component.empty(); // todo  Outputs.SHOW_ALL_TRACKED_OBJECTIVES.asText(objectives.size(), worldName);
+        final TextComponent title = super.serviceProvider.message()
+                .getMessage(src, "success.scoreboard.objectives.list.header")
+                .replace("number", contents.size())
+                .replace("world", worldKey)
+                .gray()
+                .asText();
 
-        this.serviceProvider.pagination().send(src, title, contents, false);
+        super.serviceProvider.pagination().send(src, title, contents, false);
     }
 
 }

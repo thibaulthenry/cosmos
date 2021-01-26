@@ -1,6 +1,7 @@
 package cosmos.services.perworld.impl;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.constants.Directories;
 import cosmos.services.io.FinderService;
@@ -14,8 +15,12 @@ import java.util.Optional;
 @Singleton
 public class InventoriesServiceImpl implements InventoriesService {
 
+    private final FinderService finderService;
+
     @Inject
-    private FinderService finderService;
+    public InventoriesServiceImpl(final Injector injector) {
+        this.finderService = injector.getInstance(FinderService.class);
+    }
 
     @Override
     public Optional<Path> getPath(final ServerWorld world, final ServerPlayer player) {
@@ -27,4 +32,5 @@ public class InventoriesServiceImpl implements InventoriesService {
     public Optional<Path> getPath(final ServerPlayer player) {
         return this.getPath(player.getServerLocation().getWorld(), player);
     }
+
 }

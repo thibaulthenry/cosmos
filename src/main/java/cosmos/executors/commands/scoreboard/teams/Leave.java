@@ -23,7 +23,8 @@ public class Leave extends AbstractMultiTargetCommand {
     @Inject
     public Leave(final Injector injector) {
         super(
-                injector.getInstance(Targets.class).get() // todo return source
+                true,
+                injector.getInstance(Targets.class).optional().build()
         );
     }
 
@@ -32,22 +33,44 @@ public class Leave extends AbstractMultiTargetCommand {
         final Collection<Component> contents = targets
                 .stream()
                 .map(target -> {
-                    final Optional<Team> optionalMemberTeam = super.getScoreboard(worldKey).getMemberTeam(target);
+                    final Optional<Team> optionalTeam = super.serviceProvider.perWorld().scoreboards()
+                            .getOrCreateScoreboard(worldKey)
+                            .getMemberTeam(target);
+                    final boolean sourceIsNotTarget = !super.serviceProvider.validation().isSelf(src, target);
 
-                    if (optionalMemberTeam.isPresent()) {
-                        final Team memberTeam = optionalMemberTeam.get();
-                        memberTeam.removeMember(target);
-                        // todo addSuccess();
+                    if (optionalTeam.isPresent()) {
+                        final Team team = optionalTeam.get();
+                        team.removeMember(target);
+                        super.success();
 
-                        return Component.empty(); // todo return Outputs.LEAVE_TEAM.asText(target, memberTeam);
+                        return super.serviceProvider.message()
+                                .getMessage(src, "success.scoreboard.teams.leave")
+                                .replace("target", target)
+                                .replace("team", team)
+                                .condition("target", sourceIsNotTarget)
+                                .condition("verb", sourceIsNotTarget)
+                                .green()
+                                .asText();
                     }
 
-                    return Component.empty(); // todo return Outputs.MISSING_TARGET_TEAM.asText(target);
+                    return super.serviceProvider.message()
+                            .getMessage(src, "error.missing.team")
+                            .replace("target", target)
+                            .condition("target", sourceIsNotTarget)
+                            .condition("verb", sourceIsNotTarget)
+                            .red()
+                            .asText();
                 })
                 .collect(Collectors.toList());
 
-        final TextComponent title = Component.empty(); // todo Outputs.SHOW_TEAM_OPERATIONS.asText(contents.size(), "unsubscription(s)", worldName);
+        final TextComponent title = super.serviceProvider.message()
+                .getMessage(src, "success.scoreboard.teams.processing.header")
+                .replace("number", contents.size())
+                .replace("world", worldKey)
+                .gray()
+                .asText();
 
-        this.serviceProvider.pagination().send(src, title, contents, true);
+        super.serviceProvider.pagination().send(src, title, contents, true);
     }
+
 }

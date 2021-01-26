@@ -16,15 +16,11 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class AbstractModule extends AbstractExecutor {
+public abstract class AbstractModule extends AbstractExecutor {
 
     private final Map<List<String>, AbstractExecutor> childExecutorMap;
     private final String moduleName;
@@ -32,7 +28,10 @@ public class AbstractModule extends AbstractExecutor {
     private Command.Parameterized parameterized;
 
     protected AbstractModule(@Nullable final Parameter prefixedParameter, final AbstractExecutor... childExecutors) {
-        this.moduleName = this.getClass().getSimpleName().toLowerCase();
+        this.moduleName = this.getClass().getName()
+                .replace(AbstractModule.class.getPackage().getName() + ".", "")
+                .replaceAll("\\.", "-")
+                .toLowerCase(Locale.ROOT);
         this.childExecutorMap = Arrays.stream(childExecutors).collect(Collectors.toMap(AbstractExecutor::getAliases, Function.identity()));
         this.prefixedParameter = prefixedParameter;
     }
@@ -42,16 +41,7 @@ public class AbstractModule extends AbstractExecutor {
     }
 
     @Override
-    protected CommandResult execute(final Audience src, final CommandContext context) {
-        final TextComponent hoverHelpText = this.serviceProvider.message().getMessage(src, "modules.help.hover").asText();
-
-        final TextComponent helpText = this.serviceProvider.message().getMessage(src, "modules.help")
-                .replace("module", this.moduleName)
-                .hoverEvent("help", HoverEvent.showText(hoverHelpText))
-                .clickEvent("help", ClickEvent.suggestCommand("/cm help"))
-                .green()
-                .asText();
-
+    protected final CommandResult execute(final Audience src, final CommandContext context) {
         final Comparator<TextComponent> comparator = (t1, t2) -> {
             final String s1 = PlainComponentSerializer.plain().serialize(t1);
             final String s2 = PlainComponentSerializer.plain().serialize(t2);
@@ -69,12 +59,18 @@ public class AbstractModule extends AbstractExecutor {
                         .collect(Collectors.toList())
         );
 
-        final TextComponent helpCommandsText = this.serviceProvider.message().getMessage(src, "modules.help.commands")
+        final TextComponent hoverHelpText = super.serviceProvider.message().getText(src, "modules.help.hover");
+
+        final TextComponent helpText = super.serviceProvider.message()
+                .getMessage(src, "modules.help")
                 .replace("commands", allowedSubCommandsText)
-                .defaultColor(NamedTextColor.GRAY)
+                .replace("module", this.moduleName)
+                .clickEvent("help", ClickEvent.suggestCommand("/cm help"))
+                .hoverEvent("help", HoverEvent.showText(hoverHelpText))
+                .green()
                 .asText();
 
-        src.sendMessage(Component.text().append(helpText).append(Component.newline()).append(helpCommandsText).build());
+        src.sendMessage(helpText);
 
         return CommandResult.success();
     }
@@ -134,4 +130,5 @@ public class AbstractModule extends AbstractExecutor {
                             && commandCause.hasPermission(((AbstractCommand) executor).getPermission());
                 });
     }
+
 }

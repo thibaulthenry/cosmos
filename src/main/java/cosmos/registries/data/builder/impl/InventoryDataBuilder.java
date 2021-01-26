@@ -43,4 +43,5 @@ public class InventoryDataBuilder extends AbstractDataBuilder<InventoryData> {
 
         return Optional.of(new InventoryData(slots));
     }
+
 }

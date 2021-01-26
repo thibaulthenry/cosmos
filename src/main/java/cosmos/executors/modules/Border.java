@@ -22,7 +22,7 @@ class Border extends AbstractModule {
     @Inject
     Border(final Injector injector) {
         super(
-                injector.getInstance(WorldAll.class).builder().optional().build(),
+                injector.getInstance(WorldAll.class).optional().build(),
                 injector.getInstance(Center.class),
                 injector.getInstance(DamageAmount.class),
                 injector.getInstance(DamageThreshold.class),
@@ -36,4 +36,5 @@ class Border extends AbstractModule {
                 injector.getInstance(WarningTime.class)
         );
     }
+
 }

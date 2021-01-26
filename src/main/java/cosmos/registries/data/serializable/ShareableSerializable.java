@@ -1,6 +1,9 @@
 package cosmos.registries.data.serializable;
 
-public interface ShareableSerializable<T> {
+import org.spongepowered.api.data.persistence.DataSerializable;
 
-    void offer(T data);
+public interface ShareableSerializable<T> extends DataSerializable {
+
+    void share(T data);
+
 }

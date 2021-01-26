@@ -6,21 +6,26 @@ import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.item.inventory.Container;
+import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.crafting.CraftingGridInventory;
 
-public class ExtendedInventoryData implements DataSerializable, ShareableSerializable<ServerPlayer> {
+import java.util.Optional;
+
+public class ExtendedInventoryData implements ShareableSerializable<ServerPlayer> {
 
     private final InventoryData enderChestInventoryData;
     private final InventoryData playerInventoryData;
-    private InventoryData craftingInventoryData;
-    private ItemStack pickedItem;
+    private final InventoryData craftingInventoryData;
+    private final ItemStack pickedItem;
 
     public ExtendedInventoryData(final ServerPlayer player) {
         this.enderChestInventoryData = new InventoryData(player.getEnderChestInventory());
         this.playerInventoryData = new InventoryData(player.getInventory());
 
         if (!player.isViewingInventory() || !player.getOpenInventory().isPresent()) {
+            this.craftingInventoryData = null;
+            this.pickedItem = null;
             return;
         }
 
@@ -43,22 +48,27 @@ public class ExtendedInventoryData implements DataSerializable, ShareableSeriali
         this.pickedItem = pickedItem;
     }
 
+    public ExtendedInventoryData() {
+        this.craftingInventoryData = null;
+        this.enderChestInventoryData = null;
+        this.playerInventoryData = null;
+        this.pickedItem = null;
+    }
+
     @Override
     public int getContentVersion() {
         return 1;
     }
 
     @Override
-    public void offer(final ServerPlayer data) {
-        if (this.playerInventoryData != null) {
-            data.getInventory().clear();
-            this.playerInventoryData.offer(data.getInventory());
-        }
+    public void share(final ServerPlayer data) {
+        Optional.ofNullable(this.playerInventoryData)
+                .orElse(new InventoryData())
+                .share(data.getInventory());
 
-        if (this.enderChestInventoryData != null) {
-            data.getEnderChestInventory().clear();
-            this.enderChestInventoryData.offer(data.getEnderChestInventory());
-        }
+        Optional.ofNullable(this.enderChestInventoryData)
+                .orElse(new InventoryData())
+                .share(data.getEnderChestInventory());
 
         if (!data.isViewingInventory() || !data.getOpenInventory().isPresent()) {
             return;
@@ -66,20 +76,22 @@ public class ExtendedInventoryData implements DataSerializable, ShareableSeriali
 
         final Container playerContainer = data.getOpenInventory().get();
 
-        if (this.craftingInventoryData != null) {
-            playerContainer.getViewed()
-                    .stream()
-                    .filter(inventory -> inventory instanceof CraftingGridInventory)
-                    .findFirst()
-                    .ifPresent(craftingInventory -> {
-                        craftingInventory.clear();
-                        this.craftingInventoryData.offer(craftingInventory);
-                    });
+        if (this.pickedItem != null) {
+            // playerContainer.setCursor(this.pickedItem); TODO [SpongePowered/Sponge] Issue opened: #3258
         }
 
-        if (this.pickedItem != null) {
-            // TODO BUG playerContainer.setCursor(this.pickedItem);
+        final Optional<Inventory> optionalCraftingInventory = playerContainer.getViewed()
+                .stream()
+                .filter(inventory -> inventory instanceof CraftingGridInventory)
+                .findFirst();
+
+        if (!optionalCraftingInventory.isPresent()) {
+            return;
         }
+
+        Optional.ofNullable(this.craftingInventoryData)
+                .orElse(new InventoryData())
+                .share(optionalCraftingInventory.get());
     }
 
     @Override
@@ -104,4 +116,5 @@ public class ExtendedInventoryData implements DataSerializable, ShareableSeriali
 
         return dataContainer;
     }
+
 }

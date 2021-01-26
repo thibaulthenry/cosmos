@@ -9,4 +9,5 @@ import org.spongepowered.api.data.persistence.DataSerializable;
 public interface DataBuilderService extends CosmosService {
 
     <T extends DataSerializable> void registerAll();
+
 }

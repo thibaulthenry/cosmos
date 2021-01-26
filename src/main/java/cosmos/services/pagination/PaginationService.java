@@ -16,4 +16,5 @@ public interface PaginationService extends CosmosService {
     void send(Audience src, Component title, Iterable<Component> contents, boolean flattenSingle) throws CommandException;
 
     void send(Audience src, PaginationList pagination, boolean flattenSingle) throws CommandException;
+
 }

@@ -16,17 +16,17 @@ public class Unload extends AbstractCommand {
 
     @Inject
     public Unload(final Injector injector) {
-        super(injector.getInstance(WorldOnline.class).builder().build());
+        super(injector.getInstance(WorldOnline.class).build());
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
-        final ResourceKey worldKey = context.getOne(CosmosKeys.WORLD_KEY)
-                .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.world.online"));
+        final ResourceKey worldKey = context.getOne(CosmosKeys.WORLD)
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.world.online"));
 
-        this.serviceProvider.world().unload(src, worldKey, false);
+        super.serviceProvider.world().unload(src, worldKey, false);
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, "success.root.unload")
                 .replace("world", worldKey)
                 .green()

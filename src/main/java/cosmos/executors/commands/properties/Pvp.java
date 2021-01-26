@@ -25,10 +25,10 @@ public class Pvp extends AbstractPropertiesCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             properties.setPvp(value);
-            this.serviceProvider.world().saveProperties(src, properties);
+            super.serviceProvider.world().saveProperties(src, properties);
         }
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, optionalInput.isPresent() ? "success.properties.pvp.set" : "success.properties.pvp.get")
                 .replace("world", properties)
                 .condition("value", value)
@@ -36,4 +36,5 @@ public class Pvp extends AbstractPropertiesCommand {
                 .green()
                 .sendTo(src);
     }
+
 }

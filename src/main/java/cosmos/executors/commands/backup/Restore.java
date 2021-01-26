@@ -16,18 +16,17 @@ public class Restore extends AbstractCommand {
 
     @Inject
     public Restore(final Injector injector) {
-        super(injector.getInstance(Backup.class).builder().build());
+        super(injector.getInstance(Backup.class).build());
     }
-
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
         final BackupArchetype backupArchetype = context.getOne(CosmosKeys.BACKUP)
-                .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.choices.backup"));
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.backup", "param", CosmosKeys.BACKUP));
 
-        this.serviceProvider.world().restore(src, backupArchetype, false);
+        super.serviceProvider.world().restore(src, backupArchetype, false);
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, "success.backup.restore")
                 .replace("backup", backupArchetype)
                 .green()

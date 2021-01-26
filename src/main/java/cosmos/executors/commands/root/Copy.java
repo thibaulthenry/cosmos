@@ -22,7 +22,7 @@ public class Copy extends AbstractCommand {
     @Inject
     public Copy(final Injector injector) {
         super(
-                injector.getInstance(WorldAll.class).builder().build(),
+                injector.getInstance(WorldAll.class).build(),
                 Parameter.string().setKey(CosmosKeys.NAME).build()
         );
     }
@@ -34,21 +34,16 @@ public class Copy extends AbstractCommand {
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
-        final ResourceKey worldKey = context.getOne(CosmosKeys.WORLD_KEY)
-                .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.world.online"));
+        final ResourceKey worldKey = context.getOne(CosmosKeys.WORLD)
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.world.online"));
 
         final ResourceKey copyKey = context.getOne(CosmosKeys.NAME)
                 .map(name -> ResourceKey.of(Cosmos.NAMESPACE, name))
-                .orElseThrow(
-                        this.serviceProvider.message()
-                                .getMessage(src, "error.invalid.value")
-                                .replace("parameter", CosmosKeys.NAME)
-                                .asSupplier()
-                );
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "parameter", CosmosKeys.NAME));
 
-        this.serviceProvider.world().copy(src, worldKey, copyKey, true);
+        super.serviceProvider.world().copy(src, worldKey, copyKey, true);
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, "success.root.copy")
                 .replace("world", worldKey)
                 .replace("copy", copyKey)

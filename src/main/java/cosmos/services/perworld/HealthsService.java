@@ -5,6 +5,4 @@ import cosmos.services.perworld.impl.HealthsServiceImpl;
 
 @ImplementedBy(HealthsServiceImpl.class)
 public interface HealthsService extends PlayerRelatedPerWorldService {
-
-
 }

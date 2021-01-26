@@ -26,14 +26,15 @@ public class Center extends AbstractBorderCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             border.setCenter(value.getX(), value.getY());
-            this.serviceProvider.world().saveProperties(src, properties);
+            super.serviceProvider.world().saveProperties(src, properties);
         }
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, optionalInput.isPresent() ? "success.border.center.set" : "success.border.center.get")
-                .replace("world", properties)
                 .replace("value", value)
+                .replace("world", properties)
                 .green()
                 .sendTo(src);
     }
+
 }

@@ -27,9 +27,9 @@ public class Operate extends AbstractBorderCommand {
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
         final Operands operand = context.getOne(CosmosParameters.STANDARD_OPERAND)
-                .orElseThrow(this.serviceProvider.message().getMessage(src, "error.invalid.operand").asSupplier());
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.OPERAND));
         final double value = context.getOne(CosmosKeys.AMOUNT_DOUBLE)
-                .orElseThrow(this.serviceProvider.message().getMessage(src, "error.invalid.value").asSupplier());
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.AMOUNT_DOUBLE));
         final long duration = context.getOne(CosmosKeys.DURATION).orElse(0L);
         final ChronoUnit unit = context.getOne(CosmosKeys.TIME_UNIT).orElse(ChronoUnit.SECONDS);
 
@@ -52,20 +52,21 @@ public class Operate extends AbstractBorderCommand {
         }
 
         if (Double.isNaN(endDiameter) || Double.isInfinite(endDiameter)) {
-            throw this.serviceProvider.message().getMessage(src, "error.not-a-number").asException();
+            throw super.serviceProvider.message().getError(src, "error.result.nan");
         }
 
         border.setDiameter(endDiameter, duration, unit);
-        this.serviceProvider.world().saveProperties(src, properties);
+        super.serviceProvider.world().saveProperties(src, properties);
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, "success.border.operate")
-                .replace("world", properties)
-                .replace("start_diameter", startDiameter)
-                .replace("end_diameter", endDiameter)
                 .replace("duration", duration)
+                .replace("end_diameter", endDiameter)
+                .replace("start_diameter", startDiameter)
                 .replace("unit", unit)
+                .replace("world", properties)
                 .green()
                 .sendTo(src);
     }
+
 }

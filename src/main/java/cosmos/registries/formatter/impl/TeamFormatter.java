@@ -1,7 +1,10 @@
 package cosmos.registries.formatter.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import cosmos.registries.formatter.Formatter;
+import cosmos.registries.formatter.LocaleFormatter;
+import cosmos.services.message.MessageService;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -10,40 +13,35 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.scoreboard.Team;
 
+import java.util.Locale;
+
 @Singleton
-public class TeamFormatter implements Formatter<Team> {
+public class TeamFormatter implements LocaleFormatter<Team> {
+
+    private final MessageService messageService;
+
+    @Inject
+    public TeamFormatter(final Injector injector) {
+        this.messageService = injector.getInstance(MessageService.class);
+    }
 
     @Override
-    public TextComponent asText(final Team value) {
-        final TextComponent hoverText = Component.text("Displayed as: ", NamedTextColor.GRAY)
-                .append(value.getDisplayName())
-                .append(Component.newline())
-                .append(Component.text("Registered members: "))
-                .append(Component.text(value.getMembers().size(), NamedTextColor.GOLD))
-                .append(Component.newline())
-                .append(Component.text("Options: "))
-                .append(Component.newline())
-                .append(Component.text("   • Collision rule - "))
-                .append(Component.text(value.getCollisionRule().key(RegistryTypes.COLLISION_RULE).getValue(), NamedTextColor.GOLD))
-                .append(Component.newline())
-                .append(Component.text("   • Color - "))
-                .append(Component.text(value.getColor().toString(), value.getColor()))
-                .append(Component.newline())
-                .append(Component.text("   • Death message visibility - "))
-                .append(Component.text(value.getDeathMessageVisibility().key(RegistryTypes.VISIBILITY).getValue(), NamedTextColor.GOLD))
-                .append(Component.newline())
-                .append(Component.text("   • Allow friendly fire - "))
-                .append(Component.text(value.allowFriendlyFire(), NamedTextColor.GOLD))
-                .append(Component.newline())
-                .append(Component.text("   • Nametag visibility - "))
-                .append(Component.text(value.getNameTagVisibility().key(RegistryTypes.VISIBILITY).getValue(), NamedTextColor.GOLD))
-                .append(Component.newline())
-                .append(Component.text("   • Can see friendly invisibles - "))
-                .append(Component.text(value.canSeeFriendlyInvisibles(), NamedTextColor.GOLD));
+    public TextComponent asText(final Team value, final Locale locale) {
+        final TextComponent hoverText = this.messageService.getMessage(locale, "formatter.team.hover")
+                .replace("collision", value.getCollisionRule().key(RegistryTypes.COLLISION_RULE).getValue())
+                .replace("color", "N/A") // todo .append(Component.text(value.getColor().toString(), value.getColor()))
+                .replace("death", value.getDeathMessageVisibility().key(RegistryTypes.VISIBILITY).getValue())
+                .replace("display", value.getDisplayName())
+                .replace("members", value.getMembers().size())
+                .replace("prefix", value.getPrefix())
+                .replace("suffix", value.getSuffix())
+                .replace("tag", value.getNameTagVisibility().key(RegistryTypes.VISIBILITY).getValue())
+                .condition("fire", value.allowFriendlyFire())
+                .condition("invisibles", value.canSeeFriendlyInvisibles())
+                .gray()
+                .asText();
 
-        return Component.text(value.getName())
-                .hoverEvent(HoverEvent.showText(hoverText))
-                .decoration(TextDecoration.UNDERLINED, true);
+        return Component.text(value.getName()).hoverEvent(HoverEvent.showText(hoverText));
     }
 
 }

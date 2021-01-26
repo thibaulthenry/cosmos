@@ -46,4 +46,5 @@ public class AdvancementProgressDataBuilder extends AbstractDataBuilder<Advancem
 
         return Optional.of(new AdvancementProgressData(criteriaProgressesData, container.getName()));
     }
+
 }

@@ -25,10 +25,10 @@ public class LoadOnStartup extends AbstractPropertiesCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             properties.setLoadOnStartup(value);
-            this.serviceProvider.world().saveProperties(src, properties);
+            super.serviceProvider.world().saveProperties(src, properties);
         }
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, optionalInput.isPresent() ? "success.properties.load-on-startup.set" : "success.properties.load-on-startup.get")
                 .replace("world", properties)
                 .condition("value", value)
@@ -36,4 +36,5 @@ public class LoadOnStartup extends AbstractPropertiesCommand {
                 .green()
                 .sendTo(src);
     }
+
 }

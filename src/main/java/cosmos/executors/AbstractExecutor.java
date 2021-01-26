@@ -1,6 +1,7 @@
 package cosmos.executors;
 
-import cosmos.Cosmos;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import cosmos.services.ServiceProvider;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.Command;
@@ -17,13 +18,18 @@ import java.util.Locale;
 
 public abstract class AbstractExecutor implements CommandExecutor {
 
-    protected final ServiceProvider serviceProvider;
+    @Inject
+    protected ServiceProvider serviceProvider;
+
     private final List<String> aliases = new ArrayList<>();
 
     protected AbstractExecutor() {
-        this.serviceProvider = Cosmos.getServices();
         this.aliases.add(this.getClass().getSimpleName().toLowerCase(Locale.ROOT));
         this.aliases.addAll(this.aliases());
+    }
+
+    protected List<String> aliases() {
+        return Collections.emptyList();
     }
 
     @Override
@@ -33,13 +39,10 @@ public abstract class AbstractExecutor implements CommandExecutor {
 
     protected abstract CommandResult execute(Audience src, CommandContext context) throws CommandException;
 
-    public abstract Command.Parameterized getParametrized();
-
-    protected List<String> aliases() {
-        return Collections.emptyList();
-    }
-
     public List<String> getAliases() {
         return this.aliases;
     }
+
+    public abstract Command.Parameterized getParametrized();
+
 }

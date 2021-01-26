@@ -3,9 +3,11 @@ package cosmos.services;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import cosmos.services.data.builder.DataBuilderService;
+import cosmos.services.data.DataProvider;
+import cosmos.services.data.selector.SelectorService;
 import cosmos.services.formatter.FormatterService;
 import cosmos.services.io.BackupService;
+import cosmos.services.io.ConfigurationService;
 import cosmos.services.io.FinderService;
 import cosmos.services.listener.ListenerService;
 import cosmos.services.message.MessageService;
@@ -22,7 +24,8 @@ import cosmos.services.world.WorldService;
 public class ServiceProviderImpl implements ServiceProvider {
 
     private final BackupService backupService;
-    private final DataBuilderService dataBuilderService;
+    private final ConfigurationService configurationService;
+    private final DataProvider dataProvider;
     private final FinderService finderService;
     private final FormatterService formatService;
     private final ListenerService listenerService;
@@ -39,7 +42,8 @@ public class ServiceProviderImpl implements ServiceProvider {
     @Inject
     public ServiceProviderImpl(final Injector injector) {
         this.backupService = injector.getInstance(BackupService.class);
-        this.dataBuilderService = injector.getInstance(DataBuilderService.class);
+        this.configurationService = injector.getInstance(ConfigurationService.class);
+        this.dataProvider = injector.getInstance(DataProvider.class);
         this.finderService = injector.getInstance(FinderService.class);
         this.formatService = injector.getInstance(FormatterService.class);
         this.listenerService = injector.getInstance(ListenerService.class);
@@ -60,8 +64,13 @@ public class ServiceProviderImpl implements ServiceProvider {
     }
 
     @Override
-    public DataBuilderService dataBuilder() {
-        return this.dataBuilderService;
+    public ConfigurationService configuration() {
+        return this.configurationService;
+    }
+
+    @Override
+    public DataProvider data() {
+        return this.dataProvider;
     }
 
     @Override

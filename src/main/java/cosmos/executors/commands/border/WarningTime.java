@@ -28,14 +28,15 @@ public class WarningTime extends AbstractBorderCommand {
         if (optionalInput.isPresent()) {
             value = Duration.of(optionalInput.get(), context.getOne(CosmosKeys.TIME_UNIT).orElse(ChronoUnit.SECONDS));
             border.setWarningTime(value);
-            this.serviceProvider.world().saveProperties(src, properties);
+            super.serviceProvider.world().saveProperties(src, properties);
         }
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, optionalInput.isPresent() ? "success.border.warning-time.set" : "success.border.warning-time.get")
-                .replace("world", properties)
                 .replace("value", value)
+                .replace("world", properties)
                 .green()
                 .sendTo(src);
     }
+
 }

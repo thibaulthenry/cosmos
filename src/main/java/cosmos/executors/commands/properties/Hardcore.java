@@ -25,10 +25,10 @@ public class Hardcore extends AbstractPropertiesCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             properties.setHardcore(value);
-            this.serviceProvider.world().saveProperties(src, properties);
+            super.serviceProvider.world().saveProperties(src, properties);
         }
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, optionalInput.isPresent() ? "success.properties.hardcore.set" : "success.properties.hardcore.get")
                 .replace("world", properties)
                 .condition("value", value)
@@ -36,4 +36,5 @@ public class Hardcore extends AbstractPropertiesCommand {
                 .green()
                 .sendTo(src);
     }
+
 }

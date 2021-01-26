@@ -4,10 +4,8 @@ import cosmos.registries.data.serializable.ShareableSerializable;
 import org.spongepowered.api.advancement.Advancement;
 import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.data.persistence.DataQuery;
-import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.data.persistence.DataView;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
-import org.spongepowered.api.registry.RegistryTypes;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -15,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class AdvancementTreeData implements DataSerializable, ShareableSerializable<ServerPlayer> {
+public class AdvancementTreeData implements ShareableSerializable<ServerPlayer> {
 
     private final List<AdvancementProgressData> advancementProgressesData;
 
@@ -53,7 +51,7 @@ public class AdvancementTreeData implements DataSerializable, ShareableSerializa
     }
 
     @Override
-    public void offer(final ServerPlayer data) {
+    public void share(final ServerPlayer data) {
         // TODO Retrieve advancements via ResourceKey
     }
 

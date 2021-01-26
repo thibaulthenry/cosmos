@@ -11,55 +11,37 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.spongepowered.api.command.exception.CommandException;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 public class Message {
 
-    private final Template template;
-    private final Map<String, Component> replacementMap = new HashMap<>();
+    private final Map<String, ClickEvent> clickEventMap = new HashMap<>();
     private final Map<String, Boolean> conditionMap = new HashMap<>();
     private final Map<String, HoverEvent<?>> hoverEventMap = new HashMap<>();
-    private final Map<String, ClickEvent> clickEventMap = new HashMap<>();
+    private final Map<String, Object> replacementMap = new HashMap<>();
+    private final Template template;
+
     private TextColor defaultColor = NamedTextColor.WHITE;
 
     public Message(final Template template) {
         this.template = template;
     }
 
-    public Message replace(final String key, final Object replacement) {
-        this.replacementMap.put(key, Cosmos.getServices().format().asText(replacement));
-        return this;
+    public CommandException asError() {
+        return new CommandException(this.red().asText());
     }
 
-    public Message condition(final String key, final boolean condition) {
-        this.conditionMap.put(key, condition);
-        return this;
+    public List<Component> asSingleton() {
+        return Collections.singletonList(this.asText());
     }
 
-    public Message hoverEvent(final String key, final HoverEvent<?> hoverEvent) {
-        this.hoverEventMap.put(key, hoverEvent);
-        return this;
-    }
-
-    public Message clickEvent(final String key, final ClickEvent clickEvent) {
-        this.clickEventMap.put(key, clickEvent);
-        return this;
-    }
-
-    public Message defaultColor(final TextColor defaultColor) {
-        this.defaultColor = defaultColor;
-        return this;
-    }
-
-    public Message green() {
-        return this.defaultColor(NamedTextColor.GREEN);
-    }
-
-    public Message red() {
-        return this.defaultColor(NamedTextColor.RED);
+    public Supplier<CommandException> asSupplier() {
+        return this::asError;
     }
 
     public TextComponent asText() {
@@ -71,12 +53,41 @@ public class Message {
                 });
     }
 
-    public CommandException asException() {
-        return new CommandException(this.red().asText());
+    public Message clickEvent(final String key, final ClickEvent clickEvent) {
+        this.clickEventMap.put(key, clickEvent);
+        return this;
     }
 
-    public Supplier<CommandException> asSupplier() {
-        return this::asException;
+    public Message condition(final String key, final boolean condition) {
+        this.conditionMap.put(key, condition);
+        return this;
+    }
+
+    public Message defaultColor(final TextColor defaultColor) {
+        this.defaultColor = defaultColor;
+        return this;
+    }
+
+    public Message gray() {
+        return this.defaultColor(NamedTextColor.GRAY);
+    }
+
+    public Message green() {
+        return this.defaultColor(NamedTextColor.GREEN);
+    }
+
+    public Message hoverEvent(final String key, final HoverEvent<?> hoverEvent) {
+        this.hoverEventMap.put(key, hoverEvent);
+        return this;
+    }
+
+    public Message red() {
+        return this.defaultColor(NamedTextColor.RED);
+    }
+
+    public Message replace(final String key, final Object replacement) {
+        this.replacementMap.put(key, replacement);
+        return this;
     }
 
     public void sendTo(final Audience src) {

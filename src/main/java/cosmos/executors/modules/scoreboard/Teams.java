@@ -8,9 +8,9 @@ import cosmos.executors.commands.scoreboard.teams.Empty;
 import cosmos.executors.commands.scoreboard.teams.Join;
 import cosmos.executors.commands.scoreboard.teams.Leave;
 import cosmos.executors.commands.scoreboard.teams.List;
-import cosmos.executors.commands.scoreboard.teams.Modify;
 import cosmos.executors.commands.scoreboard.teams.Remove;
 import cosmos.executors.modules.AbstractModule;
+import cosmos.executors.modules.scoreboard.teams.Modify;
 
 @Singleton
 public class Teams extends AbstractModule {
@@ -27,4 +27,5 @@ public class Teams extends AbstractModule {
                 injector.getInstance(Remove.class)
         );
     }
+
 }

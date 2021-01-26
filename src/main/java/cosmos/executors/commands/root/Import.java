@@ -17,7 +17,7 @@ public class Import extends AbstractCommand {
 
     @Inject
     public Import(final Injector injector) {
-        super(injector.getInstance(WorldExported.class).builder().build());
+        super(injector.getInstance(WorldExported.class).build());
     }
 
     @Override

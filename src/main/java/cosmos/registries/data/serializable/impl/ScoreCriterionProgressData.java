@@ -32,4 +32,5 @@ public class ScoreCriterionProgressData extends CriterionProgressData {
                 .set(Queries.Advancements.Criterion.GOAL, this.goal)
                 .set(Queries.Advancements.Criterion.SCORE, this.score);
     }
+
 }

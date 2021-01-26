@@ -11,7 +11,7 @@ public class Midday extends AbstractTimeChangeCommand {
 
     @Override
     protected long getNewTime(final Audience src, final CommandContext context, final MinecraftDayTime time) {
-        return this.serviceProvider.time().getNearestTickOccurrence(time.asTicks().getTicks(), Units.MIDDAY);
+        return super.serviceProvider.time().getNearestTickOccurrence(time.asTicks().getTicks(), Units.MIDDAY);
     }
 
 }

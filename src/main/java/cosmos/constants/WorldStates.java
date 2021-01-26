@@ -25,4 +25,5 @@ public enum WorldStates {
     public TextComponent toText() {
         return Component.text(this.name, this.color);
     }
+
 }

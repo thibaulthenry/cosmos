@@ -20,7 +20,7 @@ class Time extends AbstractModule {
     @Inject
     public Time(final Injector injector) {
         super(
-                injector.getInstance(WorldAll.class).builder().optional().build(),
+                injector.getInstance(WorldAll.class).optional().build(),
                 injector.getInstance(Calendar.class),
                 injector.getInstance(Dawn.class),
                 injector.getInstance(Dusk.class),
@@ -32,4 +32,5 @@ class Time extends AbstractModule {
                 injector.getInstance(Tomorrow.class)
         );
     }
+
 }

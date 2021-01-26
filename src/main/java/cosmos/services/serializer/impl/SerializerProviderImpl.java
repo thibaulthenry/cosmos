@@ -3,7 +3,12 @@ package cosmos.services.serializer.impl;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import cosmos.registries.serializer.impl.*;
+import cosmos.registries.serializer.impl.AdvancementsSerializer;
+import cosmos.registries.serializer.impl.ExperiencesSerializer;
+import cosmos.registries.serializer.impl.HealthsSerializer;
+import cosmos.registries.serializer.impl.HungersSerializer;
+import cosmos.registries.serializer.impl.InventoriesSerializer;
+import cosmos.registries.serializer.impl.ScoreboardsSerializer;
 import cosmos.services.serializer.SerializerProvider;
 
 @Singleton
@@ -55,4 +60,5 @@ public class SerializerProviderImpl implements SerializerProvider {
     public ScoreboardsSerializer scoreboards() {
         return this.scoreboardsSerializer;
     }
+
 }

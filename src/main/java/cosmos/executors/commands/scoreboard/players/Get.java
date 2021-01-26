@@ -26,29 +26,58 @@ public class Get extends AbstractMultiTargetCommand {
     @Inject
     public Get(final Injector injector) {
         super(
-                injector.getInstance(Targets.class).get(),
-                injector.getInstance(ObjectiveAll.class).builder().build()
+                injector.getInstance(Targets.class).build(),
+                injector.getInstance(ObjectiveAll.class).build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Collection<Component> targets) throws CommandException {
         final Objective objective = context.getOne(CosmosKeys.OBJECTIVE)
-                .orElseThrow(() -> new CommandException(Component.empty())); // todo .orElseThrow(Outputs.INVALID_OBJECTIVE_CHOICE.asSupplier(worldName));
+                .orElseThrow(
+                        super.serviceProvider.message()
+                                .getMessage(src, "error.invalid.objective")
+                                .replace("param", CosmosKeys.OBJECTIVE)
+                                .replace("world", worldKey)
+                                .asSupplier()
+                );
 
-        final Collection<Component> contents = targets.stream().map(target -> {
-            final Optional<Score> optionalScore = objective.getScore(target);
+        final Collection<Component> contents = targets.stream()
+                .map(target -> {
+                    final Optional<Score> optionalScore = objective.getScore(target);
 
-            return optionalScore
-                    .map(score -> {
-                        // todo addSuccess();
-                        return Component.empty(); // todo return Outputs.GET_SCORE.asText(target, objective, score.getScore());
-                    })
-                    .orElse(Component.empty()); // todo .orElse(Outputs.MISSING_TARGET_SCORE.asText(target.toPlain(), objective));
-        }).collect(Collectors.toList());
+                    return optionalScore
+                            .map(score -> {
+                                super.success();
 
-        final TextComponent title = Component.empty(); // todo Outputs.SHOW_SCORE_OPERATIONS.asText(contents.size(), "retrieval(s)", worldName);
+                                return super.serviceProvider.message()
+                                        .getMessage(src, "success.scoreboard.players.get")
+                                        .replace("obj", objective)
+                                        .replace("score", score.getScore())
+                                        .replace("target", target)
+                                        .green()
+                                        .asText();
+                            })
+                            .orElse(
+                                    super.serviceProvider.message()
+                                            .getMessage(src, "error.missing.score")
+                                            .replace("obj", objective)
+                                            .replace("target", target)
+                                            .condition("any", false)
+                                            .red()
+                                            .asText()
+                            );
+                })
+                .collect(Collectors.toList());
 
-        this.serviceProvider.pagination().send(src, title, contents, true);
+        final TextComponent title = super.serviceProvider.message()
+                .getMessage(src, "success.scoreboard.players.processing.header")
+                .replace("number", contents.size())
+                .replace("world", worldKey)
+                .gray()
+                .asText();
+
+        super.serviceProvider.pagination().send(src, title, contents, true);
     }
+
 }

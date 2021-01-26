@@ -25,14 +25,15 @@ public class EnableFeatures extends AbstractPropertiesCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             properties.worldGenerationConfig().setGenerateFeatures(value);
-            this.serviceProvider.world().saveProperties(src, properties);
+            super.serviceProvider.world().saveProperties(src, properties);
         }
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, optionalInput.isPresent() ? "success.properties.enable-features.set" : "success.properties.enable-features.get")
                 .replace("world", properties)
                 .condition("value", value)
                 .green()
                 .sendTo(src);
     }
+
 }

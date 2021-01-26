@@ -19,19 +19,33 @@ public class Remove extends AbstractScoreboardCommand {
 
     @Inject
     public Remove(final Injector injector) {
-        super(injector.getInstance(TeamAll.class).builder().build());
+        super(injector.getInstance(TeamAll.class).build());
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Scoreboard scoreboard) throws CommandException {
         final Team team = context.getOne(CosmosKeys.TEAM)
-                .orElseThrow(() -> new CommandException(Component.empty())); // todo .orElseThrow(Outputs.INVALID_TEAM_CHOICE.asSupplier());
+                .orElseThrow(
+                        super.serviceProvider.message()
+                                .getMessage(src, "error.invalid.team")
+                                .replace("param", CosmosKeys.TEAM)
+                                .replace("world", worldKey)
+                                .asSupplier()
+                );
 
         if (!team.unregister()) {
-            throw new CommandException(Component.empty()); // todo throw Outputs.REMOVING_TEAM.asException(team, worldName);
+            throw super.serviceProvider.message()
+                    .getMessage(src, "error.scoreboard.teams.remove")
+                    .replace("team", team)
+                    .replace("world", worldKey)
+                    .asError();
         }
 
-        // todo src.sendMessage(Outputs.REMOVE_TEAM.asText(team, worldName));
+        super.serviceProvider.message()
+                .getMessage(src, "success.scoreboard.teams.remove")
+                .replace("team", team)
+                .replace("world", worldKey)
+                .sendTo(src);
     }
 
 }

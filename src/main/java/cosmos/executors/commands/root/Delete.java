@@ -19,7 +19,7 @@ public class Delete extends AbstractCommand {
 
     @Inject
     public Delete(final Injector injector) {
-        super(injector.getInstance(WorldOffline.class).builder().build());
+        super(injector.getInstance(WorldOffline.class).build());
     }
 
     @Override
@@ -29,12 +29,12 @@ public class Delete extends AbstractCommand {
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
-        final ResourceKey worldKey = context.getOne(CosmosKeys.WORLD_KEY)
-                .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.world.offline"));
+        final ResourceKey worldKey = context.getOne(CosmosKeys.WORLD)
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.world.offline"));
 
-        this.serviceProvider.world().delete(src, worldKey, false);
+        super.serviceProvider.world().delete(src, worldKey, false);
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, "success.root.delete")
                 .replace("world", worldKey)
                 .green()

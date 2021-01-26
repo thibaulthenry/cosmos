@@ -4,6 +4,14 @@ import org.spongepowered.api.data.persistence.DataQuery;
 
 public class Queries {
 
+    public static final class Backup {
+
+        public static final DataQuery DATE = DataQuery.of("Date");
+        public static final DataQuery TAG = DataQuery.of("Tag");
+        public static final DataQuery WORLD = DataQuery.of("World");
+
+    }
+
     public static final class Advancements {
 
         public static final class Criterion {
@@ -77,10 +85,10 @@ public class Queries {
         public static final class Objective {
 
             public static final DataQuery CRITERION = DataQuery.of("Criterion");
+            public static final DataQuery DISPLAY_MODE = DataQuery.of("DisplayMode");
             public static final DataQuery DISPLAY_NAME = DataQuery.of("DisplayName");
             public static final DataQuery NAME = DataQuery.of("Name");
-            public static final DataQuery RENDER_TYPE = DataQuery.of("RenderType");
-            
+
         }
         
         public static final class Score {

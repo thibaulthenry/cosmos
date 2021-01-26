@@ -26,8 +26,8 @@ public class Reset extends AbstractMultiTargetCommand {
     @Inject
     public Reset(final Injector injector) {
         super(
-                injector.getInstance(Targets.class).get(),
-                injector.getInstance(ObjectiveAll.class).builder().optional().build()
+                injector.getInstance(Targets.class).build(),
+                injector.getInstance(ObjectiveAll.class).optional().build()
         );
     }
 
@@ -37,7 +37,7 @@ public class Reset extends AbstractMultiTargetCommand {
 
         final Collection<Objective> objectives = optionalObjective
                 .map(Collections::singleton)
-                .orElse(this.serviceProvider.perWorld().scoreboards().getObjectives(worldKey));
+                .orElse(super.serviceProvider.perWorld().scoreboards().getObjectives(worldKey));
 
         final Collection<Component> contents = targets
                 .stream()
@@ -46,17 +46,28 @@ public class Reset extends AbstractMultiTargetCommand {
                         .filter(objective -> objective.hasScore(target))
                         .map(objective -> {
                             objective.removeScore(target);
-                            // todo addSuccess();
-                            return Component.empty(); // todo return Outputs.RESET_SCORE.asText(target, objective);
+                            super.success();
+
+                            return super.serviceProvider.message()
+                                    .getMessage(src, "success.scoreboard.players.reset")
+                                    .replace("obj", objective)
+                                    .replace("target", target)
+                                    .green()
+                                    .asText();
                         })
                         .collect(Collectors.toList())
                 )
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-        final TextComponent title = Component.empty(); // todo Outputs.SHOW_SCORE_OPERATIONS.asText(contents.size(), "erasure(s)", worldName);
+        final TextComponent title = super.serviceProvider.message()
+                .getMessage(src, "success.scoreboard.players.processing.header")
+                .replace("number", contents.size())
+                .replace("world", worldKey)
+                .gray()
+                .asText();
 
-        this.serviceProvider.pagination().send(src, title, contents, true);
+        super.serviceProvider.pagination().send(src, title, contents, true);
     }
 
 }

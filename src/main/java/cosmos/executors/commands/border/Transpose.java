@@ -33,23 +33,24 @@ public class Transpose extends AbstractBorderCommand {
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
         final long duration = context.getOne(CosmosKeys.DURATION)
-                .orElseThrow(this.serviceProvider.message().getMessage(src, "error.invalid.duration").asSupplier());
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "parameter", CosmosKeys.DURATION));
         final ChronoUnit unit = context.getOne(CosmosKeys.TIME_UNIT).orElse(ChronoUnit.SECONDS);
         final double endDiameter = context.getOne(CosmosKeys.END_DIAMETER)
-                .orElseThrow(this.serviceProvider.message().getMessage(src, "error.invalid.diameter").asSupplier());
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "parameter", CosmosKeys.END_DIAMETER));
         final double startDiameter = context.getOne(CosmosKeys.START_DIAMETER).orElse(border.getDiameter());
 
         border.setDiameter(startDiameter, endDiameter, duration, unit);
-        this.serviceProvider.world().saveProperties(src, properties);
+        super.serviceProvider.world().saveProperties(src, properties);
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, "success.border.transpose")
-                .replace("world", properties)
-                .replace("start_diameter", startDiameter)
-                .replace("end_diameter", endDiameter)
                 .replace("duration", duration)
+                .replace("end_diameter", endDiameter)
+                .replace("start_diameter", startDiameter)
                 .replace("unit", unit)
+                .replace("world", properties)
                 .green()
                 .sendTo(src);
     }
+
 }

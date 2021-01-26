@@ -1,9 +1,12 @@
 package cosmos.services;
 
 import com.google.inject.ImplementedBy;
+import cosmos.services.data.DataProvider;
 import cosmos.services.data.builder.DataBuilderService;
+import cosmos.services.data.selector.SelectorService;
 import cosmos.services.formatter.FormatterService;
 import cosmos.services.io.BackupService;
+import cosmos.services.io.ConfigurationService;
 import cosmos.services.io.FinderService;
 import cosmos.services.listener.ListenerService;
 import cosmos.services.message.MessageService;
@@ -21,7 +24,9 @@ public interface ServiceProvider {
 
     BackupService backup();
 
-    DataBuilderService dataBuilder();
+    ConfigurationService configuration();
+
+    DataProvider data();
 
     FinderService finder();
 

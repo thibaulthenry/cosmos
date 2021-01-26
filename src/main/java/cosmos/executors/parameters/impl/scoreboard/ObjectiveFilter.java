@@ -38,10 +38,11 @@ class ObjectiveFilter implements ValueParameter<Objective> {
 
     @Override
     public Optional<? extends Objective> getValue(final Parameter.Key<? super Objective> parameterKey, final ArgumentReader.Mutable reader, final CommandContext.Builder context) throws ArgumentParseException {
-        final String input = reader.peekString();
+        final String input = reader.parseString();
 
         return this.serviceProvider.world().findKeyOrSource(context)
                 .map(worldKey -> this.serviceProvider.perWorld().scoreboards().getOrCreateScoreboard(worldKey))
                 .flatMap(scoreboard -> scoreboard.getObjective(input));
     }
+
 }

@@ -23,38 +23,51 @@ public class Add extends AbstractScoreboardCommand {
     public Add() {
         super(
                 Parameter.string().setKey(CosmosKeys.NAME).build(),
-                CosmosParameters.CRITERION,
-                CosmosParameters.TEXTS_ALL_OPTIONAL // todo display name
+                CosmosParameters.CRITERION, // todo Missing criterion + dummy without namespace
+                CosmosParameters.TEXTS_ALL_OPTIONAL
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Scoreboard scoreboard) throws CommandException {
         final String name = context.getOne(CosmosKeys.NAME)
-                .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.value")); // todo
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.NAME));
 
-        if (this.serviceProvider.validation().doesOverflowMaxLength(name, Units.NAME_MAX_LENGTH)) {
-            // todo throw Outputs.TOO_LONG_OBJECTIVE_NAME.asException(objectiveName);
+        if (super.serviceProvider.validation().doesOverflowMaxLength(name, Units.NAME_MAX_LENGTH)) {
+            throw super.serviceProvider.message()
+                    .getMessage(src, "error.invalid.objective.overflow")
+                    .replace("name", name)
+                    .condition("display1", false)
+                    .condition("display2", false)
+                    .asError();
         }
 
         if (scoreboard.getObjective(name).isPresent()) {
-            // todo throw Outputs.EXISTING_OBJECTIVE.asException(objectiveName);
+            throw super.serviceProvider.message()
+                    .getMessage(src, "error.scoreboard.objectives.add.already-existing")
+                    .replace("name", name)
+                    .replace("world", worldKey)
+                    .asError();
         }
 
         final Criterion criterion = context.getOne(CosmosKeys.CRITERION)
-                .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.value")); // todo
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.CRITERION));
 
         final Objective.Builder objectiveBuilder = Objective.builder()
                 .name(name)
                 .criterion(criterion);
 
-        final Optional<Component> optionalDisplayName = Optional.empty(); // todo context.getOne(CosmosParameters.TEXTS_ALL_OPTIONAL);
+        final Optional<Component> optionalDisplayName = super.serviceProvider.perWorld().scoreboards().findComponent(context);
 
         if (optionalDisplayName.isPresent()) {
             final Component displayName = optionalDisplayName.get();
 
-            if (this.serviceProvider.validation().doesOverflowMaxLength(displayName, Units.DISPLAY_NAME_MAX_LENGTH)) {
-                // todo throw Outputs.TOO_LONG_OBJECTIVE_DISPLAY_NAME.asException(displayName);
+            if (super.serviceProvider.validation().doesOverflowMaxLength(displayName, Units.DISPLAY_NAME_MAX_LENGTH)) {
+                throw super.serviceProvider.message()
+                        .getMessage(src, "error.invalid.objective.overflow")
+                        .condition("display1", true)
+                        .condition("display2", true)
+                        .asError();
             }
 
             objectiveBuilder.displayName(displayName);
@@ -64,6 +77,12 @@ public class Add extends AbstractScoreboardCommand {
 
         scoreboard.addObjective(objectiveBuilder.build());
 
-        // todo src.sendMessage(Outputs.ADD_OBJECTIVE.asText(objective, worldName));
+        super.serviceProvider.message()
+                .getMessage(src, "success.scoreboard.objectives.add")
+                .replace("obj", objective)
+                .replace("world", worldKey)
+                .green()
+                .sendTo(src);
     }
+
 }

@@ -7,6 +7,7 @@ import cosmos.executors.commands.properties.Difficulty;
 import cosmos.executors.commands.properties.EnableCommandBlocks;
 import cosmos.executors.commands.properties.EnableFeatures;
 import cosmos.executors.commands.properties.GameMode;
+import cosmos.executors.commands.properties.GameRule;
 import cosmos.executors.commands.properties.Hardcore;
 import cosmos.executors.commands.properties.KeepSpawnLoaded;
 import cosmos.executors.commands.properties.LoadOnStartup;
@@ -21,11 +22,12 @@ class Properties extends AbstractModule {
     @Inject
     Properties(final Injector injector) {
         super(
-                injector.getInstance(WorldAll.class).builder().optional().build(),
+                injector.getInstance(WorldAll.class).optional().build(),
                 injector.getInstance(Difficulty.class),
                 injector.getInstance(EnableCommandBlocks.class),
                 injector.getInstance(EnableFeatures.class),
                 injector.getInstance(GameMode.class),
+                injector.getInstance(GameRule.class),
                 injector.getInstance(Hardcore.class),
                 injector.getInstance(KeepSpawnLoaded.class),
                 injector.getInstance(LoadOnStartup.class),
@@ -34,4 +36,5 @@ class Properties extends AbstractModule {
                 injector.getInstance(ViewDistance.class)
         );
     }
+
 }

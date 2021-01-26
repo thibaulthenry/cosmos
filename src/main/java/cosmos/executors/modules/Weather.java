@@ -15,11 +15,12 @@ class Weather extends AbstractModule {
     @Inject
     public Weather(final Injector injector) {
         super(
-                injector.getInstance(WorldAll.class).builder().optional().build(),
+                injector.getInstance(WorldAll.class).optional().build(),
                 injector.getInstance(Forecast.class),
                 injector.getInstance(Rain.class),
                 injector.getInstance(Sun.class),
                 injector.getInstance(Thunder.class)
         );
     }
+
 }

@@ -19,28 +19,23 @@ public class Rename extends AbstractCommand {
     @Inject
     public Rename(final Injector injector) {
         super(
-                injector.getInstance(WorldAll.class).builder().build(),
+                injector.getInstance(WorldAll.class).build(),
                 Parameter.string().setKey(CosmosKeys.NAME).build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
-        final ResourceKey worldKey = context.getOne(CosmosKeys.WORLD_KEY)
-                .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.world"));
+        final ResourceKey worldKey = context.getOne(CosmosKeys.WORLD)
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "parameter", CosmosKeys.WORLD));
 
         final ResourceKey renameKey = context.getOne(CosmosKeys.NAME)
                 .map(name -> ResourceKey.of(Cosmos.NAMESPACE, name))
-                .orElseThrow(
-                        this.serviceProvider.message()
-                                .getMessage(src, "error.invalid.value")
-                                .replace("parameter", CosmosKeys.NAME)
-                                .asSupplier()
-                );
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "parameter", CosmosKeys.NAME));
 
-        this.serviceProvider.world().rename(src, worldKey, renameKey, true);
+        super.serviceProvider.world().rename(src, worldKey, renameKey, true);
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, "success.root.rename")
                 .replace("world", worldKey)
                 .green()

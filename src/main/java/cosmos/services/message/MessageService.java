@@ -18,17 +18,22 @@ public interface MessageService extends CosmosService {
 
     CommandException getError(Audience src, String key);
 
+    CommandException getError(Audience src, String key, String replaceKey, Object replacement);
+
     Locale getLocale(Audience src);
-
-    Message getMessage(Template template);
-
-    Message getMessage(Locale locale, String key);
 
     Message getMessage(Audience src, String key);
 
     Message getMessage(CommandContext context, String key);
 
+    Message getMessage(Locale locale, String key);
+
+    Message getMessage(Template template);
+
     TextComponent getText(Audience src, String key);
 
     Supplier<CommandException> supplyError(Audience src, String key);
+
+    Supplier<CommandException> supplyError(Audience src, String key, String replaceKey, Object replacement);
+
 }

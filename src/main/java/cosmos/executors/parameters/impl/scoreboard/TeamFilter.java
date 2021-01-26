@@ -38,10 +38,11 @@ class TeamFilter implements ValueParameter<Team> {
 
     @Override
     public Optional<? extends Team> getValue(final Parameter.Key<? super Team> parameterKey, final ArgumentReader.Mutable reader, final CommandContext.Builder context) throws ArgumentParseException {
-        final String input = reader.peekString();
+        final String input = reader.parseString();
 
         return this.serviceProvider.world().findKeyOrSource(context)
                 .map(worldKey -> this.serviceProvider.perWorld().scoreboards().getOrCreateScoreboard(worldKey))
                 .flatMap(scoreboard -> scoreboard.getTeam(input));
     }
+
 }

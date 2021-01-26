@@ -36,4 +36,5 @@ public class CriterionProgressDataBuilder extends AbstractDataBuilder<CriterionP
 
         return Optional.of(new CriterionProgressData(date, name));
     }
+
 }

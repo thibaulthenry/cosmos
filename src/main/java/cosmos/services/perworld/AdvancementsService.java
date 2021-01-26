@@ -5,5 +5,4 @@ import cosmos.services.perworld.impl.AdvancementsServiceImpl;
 
 @ImplementedBy(AdvancementsServiceImpl.class)
 public interface AdvancementsService extends PlayerRelatedPerWorldService {
-
 }

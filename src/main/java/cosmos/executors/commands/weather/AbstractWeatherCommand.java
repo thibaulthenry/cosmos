@@ -8,15 +8,15 @@ import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 import org.spongepowered.api.world.weather.Weather;
 
-public abstract class AbstractWeatherCommand extends AbstractCommand {
+abstract class AbstractWeatherCommand extends AbstractCommand {
 
-    protected AbstractWeatherCommand(final Parameter... parameters) {
+    AbstractWeatherCommand(final Parameter... parameters) {
         super(parameters);
     }
 
     @Override
     protected final void run(final Audience src, final CommandContext context) throws CommandException {
-        final ServerWorldProperties properties = this.serviceProvider.world().getPropertiesOrSource(context);
+        final ServerWorldProperties properties = super.serviceProvider.world().getPropertiesOrSource(context);
         this.run(src, context, properties, properties.weather());
     }
 

@@ -14,4 +14,5 @@ public class RealTime extends AbstractTimeCommand {
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final MinecraftDayTime time) throws CommandException {
 
     }
+
 }

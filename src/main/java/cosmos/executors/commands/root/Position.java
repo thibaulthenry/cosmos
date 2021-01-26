@@ -7,6 +7,7 @@ import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
@@ -39,11 +40,11 @@ public class Position extends AbstractCommand {
     private TextComponent getPositionText(final Entity target, final ServerPlayer messageReceiver) {
         final ServerLocation targetLocation = target.getServerLocation();
         final String targetName = target instanceof Tamer ? ((Tamer) target).getName() : target.getUniqueId().toString();
-        final boolean targetIsNotReceiver = !this.serviceProvider.transportation().isSelf((Audience) messageReceiver, target);
+        final boolean targetIsNotReceiver = !super.serviceProvider.validation().isSelf((Audience) messageReceiver, target);
 
-        return this.serviceProvider.message()
+        return super.serviceProvider.message()
                 .getMessage(messageReceiver, "success.root.position")
-                .replace("position", targetLocation.getPosition())
+                .replace("position", targetLocation)
                 .replace("target", targetName)
                 .replace("world", targetLocation.getWorld())
                 .condition("target", targetIsNotReceiver)
@@ -57,7 +58,7 @@ public class Position extends AbstractCommand {
         final Optional<ServerPlayer> optionalPlayer = context.getOne(CosmosKeys.MESSAGE_RECEIVER);
 
         if (!(optionalPlayer.isPresent() || src instanceof ServerPlayer)) {
-            throw this.serviceProvider.message().getError(src, "error.missing.player");
+            throw super.serviceProvider.message().getError(src, "error.missing.player");
         }
 
         final ServerPlayer player = optionalPlayer.orElse((ServerPlayer) src);
@@ -68,13 +69,13 @@ public class Position extends AbstractCommand {
                 .map(target -> this.getPositionText(target, player))
                 .collect(Collectors.toList());
 
-        final TextComponent title = this.serviceProvider.message()
-                .getMessage(src, "success.root.position.list")
+        final TextComponent title = super.serviceProvider.message()
+                .getMessage(src, "success.root.position.header")
                 .replace("number", contents.size())
-                .green()
+                .gray()
                 .asText();
 
-        this.serviceProvider.pagination().send(player, title, contents, true);
+        super.serviceProvider.pagination().send(player, title, contents, true);
     }
 
 }

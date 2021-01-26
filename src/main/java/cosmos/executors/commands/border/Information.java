@@ -47,29 +47,32 @@ public class Information extends AbstractBorderCommand {
         final long secondsRemaining = border.getTimeRemaining().getSeconds();
 
         final TextComponent contractingTextDetails = secondsRemaining > 0
-                ? this.serviceProvider.message().getMessage(src, "success.border.information.contracting.details")
-                .replace("time", secondsRemaining)
+                ? super.serviceProvider.message()
+                .getMessage(src, "success.border.information.contracting.details")
                 .replace("diameter", border.getNewDiameter())
-                .defaultColor(NamedTextColor.GRAY)
+                .replace("time", secondsRemaining)
+                .gray()
                 .asText() :
                 Component.empty();
 
-        return this.serviceProvider.message().getMessage(src, "success.border.information")
-                .replace("world", properties)
+        return super.serviceProvider.message()
+                .getMessage(src, "success.border.information")
+                .replace("amount", border.getDamageAmount())
                 .replace("center", center.toVector2(true))
-                .hoverEvent("center", HoverEvent.showText(this.serviceProvider.message().getText(src, "success.border.information.center.hover")))
-                .clickEvent("center", ClickEvent.suggestCommand(command))
-                .replace("diameter", border.getDiameter())
                 .replace("contracting", secondsRemaining > 0
                         ? Component.text("✓", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true) :
                         Component.text("✗", NamedTextColor.RED).decoration(TextDecoration.BOLD, true)
                 )
                 .replace("details", contractingTextDetails)
-                .replace("amount", border.getDamageAmount())
-                .replace("threshold", border.getDamageThreshold())
+                .replace("diameter", border.getDiameter())
                 .replace("distance", border.getWarningDistance())
+                .replace("threshold", border.getDamageThreshold())
                 .replace("time", border.getWarningTime().getSeconds())
-                .defaultColor(NamedTextColor.GRAY)
+                .replace("world", properties)
+                .clickEvent("center", ClickEvent.suggestCommand(command))
+                .hoverEvent("center", HoverEvent.showText(super.serviceProvider.message().getText(src, "success.border.information.center.hover")))
+                .gray()
                 .asText();
     }
+
 }

@@ -1,39 +1,49 @@
 package cosmos.executors.parameters.impl.scoreboard;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.executors.parameters.CosmosParameters;
-import cosmos.executors.parameters.impl.CosmosComplex;
+import cosmos.executors.parameters.impl.CosmosFirstOfBuilder;
+import cosmos.services.ServiceProvider;
+import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.Component;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.parameter.Parameter;
 
-@Singleton
-public class Targets implements CosmosComplex {
+import java.util.List;
 
-    private final Parameter parameter;
+public class Targets implements CosmosFirstOfBuilder {
+
+    private final Parameter.FirstOfBuilder builder;
+    private final ServiceProvider serviceProvider;
+    private Parameter.Key<List<Component>> scoreHoldersKey;
 
     @Inject
-    public Targets(final Injector injector) {
-//        final Parameter.Value<Component> worldPlayerNames = Parameter.builder(Component.class)
-//                .parser(injector.getInstance(PlayerNames.class))
-//                .setKey(CosmosKeys.PLAYER_NAME)
-//                .build();
-        final Parameter.Value<Component> worldScoreboardTracked = Parameter.builder(Component.class)
-                .parser(injector.getInstance(TrackedNames.class))
-                .setKey(CosmosKeys.TRACKED)
-                .build();
-        this.parameter = Parameter.firstOf(
-                //worldPlayerNames,
-                worldScoreboardTracked,
-                CosmosParameters.TEXT_AMPERSAND,
-                CosmosParameters.TEXT_JSON
-        );
+    public Targets(final ServiceProvider serviceProvider) {
+        this.builder = Sponge.getGame().getBuilderProvider().provide(Parameter.FirstOfBuilder.class);
+        this.scoreHoldersKey = CosmosKeys.MANY_SCORE_HOLDER;
+        this.serviceProvider = serviceProvider;
     }
 
     @Override
-    public Parameter get() {
-        return this.parameter;
+    public Parameter build() {
+        return this.builder
+                .or(CosmosParameters.ENTITY_TARGETS)
+                .or(
+                        Parameter.builder(new TypeToken<List<Component>>() {})
+                                .parser(new ScoreHolders(this.serviceProvider))
+                                .setKey(this.scoreHoldersKey)
+                                .build()
+                )
+                .or(CosmosParameters.TEXT_AMPERSAND)
+                .or(CosmosParameters.TEXT_JSON)
+                .build();
     }
+
+    @Override
+    public Targets optional() {
+        this.builder.optional();
+        return this;
+    }
+
 }

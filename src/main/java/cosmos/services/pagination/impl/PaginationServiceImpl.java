@@ -2,12 +2,13 @@ package cosmos.services.pagination.impl;
 
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.services.message.MessageService;
 import cosmos.services.pagination.PaginationService;
+import cosmos.services.template.TemplateService;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.service.pagination.PaginationList;
 
@@ -15,8 +16,12 @@ import org.spongepowered.api.service.pagination.PaginationList;
 @Singleton
 public class PaginationServiceImpl implements PaginationService {
 
+    private final MessageService messageService;
+
     @Inject
-    private MessageService messageService;
+    public PaginationServiceImpl(final Injector injector) {
+        this.messageService = injector.getInstance(MessageService.class);
+    }
 
     @Override
     public PaginationList generate(final Component title, final Iterable<Component> contents) {
@@ -26,11 +31,8 @@ public class PaginationServiceImpl implements PaginationService {
     @Override
     public void send(final Audience src, final Component title, final Iterable<Component> contents, final boolean flattenSingle) throws CommandException {
         if (Iterables.isEmpty(contents)) {
-            this.messageService.getMessage(src, "error.empty-output").defaultColor(NamedTextColor.GRAY).sendTo(src);
-            return;
+            throw this.messageService.getError(src, "error.empty-output");
         }
-
-        // TODO Sort
 
         if (flattenSingle && Iterables.size(contents) == 1) {
             contents.forEach(src::sendMessage);
@@ -43,4 +45,5 @@ public class PaginationServiceImpl implements PaginationService {
     public void send(final Audience src, final PaginationList pagination, final boolean flattenSingle) throws CommandException {
         this.send(src, pagination.getTitle().orElse(Component.empty()), pagination.getContents(), flattenSingle);
     }
+
 }

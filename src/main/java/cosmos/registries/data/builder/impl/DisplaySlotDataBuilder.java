@@ -7,6 +7,8 @@ import cosmos.registries.data.serializable.impl.DisplaySlotData;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.DataView;
 import org.spongepowered.api.data.persistence.InvalidDataException;
+import org.spongepowered.api.registry.RegistryTypes;
+import org.spongepowered.api.scoreboard.displayslot.DisplaySlot;
 
 import java.util.Optional;
 
@@ -28,7 +30,7 @@ public class DisplaySlotDataBuilder extends AbstractDataBuilder<DisplaySlotData>
             return Optional.empty();
         }
 
-        final String displaySlot = container.getString(Queries.Scoreboards.DisplaySlot.DISPLAY_SLOT)
+        final DisplaySlot displaySlot = container.getRegistryValue(Queries.Scoreboards.DisplaySlot.DISPLAY_SLOT, RegistryTypes.DISPLAY_SLOT)
                 .orElseThrow(() -> new InvalidDataException("Missing display slot while building ObjectiveData"));
         final String objective = container.getString(Queries.Scoreboards.DisplaySlot.OBJECTIVE)
                 .orElseThrow(() -> new InvalidDataException("Missing objective while building ObjectiveData"));

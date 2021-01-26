@@ -25,4 +25,5 @@ public class DataBuilderServiceImpl implements DataBuilderService {
                 Sponge.getDataManager().registerBuilder((Class<T>) entry.getKey(), (DataBuilder<T>) entry.getValue())
         );
     }
+
 }

@@ -20,7 +20,7 @@ public class Tag extends AbstractCommand {
     @Inject
     public Tag(final Injector injector) {
         super(
-                injector.getInstance(Backup.class).builder().build(),
+                injector.getInstance(Backup.class).build(),
                 Parameter.string().setKey(CosmosKeys.TAG).build()
         );
     }
@@ -28,32 +28,24 @@ public class Tag extends AbstractCommand {
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
         final BackupArchetype backupArchetype = context.getOne(CosmosKeys.BACKUP)
-                .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.choices.backup"));
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.backup", "param", CosmosKeys.BACKUP));
 
         final String tag = context.getOne(CosmosKeys.TAG)
                 .map(input -> input.replaceAll("_", "-"))
-                .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.value"));
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value"));
 
-        if (this.serviceProvider.validation().doesOverflowMaxLength(tag, Units.NAME_MAX_LENGTH)) {
-            throw this.serviceProvider.message()
-                    .getMessage(src, "error.overflow.tag")
-                    .replace("tag", tag)
-                    .asException();
+        if (super.serviceProvider.validation().doesOverflowMaxLength(tag, Units.NAME_MAX_LENGTH)) {
+            throw super.serviceProvider.message().getError(src, "error.invalid.backup.overflow", "tag", tag);
         }
-
-        backupArchetype.setTag(tag);
 
         try {
-            this.serviceProvider.backup().tag(backupArchetype);
+            super.serviceProvider.backup().tag(backupArchetype, tag);
         } catch (final Exception e) {
             Cosmos.getLogger().warn("An unexpected error occurred while tagging backup", e);
-            throw this.serviceProvider.message()
-                    .getMessage(src, "error.backup.tag")
-                    .replace("backup", backupArchetype)
-                    .asException();
+            throw super.serviceProvider.message().getError(src, "error.backup.tag", "backup", backupArchetype);
         }
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, "success.backup.tag")
                 .replace("backup", backupArchetype)
                 .replace("tag", tag)

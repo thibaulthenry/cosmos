@@ -74,4 +74,5 @@ public class ScoreboardDataBuilder extends AbstractDataBuilder<ScoreboardData> {
 
         return Optional.of(new ScoreboardData(displaySlotsData, objectivesData, scoresData, teamsData));
     }
+
 }

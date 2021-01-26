@@ -40,4 +40,5 @@ public class ScoreDataBuilder extends AbstractDataBuilder<ScoreData> {
 
         return Optional.of(new ScoreData(locked, objective, score, targetName));
     }
+
 }

@@ -27,14 +27,15 @@ public class SpawnPosition extends AbstractPropertiesCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get().toInt();
             properties.setSpawnPosition(value);
-            this.serviceProvider.world().saveProperties(src, properties);
+            super.serviceProvider.world().saveProperties(src, properties);
         }
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, optionalInput.isPresent() ? "success.properties.spawn-position.set" : "success.properties.spawn-position.get")
+                .replace("value", value.toDouble())
                 .replace("world", properties)
-                .replace("value", value)
                 .green()
                 .sendTo(src);
     }
+
 }

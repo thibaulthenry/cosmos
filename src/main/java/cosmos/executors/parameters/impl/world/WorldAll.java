@@ -1,7 +1,6 @@
 package cosmos.executors.parameters.impl.world;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.executors.parameters.impl.CosmosBuilder;
 import cosmos.services.ServiceProvider;
@@ -9,22 +8,40 @@ import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.command.parameter.managed.ValueParameter;
 
-@Singleton
 public class WorldAll implements CosmosBuilder<ResourceKey> {
 
-    private final ValueParameter<ResourceKey> value;
+    private final Parameter.Value.Builder<ResourceKey> builder;
 
     @Inject
     private WorldAll(final ServiceProvider serviceProvider) {
-        this.value = new WorldFilter(
-                "error.invalid.world",
-                worldKey -> true,
-                serviceProvider
+        final ValueParameter<ResourceKey> value = new WorldFilter(
+                src -> serviceProvider.message()
+                        .getMessage(src, "error.invalid.value")
+                        .replace("parameter", CosmosKeys.WORLD),
+                worldKey -> true
         );
+        this.builder = Parameter.builder(ResourceKey.class, value);
+        this.builder.setKey(CosmosKeys.WORLD);
     }
 
-    public Parameter.Value.Builder<ResourceKey> builder() {
-        return Parameter.builder(ResourceKey.class, this.value).setKey(CosmosKeys.WORLD_KEY);
+    @Override
+    public Parameter.Value<ResourceKey> build() {
+        return this.builder.build();
+    }
+
+    public CosmosBuilder<ResourceKey> key(final Parameter.Key<ResourceKey> key) {
+        this.builder.setKey(key);
+        return this;
+    }
+
+    public CosmosBuilder<ResourceKey> key(final String key) {
+        return this.key(Parameter.key(key, ResourceKey.class));
+    }
+
+    @Override
+    public CosmosBuilder<ResourceKey> optional() {
+        this.builder.optional();
+        return this;
     }
 
 }

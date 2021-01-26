@@ -20,35 +20,31 @@ public class Save extends AbstractCommand {
     @Inject
     public Save(final Injector injector) {
         super(
-                injector.getInstance(WorldOffline.class).builder().build(),
+                injector.getInstance(WorldOffline.class).build(),
                 Parameter.string().setKey(CosmosKeys.TAG).optional().build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
-        final ResourceKey worldKey = context.getOne(CosmosKeys.WORLD_KEY)
-                .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.world"));
+        final ResourceKey worldKey = context.getOne(CosmosKeys.WORLD)
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.WORLD));
 
-        final BackupArchetype backupArchetype = BackupArchetype.fromKey(worldKey)
-                .orElseThrow(this.serviceProvider.message().supplyError(src, "error.invalid.backup"));
+        final BackupArchetype backupArchetype = new BackupArchetype(worldKey);
 
         context.getOne(CosmosKeys.TAG).ifPresent(backupArchetype::setTag);
 
         try {
-            this.serviceProvider.backup().save(backupArchetype);
+            super.serviceProvider.backup().save(backupArchetype);
         } catch (final Exception e) {
             Cosmos.getLogger().warn("An unexpected error occurred while saving backup", e);
-            throw this.serviceProvider.message()
-                    .getMessage(src, "error.backup.save")
-                    .replace("backup", backupArchetype)
-                    .asException();
+            throw super.serviceProvider.message().getError(src, "error.backup.save", "backup", backupArchetype);
         }
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, "success.backup.save")
-                .replace("world", backupArchetype.getWorldKey())
                 .replace("backup", backupArchetype)
+                .replace("world", backupArchetype.getWorldKey())
                 .green()
                 .sendTo(src);
     }

@@ -29,25 +29,37 @@ public class Add extends AbstractScoreboardCommand {
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Scoreboard scoreboard) throws CommandException {
         final String name = context.getOne(CosmosKeys.NAME)
-                .orElseThrow(() -> new CommandException(Component.empty())); // todo .orElseThrow(Outputs.INVALID_TEAM.asSupplier());
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.NAME));
 
-        if (this.serviceProvider.validation().doesOverflowMaxLength(name, Units.NAME_MAX_LENGTH)) {
-            throw new CommandException(Component.empty()); // todo throw Outputs.TOO_LONG_TEAM_NAME.asException(name);
+        if (super.serviceProvider.validation().doesOverflowMaxLength(name, Units.NAME_MAX_LENGTH)) {
+            throw super.serviceProvider.message()
+                    .getMessage(src, "error.invalid.team.overflow")
+                    .replace("name", name)
+                    .condition("display1", false)
+                    .condition("display2", false)
+                    .asError();
         }
 
         if (scoreboard.getTeam(name).isPresent()) {
-            throw new CommandException(Component.empty()); // todo throw Outputs.EXISTING_TEAM.asException(name);
+            throw super.serviceProvider.message()
+                    .getMessage(src, "error.scoreboard.teams.add.already-existing")
+                    .replace("name", name)
+                    .replace("world", worldKey)
+                    .asError();
         }
 
-        final Team.Builder teamBuilder = Team.builder()
-                .name(name);
-        final Optional<Component> optionalDisplayName = Optional.empty(); // todo context.getOne(CosmosKeys.DISPLAY_NAME.t);
+        final Team.Builder teamBuilder = Team.builder().name(name);
+        final Optional<Component> optionalDisplayName = super.serviceProvider.perWorld().scoreboards().findComponent(context);
 
         if (optionalDisplayName.isPresent()) {
             final Component displayName = optionalDisplayName.get();
 
-            if (this.serviceProvider.validation().doesOverflowMaxLength(displayName, Units.DISPLAY_NAME_MAX_LENGTH)) {
-                throw new CommandException(Component.empty()); // todo throw Outputs.TOO_LONG_TEAM_DISPLAY_NAME.asException(displayName);
+            if (super.serviceProvider.validation().doesOverflowMaxLength(displayName, Units.DISPLAY_NAME_MAX_LENGTH)) {
+                throw super.serviceProvider.message()
+                        .getMessage(src, "error.invalid.team.overflow")
+                        .condition("display1", true)
+                        .condition("display2", true)
+                        .asError();
             }
 
             teamBuilder.displayName(displayName);
@@ -56,6 +68,12 @@ public class Add extends AbstractScoreboardCommand {
         final Team team = teamBuilder.build();
         scoreboard.registerTeam(team);
 
-        // todo src.sendMessage(Outputs.ADD_TEAM.asText(team, worldName));
+        super.serviceProvider.message()
+                .getMessage(src, "success.scoreboard.teams.add")
+                .replace("team", team)
+                .replace("world", worldKey)
+                .green()
+                .sendTo(src);
     }
+
 }

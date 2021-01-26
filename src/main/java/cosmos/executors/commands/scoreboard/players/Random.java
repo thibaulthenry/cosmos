@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import cosmos.constants.Units;
 import cosmos.executors.commands.scoreboard.AbstractMultiTargetCommand;
 import cosmos.executors.parameters.CosmosKeys;
+import cosmos.executors.parameters.impl.scoreboard.Extremum;
 import cosmos.executors.parameters.impl.scoreboard.ObjectiveAll;
 import cosmos.executors.parameters.impl.scoreboard.Targets;
 import net.kyori.adventure.audience.Audience;
@@ -14,7 +15,6 @@ import net.kyori.adventure.text.TextComponent;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
-import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.scoreboard.objective.Objective;
 
 import java.util.Collection;
@@ -27,42 +27,62 @@ public class Random extends AbstractMultiTargetCommand {
     @Inject
     public Random(final Injector injector) {
         super(
-                injector.getInstance(Targets.class).get(),
-                injector.getInstance(ObjectiveAll.class).builder().build(),
-                Parameter.integerNumber().setKey(CosmosKeys.MIN).build(), // todo extremum
-                Parameter.integerNumber().setKey(CosmosKeys.MAX).build() // todo extremum
+                injector.getInstance(Targets.class).build(),
+                injector.getInstance(ObjectiveAll.class).build(),
+                injector.getInstance(Extremum.class).integerKey(CosmosKeys.MIN).build(),
+                injector.getInstance(Extremum.class).build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Collection<Component> targets) throws CommandException {
         final Objective objective = context.getOne(CosmosKeys.OBJECTIVE)
-                .orElseThrow(() -> new CommandException(Component.empty())); // todo .orElseThrow(Outputs.INVALID_OBJECTIVE_CHOICE.asSupplier(worldName));
+                .orElseThrow(
+                        super.serviceProvider.message()
+                                .getMessage(src, "error.invalid.objective")
+                                .replace("param", CosmosKeys.OBJECTIVE)
+                                .replace("world", worldKey)
+                                .asSupplier()
+                );
 
-        final int min = context.getOne(CosmosKeys.MIN)
-                .orElseThrow(() -> new CommandException(Component.empty())); // todo .orElseThrow(Outputs.NOT_A_NUMBER.asSupplier("Min value"));
-        final int max = context.getOne(CosmosKeys.MAX)
-                .orElseThrow(() -> new CommandException(Component.empty())); // todo .orElseThrow(Outputs.NOT_A_NUMBER.asSupplier("Max value"));
+        final int min = super.serviceProvider.perWorld().scoreboards().getExtremum(context, CosmosKeys.MIN, true);
+        final int max = super.serviceProvider.perWorld().scoreboards().getExtremum(context, CosmosKeys.MAX, false);
 
         if (min >= max) {
-            throw new CommandException(Component.empty()); // todo Outputs.INVALID_DIFFERENCE.asException("min", "max", 0);
+            throw super.serviceProvider.message().getError(src, "error.invalid.operation.range-difference", "value", 0);
         }
 
         final Collection<Component> contents = targets.stream().map(target -> {
-            if (this.serviceProvider.validation().doesOverflowMaxLength(target, Units.PLAYER_NAME_MAX_LENGTH)) {
-                return Component.empty(); // todo return Outputs.TOO_LONG_PLAYER_NAME.asText(target);
+            if (super.serviceProvider.validation().doesOverflowMaxLength(target, Units.SCORE_HOLDER_MAX_LENGTH)) {
+                return super.serviceProvider.message()
+                        .getMessage(src, "error.invalid.score-holder.overflow")
+                        .replace("name", target)
+                        .red()
+                        .asText();
             }
 
             final int random = ThreadLocalRandom.current().nextInt(min, max == Integer.MAX_VALUE ? max : max + 1);
             objective.getOrCreateScore(target).setScore(random);
-            // todo addSuccess();
+            super.success();
 
-            return Component.empty(); // todo return Outputs.SET_RANDOM_SCORE.asText(random, target, objective);
+            return super.serviceProvider.message()
+                    .getMessage(src, "success.scoreboard.players.random")
+                    .replace("obj", objective)
+                    .replace("score", random)
+                    .replace("target", target)
+                    .green()
+                    .asText();
         }).collect(Collectors.toList());
 
 
-        final TextComponent title = Component.empty(); // todo  Outputs.SHOW_SCORE_OPERATIONS.asText(contents.size(), "random mutation(s)", worldName);
+        final TextComponent title = super.serviceProvider.message()
+                .getMessage(src, "success.scoreboard.players.processing.header")
+                .replace("number", contents.size())
+                .replace("world", worldKey)
+                .gray()
+                .asText();
 
-        this.serviceProvider.pagination().send(src, title, contents, true);
+        super.serviceProvider.pagination().send(src, title, contents, true);
     }
+
 }

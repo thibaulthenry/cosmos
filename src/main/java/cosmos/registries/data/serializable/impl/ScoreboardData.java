@@ -1,17 +1,22 @@
 package cosmos.registries.data.serializable.impl;
 
 import cosmos.constants.Queries;
+import cosmos.registries.backup.BackupArchetype;
+import cosmos.registries.data.serializable.CollectorSerializable;
 import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.scoreboard.Scoreboard;
+import org.spongepowered.api.scoreboard.Team;
+import org.spongepowered.api.scoreboard.objective.Objective;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ScoreboardData implements DataSerializable {
+public class ScoreboardData implements CollectorSerializable<Scoreboard> {
 
     private final List<DisplaySlotData> displaySlotsData;
     private final List<ObjectiveData> objectivesData;
@@ -57,6 +62,30 @@ public class ScoreboardData implements DataSerializable {
     }
 
     @Override
+    public Optional<Scoreboard> collect() {
+        final List<Objective> objectives = this.objectivesData
+                .stream()
+                .map(ObjectiveData::collect)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+
+        final List<Team> teams = this.teamsData
+                .stream()
+                .map(TeamData::collect)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+
+        final Scoreboard scoreboard = Scoreboard.builder().objectives(objectives).teams(teams).build();
+
+        this.displaySlotsData.forEach(data -> data.share(scoreboard));
+        this.scoresData.forEach(data -> data.share(scoreboard));
+
+        return Optional.of(scoreboard);
+    }
+
+    @Override
     public int getContentVersion() {
         return 1;
     }
@@ -69,4 +98,5 @@ public class ScoreboardData implements DataSerializable {
                 .set(Queries.Scoreboards.SCORES, this.scoresData)
                 .set(Queries.Scoreboards.TEAMS, this.teamsData);
     }
+
 }

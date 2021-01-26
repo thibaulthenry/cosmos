@@ -5,6 +5,7 @@ import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 import org.spongepowered.api.world.weather.Weather;
 
@@ -13,13 +14,14 @@ public class Forecast extends AbstractWeatherCommand {
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final Weather weather) throws CommandException {
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, "success.weather.get")
-                .replace("world", properties)
-                .replace("value", weather)
-                .replace("running", properties.weather().runningDuration().getExpectedDuration(Sponge.getServer()).getSeconds()) // todo test
                 .replace("remaining", properties.weather().remainingDuration().getExpectedDuration(Sponge.getServer()).getSeconds()) // todo test
+                .replace("running", properties.weather().runningDuration().getExpectedDuration(Sponge.getServer()).getSeconds()) // todo test
+                .replace("value", weather.type().key(RegistryTypes.WEATHER_TYPE))
+                .replace("world", properties)
                 .green()
                 .sendTo(src);
     }
+
 }

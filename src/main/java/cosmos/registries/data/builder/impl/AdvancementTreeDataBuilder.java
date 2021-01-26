@@ -38,4 +38,5 @@ public class AdvancementTreeDataBuilder extends AbstractDataBuilder<AdvancementT
 
         return Optional.of(new AdvancementTreeData(advancementProgressesData));
     }
+
 }

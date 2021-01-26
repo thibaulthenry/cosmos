@@ -3,7 +3,6 @@ package cosmos.executors.commands.scoreboard;
 import cosmos.executors.commands.AbstractCommand;
 import cosmos.registries.listener.impl.perworld.ScoreboardsListener;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.Component;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -16,19 +15,14 @@ public abstract class AbstractScoreboardCommand extends AbstractCommand {
         super(parameters);
     }
 
-    protected Scoreboard getScoreboard(final ResourceKey worldKey) {
-        return this.serviceProvider.perWorld().scoreboards().getOrCreateScoreboard(worldKey);
-    }
-
     @Override
     protected final void run(final Audience src, final CommandContext context) throws CommandException {
-        if (!this.serviceProvider.listener().isRegistered(ScoreboardsListener.class)) {
-            throw new CommandException(Component.empty()); // todo throw Outputs.PER_WORLD_SCOREBOARDS_DISABLED.asException();
+        if (!super.serviceProvider.listener().isRegistered(ScoreboardsListener.class)) {
+            throw super.serviceProvider.message().getError(src, "error.per-world.scoreboards.disabled");
         }
 
-
-        final ResourceKey worldKey = this.serviceProvider.world().getKeyOrSource(context);
-        this.run(src, context, worldKey, this.getScoreboard(worldKey));
+        final ResourceKey worldKey = super.serviceProvider.world().getKeyOrSource(context);
+        this.run(src, context, worldKey, super.serviceProvider.perWorld().scoreboards().getOrCreateScoreboard(worldKey));
     }
 
     protected abstract void run(Audience src, CommandContext context, ResourceKey worldKey, Scoreboard scoreboard) throws CommandException;

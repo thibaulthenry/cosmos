@@ -25,10 +25,10 @@ public class KeepSpawnLoaded extends AbstractPropertiesCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             properties.setPerformsSpawnLogic(value);
-            this.serviceProvider.world().saveProperties(src, properties);
+            super.serviceProvider.world().saveProperties(src, properties);
         }
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, optionalInput.isPresent() ? "success.properties.keep-spawn-loaded.set" : "success.properties.keep-spawn-loaded.get")
                 .replace("world", properties)
                 .condition("value", value)
@@ -36,4 +36,5 @@ public class KeepSpawnLoaded extends AbstractPropertiesCommand {
                 .green()
                 .sendTo(src);
     }
+
 }

@@ -26,14 +26,15 @@ public class DamageAmount extends AbstractBorderCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             border.setDamageAmount(value);
-            this.serviceProvider.world().saveProperties(src, properties);
+            super.serviceProvider.world().saveProperties(src, properties);
         }
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, optionalInput.isPresent() ? "success.border.damage-amount.set" : "success.border.damage-amount.get")
-                .replace("world", properties)
                 .replace("value", value)
+                .replace("world", properties)
                 .green()
                 .sendTo(src);
     }
+
 }

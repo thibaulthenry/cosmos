@@ -20,4 +20,5 @@ public enum Operands {
     public String getOperand() {
         return this.operand;
     }
+
 }

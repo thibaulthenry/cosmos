@@ -4,8 +4,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import cosmos.registries.formatter.Formatter;
 import cosmos.registries.formatter.FormatterRegistry;
+import cosmos.registries.formatter.LocaleFormatter;
+import cosmos.registries.formatter.OverflowFormatter;
 import cosmos.services.formatter.FormatterService;
 import net.kyori.adventure.text.TextComponent;
+
+import java.util.Locale;
+import java.util.Optional;
 
 @Singleton
 public class FormatterServiceImpl implements FormatterService {
@@ -18,14 +23,49 @@ public class FormatterServiceImpl implements FormatterService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> TextComponent asText(final T value) {
-        if (this.formatterRegistry.has(value.getClass())) {
-            return ((Formatter<T>) this.formatterRegistry.get(value.getClass())).asText(value);
+        return this.asText(value, Locale.ROOT, false);
+    }
+
+    @Override
+    public <T> TextComponent asText(final T value, final boolean keepOverflow) {
+        return this.asText(value, Locale.ROOT, keepOverflow);
+    }
+
+    @Override
+    public <T> TextComponent asText(final T value, final Locale locale) {
+        return this.asText(value, locale, false);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> TextComponent asText(final T value, final Locale locale, boolean keepOverflow) {
+        final Optional<Formatter<? super T>> optionalFormatter = this.getFormatter(value);
+
+        if (!optionalFormatter.isPresent()) {
+            return this.formatterRegistry.getDefaultFormatter().asText(value);
         }
 
-        return this.formatterRegistry.getSuper((Class<T>) value.getClass())
-                .map(superFormatter -> superFormatter.asText(value))
-                .orElse(this.formatterRegistry.getDefaultFormatter().asText(value));
+        final Formatter<? super T> formatter = optionalFormatter.get();
+
+        if (formatter instanceof LocaleFormatter) {
+            return ((LocaleFormatter<T>) formatter).asText(value, locale);
+        }
+
+        if (formatter instanceof OverflowFormatter) {
+            return ((OverflowFormatter<T>) formatter).asText(value, keepOverflow);
+        }
+
+        return formatter.asText(value);
     }
+
+    @SuppressWarnings("unchecked")
+    private <T> Optional<Formatter<? super T>> getFormatter(final T value) {
+        if (this.formatterRegistry.has(value.getClass())) {
+            return Optional.of((Formatter<T>) this.formatterRegistry.get(value.getClass()));
+        }
+
+        return this.formatterRegistry.getSuper((Class<T>) value.getClass());
+    }
+
 }

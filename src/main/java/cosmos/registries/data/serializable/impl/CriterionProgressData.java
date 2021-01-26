@@ -11,13 +11,13 @@ import java.time.format.DateTimeFormatter;
 
 public class CriterionProgressData implements DataSerializable {
 
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(ZoneId.systemDefault()); // todo better ?
-
     private final String date;
     private final String name;
 
     public CriterionProgressData(final CriterionProgress criterionProgress) {
-        this.date = CriterionProgressData.DATE_TIME_FORMATTER.format(criterionProgress.get().orElse(Instant.now()));
+        this.date = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+                .withZone(ZoneId.systemDefault())
+                .format(criterionProgress.get().orElse(Instant.now()));
         this.name = criterionProgress.getCriterion().getName();
     }
 
@@ -39,4 +39,5 @@ public class CriterionProgressData implements DataSerializable {
     public DataContainer toContainer() {
         return DataContainer.createNew().set(Queries.Advancements.Criterion.DATE, this.date);
     }
+
 }

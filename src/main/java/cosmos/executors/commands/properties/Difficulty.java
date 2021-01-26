@@ -5,6 +5,7 @@ import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 import java.util.Optional;
@@ -24,14 +25,15 @@ public class Difficulty extends AbstractPropertiesCommand {
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
             properties.setDifficulty(value);
-            this.serviceProvider.world().saveProperties(src, properties);
+            super.serviceProvider.world().saveProperties(src, properties);
         }
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, optionalInput.isPresent() ? "success.properties.difficulty.set" : "success.properties.difficulty.get")
+                .replace("value", value.key(RegistryTypes.DIFFICULTY))
                 .replace("world", properties)
-                .replace("value", value)
                 .green()
                 .sendTo(src);
     }
+
 }

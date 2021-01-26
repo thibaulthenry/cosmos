@@ -8,6 +8,7 @@ import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.world.server.ServerWorld;
 import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
@@ -23,7 +24,11 @@ public interface WorldService extends CosmosService {
 
     Optional<ResourceKey> findKeyOrSource(CommandContext context);
 
+    Optional<ResourceKey> findKeyOrSource(CommandContext context, Parameter.Key<ResourceKey> worldKey);
+
     ResourceKey getKeyOrSource(CommandContext context) throws CommandException;
+
+    ResourceKey getKeyOrSource(CommandContext context, Parameter.Key<ResourceKey> worldKey) throws CommandException;
 
     ServerWorldProperties getPropertiesOrSource(CommandContext context) throws CommandException;
 

@@ -9,7 +9,7 @@ import org.spongepowered.api.item.inventory.Inventory;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class InventoryData implements DataSerializable, ShareableSerializable<Inventory> {
+public class InventoryData implements ShareableSerializable<Inventory> {
 
     private final List<InventorySlotData> slots;
 
@@ -24,18 +24,24 @@ public class InventoryData implements DataSerializable, ShareableSerializable<In
         this.slots = slots;
     }
 
+    public InventoryData() {
+        this.slots = null;
+    }
+
     @Override
     public int getContentVersion() {
         return 1;
     }
 
     @Override
-    public void offer(final Inventory data) {
+    public void share(final Inventory data) {
+        data.clear();
+
         if (this.slots == null) {
             return;
         }
 
-        this.slots.forEach(inventorySlotData -> inventorySlotData.offer(data));
+        this.slots.forEach(inventorySlotData -> inventorySlotData.share(data));
     }
 
     @Override
@@ -48,4 +54,5 @@ public class InventoryData implements DataSerializable, ShareableSerializable<In
                         .collect(Collectors.toList())
         );
     }
+
 }

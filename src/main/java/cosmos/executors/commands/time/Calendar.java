@@ -14,13 +14,14 @@ public class Calendar extends AbstractTimeCommand {
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final MinecraftDayTime time) throws CommandException {
         final long ticks = time.asTicks().getTicks();
 
-        this.serviceProvider.message()
+        super.serviceProvider.message()
                 .getMessage(src, "success.time.get")
-                .replace("world", properties)
+                .replace("day", super.serviceProvider.time().fromWorldTimeToDayNumber(ticks))
+                .replace("hour", super.serviceProvider.time().fromWorldTimeToDayWatch(ticks))
                 .replace("value", ticks)
-                .replace("day", this.serviceProvider.time().fromWorldTimeToDayNumber(ticks))
-                .replace("hour", this.serviceProvider.time().fromWorldTimeToDayWatch(ticks))
+                .replace("world", properties)
                 .green()
                 .sendTo(src);
     }
+
 }

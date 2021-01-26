@@ -1,13 +1,19 @@
 package cosmos.registries.data.serializable.impl;
 
 import cosmos.constants.Queries;
+import cosmos.registries.data.serializable.ShareableSerializable;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.scoreboard.Score;
+import org.spongepowered.api.scoreboard.Scoreboard;
+import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.scoreboard.objective.Objective;
 
-public class ScoreData implements DataSerializable {
+import java.util.Optional;
+
+public class ScoreData implements ShareableSerializable<Scoreboard> {
 
     private final boolean locked;
     private final String objective;
@@ -34,6 +40,18 @@ public class ScoreData implements DataSerializable {
     }
 
     @Override
+    public void share(final Scoreboard data) {
+        final Component target = GsonComponentSerializer.gson().deserialize(this.targetName);
+
+        data.getObjective(this.objective).ifPresent(objective -> {
+            final Score score = objective.getOrCreateScore(target);
+
+            score.setScore(this.score);
+            score.setLocked(this.locked);
+        });
+    }
+
+    @Override
     public DataContainer toContainer() {
         return DataContainer.createNew()
                 .set(Queries.Scoreboards.Score.LOCKED, this.locked)
@@ -41,4 +59,5 @@ public class ScoreData implements DataSerializable {
                 .set(Queries.Scoreboards.Score.SCORE, this.score)
                 .set(Queries.Scoreboards.Score.TARGET_NAME, this.targetName);
     }
+
 }

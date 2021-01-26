@@ -41,4 +41,5 @@ public class ScoreCriterionProgressDataBuilder extends AbstractDataBuilder<Score
 
         return Optional.of(new ScoreCriterionProgressData(date, goal, name, score));
     }
+
 }

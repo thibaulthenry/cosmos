@@ -12,7 +12,7 @@ public class Tomorrow extends AbstractTimeChangeCommand {
     @Override
     protected long getNewTime(final Audience src, final CommandContext context, final MinecraftDayTime time) {
         final long worldTime = time.asTicks().getTicks();
-        return worldTime + this.serviceProvider.time().getFutureTickDifference(worldTime, Units.DAWN, true);
+        return worldTime + super.serviceProvider.time().getFutureTickDifference(worldTime, Units.DAWN, true);
     }
 
 }

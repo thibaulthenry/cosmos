@@ -26,33 +26,55 @@ public class Set extends AbstractMultiTargetCommand {
     @Inject
     public Set(final Injector injector) {
         super(
-                injector.getInstance(Targets.class).get(),
-                injector.getInstance(ObjectiveAll.class).builder().build(),
-                Parameter.integerNumber().setKey(CosmosKeys.AMOUNT).build()
+                injector.getInstance(Targets.class).build(),
+                injector.getInstance(ObjectiveAll.class).build(),
+                Parameter.integerNumber().setKey(CosmosKeys.SCORE).build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Collection<Component> targets) throws CommandException {
         final Objective objective = context.getOne(CosmosKeys.OBJECTIVE)
-                .orElseThrow(() -> new CommandException(Component.empty())); // todo Outputs.INVALID_OBJECTIVE_CHOICE.asSupplier(worldName)
+                .orElseThrow(
+                        super.serviceProvider.message()
+                                .getMessage(src, "error.invalid.objective")
+                                .replace("param", CosmosKeys.OBJECTIVE)
+                                .replace("world", worldKey)
+                                .asSupplier()
+                );
 
-        final int amount = context.getOne(CosmosKeys.AMOUNT)
-                .orElseThrow(() -> new CommandException(Component.empty())); // todo Outputs.INVALID_VALUE.asSupplier()
+        final int score = context.getOne(CosmosKeys.SCORE)
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.SCORE));
 
         final Collection<Component> contents = targets.stream().map(target -> {
-            if (this.serviceProvider.validation().doesOverflowMaxLength(target, Units.PLAYER_NAME_MAX_LENGTH)) {
-                return Component.empty(); // todo return Outputs.TOO_LONG_PLAYER_NAME.asText(target);
+            if (super.serviceProvider.validation().doesOverflowMaxLength(target, Units.SCORE_HOLDER_MAX_LENGTH)) {
+                return super.serviceProvider.message()
+                        .getMessage(src, "error.invalid.score-holder.overflow")
+                        .replace("name", target)
+                        .red()
+                        .asText();
             }
 
-            objective.getOrCreateScore(target).setScore(amount);
+            objective.getOrCreateScore(target).setScore(score);
+            super.success();
 
-            // todo addSuccess();
-            return Component.empty(); // todo return Outputs.SET_SCORE.asText(score, target, objective);
+            return super.serviceProvider.message()
+                    .getMessage(src, "success.scoreboard.players.set")
+                    .replace("obj", objective)
+                    .replace("score", score)
+                    .replace("target", target)
+                    .green()
+                    .asText();
         }).collect(Collectors.toList());
 
-        final TextComponent title = Component.empty(); // todo Outputs.SHOW_SCORE_OPERATIONS.asText(contents.size(), "mutation(s)", worldName);
+        final TextComponent title = super.serviceProvider.message()
+                .getMessage(src, "success.scoreboard.players.processing.header")
+                .replace("number", contents.size())
+                .replace("world", worldKey)
+                .gray()
+                .asText();
 
-        this.serviceProvider.pagination().send(src, title, contents, true);
+        super.serviceProvider.pagination().send(src, title, contents, true);
     }
+
 }

@@ -16,9 +16,10 @@ abstract class AbstractBorderCommand extends AbstractCommand {
 
     @Override
     protected final void run(final Audience src, final CommandContext context) throws CommandException {
-        final ServerWorldProperties properties = this.serviceProvider.world().getPropertiesOrSource(context);
+        final ServerWorldProperties properties = super.serviceProvider.world().getPropertiesOrSource(context);
         this.run(src, context, properties, properties.worldBorder());
     }
 
     protected abstract void run(Audience src, CommandContext context, ServerWorldProperties properties, WorldBorder border) throws CommandException;
+
 }

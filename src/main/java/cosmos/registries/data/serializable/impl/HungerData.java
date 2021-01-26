@@ -7,9 +7,7 @@ import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
-public class HungerData implements DataSerializable, ShareableSerializable<ServerPlayer> {
-
-    // TODO Builder
+public class HungerData implements ShareableSerializable<ServerPlayer> {
 
     private final double exhaustion;
     private final int foodLevel;
@@ -25,11 +23,19 @@ public class HungerData implements DataSerializable, ShareableSerializable<Serve
         this.saturation = player.saturation().get();
     }
 
+    public HungerData(final double exhaustion, final int foodLevel, final double maxExhaustion, final int maxFoodLevel, final double saturation) {
+        this.exhaustion = exhaustion;
+        this.foodLevel = foodLevel;
+        this.maxExhaustion = maxExhaustion;
+        this.maxFoodLevel = maxFoodLevel;
+        this.saturation = saturation;
+    }
+
     public HungerData() {
         this.exhaustion = 0.0;
         this.foodLevel = 20;
-        this.maxExhaustion = -1.0;
-        this.maxFoodLevel = -1;
+        this.maxExhaustion = 40.0;
+        this.maxFoodLevel = 20;
         this.saturation = 5.0;
     }
 
@@ -39,12 +45,12 @@ public class HungerData implements DataSerializable, ShareableSerializable<Serve
     }
 
     @Override
-    public void offer(final ServerPlayer data) {
-        data.exhaustion().set(this.exhaustion);
-        data.foodLevel().set(this.foodLevel);
+    public void share(final ServerPlayer data) {
+        data.offer(Keys.EXHAUSTION, this.exhaustion);
+        data.offer(Keys.FOOD_LEVEL, this.foodLevel);
         data.offer(Keys.MAX_EXHAUSTION, this.maxExhaustion);
         data.offer(Keys.MAX_FOOD_LEVEL, this.maxFoodLevel);
-        data.saturation().set(this.saturation);
+        data.offer(Keys.SATURATION, this.saturation);
     }
 
     @Override
@@ -56,4 +62,5 @@ public class HungerData implements DataSerializable, ShareableSerializable<Serve
                 .set(Queries.Hungers.MAX_FOOD_LEVEL, this.maxFoodLevel)
                 .set(Queries.Hungers.SATURATION, this.saturation);
     }
+
 }

@@ -2,8 +2,6 @@ package cosmos.registries.listener.impl.perworld;
 
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
-import cosmos.registries.listener.ToggleListener;
-import cosmos.registries.listener.impl.AbstractListener;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.entity.living.player.tab.TabList;
@@ -20,7 +18,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Singleton
-public class TabListsListener extends AbstractListener implements ToggleListener {
+public class TabListsListener extends AbstractPerWorldListener {
 
     private void addEntrySafely(final ServerPlayer addedPlayer, final ServerPlayer affectedPlayer) {
         final TabList tabList = affectedPlayer.getTabList();

@@ -10,7 +10,7 @@ import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.Slot;
 
-public class InventorySlotData implements DataSerializable, ShareableSerializable<Inventory> {
+public class InventorySlotData implements ShareableSerializable<Inventory> {
 
     private final int slotIndex;
     private final ItemStack slotStack;
@@ -35,7 +35,7 @@ public class InventorySlotData implements DataSerializable, ShareableSerializabl
     }
 
     @Override
-    public void offer(final Inventory data) {
+    public void share(final Inventory data) {
         if (this.slotIndex < 0 || this.slotStack == null || this.slotStack.isEmpty()) {
             return;
         }

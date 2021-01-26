@@ -1,11 +1,10 @@
 package cosmos.registries.listener.impl.perworld;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.registries.data.serializable.impl.HealthData;
 import cosmos.registries.listener.ScheduledAsyncSaveListener;
-import cosmos.registries.listener.ToggleListener;
-import cosmos.registries.listener.impl.AbstractListener;
 import cosmos.services.perworld.HealthsService;
 import cosmos.services.serializer.SerializerProvider;
 import org.spongepowered.api.Sponge;
@@ -15,13 +14,16 @@ import org.spongepowered.api.event.entity.ChangeEntityWorldEvent;
 import org.spongepowered.api.event.filter.cause.First;
 
 @Singleton
-public class HealthsListener extends AbstractListener implements ScheduledAsyncSaveListener, ToggleListener {
+public class HealthsListener extends AbstractPerWorldListener implements ScheduledAsyncSaveListener {
+
+    private final HealthsService healthsService;
+    private final SerializerProvider serializerProvider;
 
     @Inject
-    private HealthsService healthsService;
-
-    @Inject
-    private SerializerProvider serializerProvider;
+    public HealthsListener(final Injector injector) {
+        this.healthsService = injector.getInstance(HealthsService.class);
+        this.serializerProvider = injector.getInstance(SerializerProvider.class);
+    }
 
     @Listener
     public void onPostChangeEntityWorldEvent(final ChangeEntityWorldEvent.Post event, @First final ServerPlayer player) {
@@ -29,7 +31,7 @@ public class HealthsListener extends AbstractListener implements ScheduledAsyncS
                 .ifPresent(path -> this.serializerProvider.healths().serialize(path, new HealthData(player)));
         this.healthsService.getPath(event.getDestinationWorld(), player)
                 .flatMap(path -> this.serializerProvider.healths().deserialize(path))
-                .ifPresent(data -> data.offer(player));
+                .ifPresent(data -> data.share(player));
     }
 
     @Override
@@ -39,6 +41,5 @@ public class HealthsListener extends AbstractListener implements ScheduledAsyncS
                         .ifPresent(path -> this.serializerProvider.healths().serialize(path, new HealthData(player)))
         );
     }
-
 
 }
