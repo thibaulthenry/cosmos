@@ -22,7 +22,7 @@ import cosmos.executors.commands.root.Unload;
 public class Root extends AbstractModule {
 
     @Inject
-    public Root(final Injector injector) {
+    Root(final Injector injector) {
         super(
                 injector.getInstance(Back.class),
                 injector.getInstance(Backup.class),
@@ -38,7 +38,7 @@ public class Root extends AbstractModule {
                 injector.getInstance(MoveTo.class),
                 injector.getInstance(New.class),
                 injector.getInstance(PerWorld.class),
-                //injector.getInstance(Portal.class),
+                injector.getInstance(Portal.class),
                 injector.getInstance(Position.class),
                 injector.getInstance(Properties.class),
                 injector.getInstance(Rename.class),

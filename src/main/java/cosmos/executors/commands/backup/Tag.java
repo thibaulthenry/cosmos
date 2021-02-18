@@ -41,7 +41,7 @@ public class Tag extends AbstractCommand {
         try {
             super.serviceProvider.backup().tag(backupArchetype, tag);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while tagging backup", e);
+            Cosmos.getLogger().error("An unexpected error occurred while tagging backup", e);
             throw super.serviceProvider.message().getError(src, "error.backup.tag", "backup", backupArchetype);
         }
 

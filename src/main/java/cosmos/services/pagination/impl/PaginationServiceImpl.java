@@ -12,7 +12,6 @@ import net.kyori.adventure.text.Component;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.service.pagination.PaginationList;
 
-
 @Singleton
 public class PaginationServiceImpl implements PaginationService {
 

@@ -14,7 +14,7 @@ import cosmos.executors.modules.scoreboard.objectives.Modify;
 public class Objectives extends AbstractModule {
 
     @Inject
-    public Objectives(final Injector injector) {
+    Objectives(final Injector injector) {
         super(
                 injector.getInstance(Add.class),
                 injector.getInstance(List.class),

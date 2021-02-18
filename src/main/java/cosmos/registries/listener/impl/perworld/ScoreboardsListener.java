@@ -67,9 +67,9 @@ public class ScoreboardsListener extends AbstractPerWorldListener implements Sch
 
     @Override
     public void save() {
-        this.scoreboardsRegistry.entries().forEach(entry ->
-                this.scoreboardsService.getPath(entry.getKey()).ifPresent(path ->
-                        this.serializerProvider.scoreboards().serialize(path, new ScoreboardData(entry.getValue()))
+        this.scoreboardsRegistry.streamEntries().forEach(entry ->
+                this.scoreboardsService.getPath(entry.key()).ifPresent(path ->
+                        this.serializerProvider.scoreboards().serialize(path, new ScoreboardData(entry.value()))
                 )
         );
     }

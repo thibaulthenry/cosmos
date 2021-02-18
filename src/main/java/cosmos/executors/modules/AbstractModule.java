@@ -16,7 +16,12 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -25,19 +30,29 @@ public abstract class AbstractModule extends AbstractExecutor {
     private final Map<List<String>, AbstractExecutor> childExecutorMap;
     private final String moduleName;
     private final Parameter prefixedParameter;
+    private final boolean terminal;
     private Command.Parameterized parameterized;
 
-    protected AbstractModule(@Nullable final Parameter prefixedParameter, final AbstractExecutor... childExecutors) {
+    protected AbstractModule(@Nullable final Parameter prefixedParameter, boolean terminal, final AbstractExecutor... childExecutors) {
         this.moduleName = this.getClass().getName()
                 .replace(AbstractModule.class.getPackage().getName() + ".", "")
                 .replaceAll("\\.", "-")
                 .toLowerCase(Locale.ROOT);
         this.childExecutorMap = Arrays.stream(childExecutors).collect(Collectors.toMap(AbstractExecutor::getAliases, Function.identity()));
         this.prefixedParameter = prefixedParameter;
+        this.terminal = terminal;
+    }
+
+    protected AbstractModule(@Nullable final Parameter prefixedParameter, final AbstractExecutor... childExecutors) {
+        this(prefixedParameter, true, childExecutors);
+    }
+
+    protected AbstractModule(final boolean terminal, final AbstractExecutor... childExecutors) {
+        this(null, terminal, childExecutors);
     }
 
     protected AbstractModule(final AbstractExecutor... childExecutors) {
-        this(null, childExecutors);
+        this(null, true, childExecutors);
     }
 
     @Override
@@ -108,7 +123,7 @@ public abstract class AbstractModule extends AbstractExecutor {
         this.parameterized = commandBuilder
                 .setExecutor(this)
                 .setExecutionRequirements(this::hasSubPermission)
-                .setTerminal(true)
+                .setTerminal(this.terminal)
                 .build();
 
         return this.parameterized;

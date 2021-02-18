@@ -43,7 +43,7 @@ public class BackupArchetypeData implements CollectorSerializable<BackupArchetyp
         try {
             creationDateTime = ZonedDateTime.parse(this.date, DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(ZoneId.systemDefault()));
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while collecting BackupArchetype data", e);
+            Cosmos.getLogger().error("An unexpected error occurred while collecting BackupArchetype data", e);
             return Optional.empty();
         }
 

@@ -2,12 +2,15 @@ package cosmos.executors.parameters;
 
 import cosmos.constants.Operands;
 import cosmos.registries.backup.BackupArchetype;
+import cosmos.registries.portal.CosmosPortal;
 import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.effect.particle.ParticleType;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
@@ -20,6 +23,7 @@ import org.spongepowered.api.scoreboard.objective.Objective;
 import org.spongepowered.api.scoreboard.objective.displaymode.ObjectiveDisplayMode;
 import org.spongepowered.api.world.difficulty.Difficulty;
 import org.spongepowered.api.world.gamerule.GameRule;
+import org.spongepowered.api.world.portal.PortalType;
 import org.spongepowered.math.vector.Vector2d;
 import org.spongepowered.math.vector.Vector3d;
 
@@ -31,6 +35,7 @@ public class CosmosKeys {
     public static final Parameter.Key<Integer> AMOUNT = Parameter.key("amount", Integer.class);
     public static final Parameter.Key<Double> AMOUNT_DOUBLE = Parameter.key("amount", Double.class);
     public static final Parameter.Key<BackupArchetype> BACKUP = Parameter.key("backup", BackupArchetype.class);
+    public static final Parameter.Key<BlockType> BLOCK_TYPE = Parameter.key("block-type", BlockType.class);
     public static final Parameter.Key<Integer> CHUNKS = Parameter.key("chunks", Integer.class);
     public static final Parameter.Key<CollisionRule> COLLISION_RULE = Parameter.key("collision-rule", CollisionRule.class);
     public static final Parameter.Key<NamedTextColor> COLOR = Parameter.key("color", NamedTextColor.class);
@@ -52,7 +57,10 @@ public class CosmosKeys {
     public static final Parameter.Key<String> NAME = Parameter.key("name", String.class);
     public static final Parameter.Key<Objective> OBJECTIVE = Parameter.key("objective", Objective.class);
     public static final Parameter.Key<Operands> OPERAND = Parameter.key("operand", Operands.class);
+    public static final Parameter.Key<ParticleType> PARTICLE_TYPE = Parameter.key("particle-type", ParticleType.class);
     public static final Parameter.Key<Vector3d> PITCH_YAW_ROLL = Parameter.key("pitch> <yaw> <roll", Vector3d.class);
+    public static final Parameter.Key<CosmosPortal> PORTAL_COSMOS = Parameter.key("portal", CosmosPortal.class);
+    public static final Parameter.Key<PortalType> PORTAL_TYPE = Parameter.key("portal-type", PortalType.class);
     public static final Parameter.Key<Integer> SCORE = Parameter.key("score", Integer.class);
     public static final Parameter.Key<Long> SEED = Parameter.key("seed", Long.class);
     public static final Parameter.Key<Double> START_DIAMETER = Parameter.key("start-diameter", Double.class);
@@ -70,8 +78,8 @@ public class CosmosKeys {
     public static final Parameter.Key<ResourceKey> WORLD = Parameter.key("world", ResourceKey.class);
     public static final Parameter.Key<ResourceKey> WORLD_DESTINATION = Parameter.key("world-destination", ResourceKey.class);
     public static final Parameter.Key<ResourceKey> WORLD_ORIGIN = Parameter.key("world-origin", ResourceKey.class);
-    public static final Parameter.Key<Vector2d> XZ = Parameter.key("x> <z", Vector2d.class);
-    public static final Parameter.Key<Vector3d> XYZ = Parameter.key("x> <y> <z", Vector3d.class);
+    public static final Parameter.Key<Vector2d> X_Z = Parameter.key("x> <z", Vector2d.class);
+    public static final Parameter.Key<Vector3d> X_Y_Z = Parameter.key("x> <y> <z", Vector3d.class);
 
     public static final String FLAG_SAFE_ONLY = "safe-only";
     public static final String FLAG_SAVE_CONFIG = "save-config";

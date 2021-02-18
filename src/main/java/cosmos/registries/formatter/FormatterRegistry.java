@@ -45,14 +45,8 @@ public class FormatterRegistry implements CosmosRegistry<Class<?>, Formatter<?>>
         this.formatterMap.put(Vector3d.class, injector.getInstance(Vector3dFormatter.class));
     }
 
-    @Override
-    public Formatter<?> get(final Class<?> key) {
-        return this.formatterMap.get(key);
-    }
-
-    @Override
-    public boolean has(final Class<?> key) {
-        return this.formatterMap.containsKey(key);
+    public Formatter<Object> getDefaultFormatter() {
+        return this.defaultFormatter;
     }
 
     @SuppressWarnings("unchecked")
@@ -64,8 +58,9 @@ public class FormatterRegistry implements CosmosRegistry<Class<?>, Formatter<?>>
                 .map(entry -> (Formatter<? super T>) entry.getValue());
     }
 
-    public Formatter<Object> getDefaultFormatter() {
-        return this.defaultFormatter;
+    @Override
+    public Formatter<?> value(final Class<?> key) {
+        return this.formatterMap.get(key);
     }
 
 }

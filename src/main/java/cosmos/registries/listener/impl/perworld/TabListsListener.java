@@ -36,7 +36,7 @@ public class TabListsListener extends AbstractPerWorldListener {
         try {
             tabList.addEntry(addedTabListEntry);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while add entry to player tab list", e);
+            Cosmos.getLogger().error("An unexpected error occurred while add entry to player tab list", e);
         }
     }
 

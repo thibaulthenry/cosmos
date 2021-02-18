@@ -62,7 +62,7 @@ public class FormatterServiceImpl implements FormatterService {
     @SuppressWarnings("unchecked")
     private <T> Optional<Formatter<? super T>> getFormatter(final T value) {
         if (this.formatterRegistry.has(value.getClass())) {
-            return Optional.of((Formatter<T>) this.formatterRegistry.get(value.getClass()));
+            return Optional.of((Formatter<T>) this.formatterRegistry.value(value.getClass()));
         }
 
         return this.formatterRegistry.getSuper((Class<T>) value.getClass());

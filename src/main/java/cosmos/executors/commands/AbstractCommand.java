@@ -45,7 +45,7 @@ public abstract class AbstractCommand extends AbstractExecutor {
         }
 
         this.parameterized = Command.builder()
-                // todo
+                .flags(this.flags)
                 .parameters(this.parameters)
                 .setPermission(this.permission)
                 .setExecutor(this)

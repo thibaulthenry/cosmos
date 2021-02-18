@@ -19,7 +19,7 @@ import cosmos.executors.modules.AbstractModule;
 public class Players extends AbstractModule {
 
     @Inject
-    public Players(final Injector injector) {
+    Players(final Injector injector) {
         super(
                 injector.getInstance(Add.class),
                 injector.getInstance(Enable.class),

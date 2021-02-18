@@ -7,7 +7,7 @@ public class Directories {
     public static final String ADVANCEMENTS_DIRECTORY_NAME = "advancements";
     public static final String BACKUPS_DIRECTORY_NAME = "backups";
     public static final String COSMOS_CONFIG_DIRECTORY_NAME = "config" + File.separator + "cosmos";
-    public static final String COSMOS_MODS_DIRECTORY_NAME = "mods" + File.separator + "cosmos";
+    public static final String COSMOS_DIRECTORY_NAME = "cosmos";
     public static final String EXPERIENCES_DIRECTORY_NAME = "experiences";
     public static final String HEALTHS_DIRECTORY_NAME = "healths";
     public static final String HUNGERS_DIRECTORY_NAME = "hungers";

@@ -12,9 +12,10 @@ import cosmos.executors.parameters.impl.scoreboard.ObjectiveAll;
 public class Modify extends AbstractModule {
 
     @Inject
-    public Modify(final Injector injector) {
+    Modify(final Injector injector) {
         super(
                 injector.getInstance(ObjectiveAll.class).build(),
+                false,
                 injector.getInstance(DisplayName.class),
                 injector.getInstance(RenderType.class)
         );

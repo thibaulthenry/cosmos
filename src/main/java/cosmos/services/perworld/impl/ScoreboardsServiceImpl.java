@@ -3,8 +3,10 @@ package cosmos.services.perworld.impl;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.Cosmos;
 import cosmos.constants.Directories;
 import cosmos.executors.parameters.CosmosKeys;
+import cosmos.registries.CosmosRegistryEntry;
 import cosmos.registries.data.serializable.impl.ScoreboardData;
 import cosmos.registries.perworld.ScoreboardsRegistry;
 import cosmos.registries.serializer.impl.ScoreboardsSerializer;
@@ -27,7 +29,12 @@ import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.world.server.ServerWorld;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -80,11 +87,19 @@ public class ScoreboardsServiceImpl implements ScoreboardsService {
 
     @Override
     public Scoreboard getOrCreateScoreboard(final ResourceKey worldKey) {
-        return this.scoreboardsRegistry.computeIfAbsent(worldKey, key -> this.getPath(worldKey)
-                .flatMap(this.scoreboardsSerializer::deserialize)
-                .flatMap(ScoreboardData::collect)
-                .orElse(Scoreboard.builder().build())
-        );
+        return this.scoreboardsRegistry.find(worldKey)
+                .map(Optional::of)
+                .orElse(this.getPath(worldKey).flatMap(this.scoreboardsSerializer::deserialize).flatMap(ScoreboardData::collect))
+                .flatMap(scoreboard -> this.scoreboardsRegistry.register(worldKey, scoreboard).map(CosmosRegistryEntry::value))
+                .orElseGet(() -> {
+                    final Scoreboard scoreboard = Scoreboard.builder().build();
+
+                    if (!this.scoreboardsRegistry.register(worldKey, scoreboard).isPresent()) {
+                        Cosmos.getLogger().error("An unexpected error occurred while registering a new scoreboard for world " + worldKey);
+                    }
+
+                    return scoreboard;
+                });
     }
 
     @Override
@@ -101,11 +116,6 @@ public class ScoreboardsServiceImpl implements ScoreboardsService {
     @Override
     public Optional<Path> getPath(final ServerWorld world) {
         return this.getPath(world.getKey());
-    }
-
-    @Override
-    public Collection<Scoreboard> getScoreboards() {
-        return this.scoreboardsRegistry.values();
     }
 
     @Override

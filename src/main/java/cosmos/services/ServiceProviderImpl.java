@@ -3,8 +3,7 @@ package cosmos.services;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import cosmos.services.data.DataProvider;
-import cosmos.services.data.selector.SelectorService;
+import cosmos.services.data.DataService;
 import cosmos.services.formatter.FormatterService;
 import cosmos.services.io.BackupService;
 import cosmos.services.io.ConfigurationService;
@@ -13,6 +12,8 @@ import cosmos.services.listener.ListenerService;
 import cosmos.services.message.MessageService;
 import cosmos.services.pagination.PaginationService;
 import cosmos.services.perworld.PerWorldProvider;
+import cosmos.services.portal.PortalService;
+import cosmos.services.registry.RegistryProvider;
 import cosmos.services.serializer.SerializerProvider;
 import cosmos.services.template.TemplateService;
 import cosmos.services.time.TimeService;
@@ -25,13 +26,15 @@ public class ServiceProviderImpl implements ServiceProvider {
 
     private final BackupService backupService;
     private final ConfigurationService configurationService;
-    private final DataProvider dataProvider;
+    private final DataService dataProvider;
     private final FinderService finderService;
     private final FormatterService formatService;
     private final ListenerService listenerService;
     private final MessageService messageService;
     private final PaginationService paginationService;
     private final PerWorldProvider perWorldProvider;
+    private final PortalService portalService;
+    private final RegistryProvider registryProvider;
     private final SerializerProvider serializerProvider;
     private final TemplateService templateService;
     private final TimeService timeService;
@@ -43,13 +46,15 @@ public class ServiceProviderImpl implements ServiceProvider {
     public ServiceProviderImpl(final Injector injector) {
         this.backupService = injector.getInstance(BackupService.class);
         this.configurationService = injector.getInstance(ConfigurationService.class);
-        this.dataProvider = injector.getInstance(DataProvider.class);
+        this.dataProvider = injector.getInstance(DataService.class);
         this.finderService = injector.getInstance(FinderService.class);
         this.formatService = injector.getInstance(FormatterService.class);
         this.listenerService = injector.getInstance(ListenerService.class);
         this.messageService = injector.getInstance(MessageService.class);
         this.paginationService = injector.getInstance(PaginationService.class);
         this.perWorldProvider = injector.getInstance(PerWorldProvider.class);
+        this.portalService = injector.getInstance(PortalService.class);
+        this.registryProvider = injector.getInstance(RegistryProvider.class);
         this.serializerProvider = injector.getInstance(SerializerProvider.class);
         this.templateService = injector.getInstance(TemplateService.class);
         this.timeService = injector.getInstance(TimeService.class);
@@ -69,7 +74,7 @@ public class ServiceProviderImpl implements ServiceProvider {
     }
 
     @Override
-    public DataProvider data() {
+    public DataService data() {
         return this.dataProvider;
     }
 
@@ -101,6 +106,16 @@ public class ServiceProviderImpl implements ServiceProvider {
     @Override
     public PerWorldProvider perWorld() {
         return this.perWorldProvider;
+    }
+
+    @Override
+    public PortalService portal() {
+        return this.portalService;
+    }
+
+    @Override
+    public RegistryProvider registry() {
+        return this.registryProvider;
     }
 
     @Override

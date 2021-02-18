@@ -4,6 +4,8 @@ import cosmos.constants.Operands;
 import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.parameter.managed.ValueParameter;
 import org.spongepowered.api.command.parameter.managed.standard.VariableValueParameters;
 import org.spongepowered.api.world.gamerule.GameRule;
@@ -31,6 +33,12 @@ class CosmosValueParameters {
             .choice("reset", NamedTextColor.WHITE)
             .choice(NamedTextColor.WHITE.toString(), NamedTextColor.WHITE)
             .choice(NamedTextColor.YELLOW.toString(), NamedTextColor.YELLOW)
+            .build();
+
+    static final ValueParameter<BlockType> PORTAL_BLOCK_TYPES = VariableValueParameters.staticChoicesBuilder(BlockType.class)
+            .choice(BlockTypes.LAVA.location().getFormatted(), BlockTypes.LAVA.get())
+            .choice(BlockTypes.VOID_AIR.location().getFormatted(), BlockTypes.VOID_AIR.get())
+            .choice(BlockTypes.WATER.location().getFormatted(), BlockTypes.WATER.get())
             .build();
 
     static final ValueParameter<Operands> SCOREBOARD_OPERANDS = VariableValueParameters.staticChoicesBuilder(Operands.class)

@@ -2,6 +2,7 @@ package cosmos.executors.modules.perworld;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import cosmos.executors.commands.perworld.feature.Advancements;
 import cosmos.executors.commands.perworld.feature.Chats;
 import cosmos.executors.commands.perworld.feature.CommandBlocks;
@@ -14,11 +15,13 @@ import cosmos.executors.commands.perworld.feature.Scoreboards;
 import cosmos.executors.commands.perworld.feature.TabLists;
 import cosmos.executors.modules.AbstractModule;
 
+@Singleton
 public class Feature extends AbstractModule {
 
     @Inject
     Feature(final Injector injector) {
         super(
+                false,
                 injector.getInstance(Advancements.class),
                 injector.getInstance(Chats.class),
                 injector.getInstance(CommandBlocks.class),

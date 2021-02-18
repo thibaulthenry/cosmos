@@ -24,9 +24,8 @@ public class TemplateServiceImpl implements TemplateService {
     private final Map<Locale, TemplateRegistry> templateRegistryMap = new HashMap<>();
     private final ResourceBundle.Control utf8Control;
 
-    @Inject
-    public TemplateServiceImpl(final Injector injector) {
-        this.utf8Control = injector.getInstance(UTF8Control.class);
+    public TemplateServiceImpl() {
+        this.utf8Control = new UTF8Control();
         this.defaultTemplateRegistry = new TemplateRegistry(Locale.ROOT, ResourceBundle.getBundle(TEMPLATES_BUNDLE, Locale.ROOT, this.utf8Control));
     }
 

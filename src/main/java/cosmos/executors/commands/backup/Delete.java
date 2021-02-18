@@ -28,7 +28,7 @@ public class Delete extends AbstractCommand {
         try {
             super.serviceProvider.backup().delete(backupArchetype);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while deleting backup", e);
+            Cosmos.getLogger().error("An unexpected error occurred while deleting backup", e);
             throw super.serviceProvider.message().getError(src, "error.backup.delete", "backup", backupArchetype);
         }
 

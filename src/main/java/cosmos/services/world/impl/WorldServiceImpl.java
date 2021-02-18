@@ -56,7 +56,7 @@ public class WorldServiceImpl implements WorldService {
                 throw errorException;
             }
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while duplicating world", e);
+            Cosmos.getLogger().error("An unexpected error occurred while duplicating world", e);
             throw errorException;
         }
     }
@@ -74,7 +74,7 @@ public class WorldServiceImpl implements WorldService {
                 throw errorException;
             }
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while deleting world", e);
+            Cosmos.getLogger().error("An unexpected error occurred while deleting world", e);
             throw errorException;
         }
     }
@@ -135,7 +135,7 @@ public class WorldServiceImpl implements WorldService {
         try {
             Sponge.getServer().getWorldManager().loadWorld(worldKey).join().getProperties().setLoadOnStartup(true);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while loading world", e);
+            Cosmos.getLogger().error("An unexpected error occurred while loading world", e);
             throw this.messageService.getError(src, "error.root.load", "world", worldKey);
         }
     }
@@ -180,7 +180,7 @@ public class WorldServiceImpl implements WorldService {
                 throw errorException;
             }
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while renaming world", e);
+            Cosmos.getLogger().error("An unexpected error occurred while renaming world", e);
             throw errorException;
         }
     }
@@ -209,7 +209,7 @@ public class WorldServiceImpl implements WorldService {
         try {
             this.backupService.restore(backupArchetype);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while restoring backup", e);
+            Cosmos.getLogger().error("An unexpected error occurred while restoring backup", e);
             throw this.messageService.getError(src, "error.backup.restore", "backup", backupArchetype);
         }
     }
@@ -225,7 +225,7 @@ public class WorldServiceImpl implements WorldService {
         try {
             success = Sponge.getServer().getWorldManager().saveProperties(properties).join();
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An error occurred while saving world properties", e);
+            Cosmos.getLogger().error("An error occurred while saving world properties", e);
         }
 
         if (!success) {
@@ -267,7 +267,7 @@ public class WorldServiceImpl implements WorldService {
             Sponge.getServer().getWorldManager().unloadWorld(world).join();
         } catch (final Exception e) {
             properties.setLoadOnStartup(loadOnStartupFallback);
-            Cosmos.getLogger().warn("An unexpected error occurred while unloading world", e);
+            Cosmos.getLogger().error("An unexpected error occurred while unloading world", e);
             throw this.messageService.getError(src, "error.root.unload", "world", world);
         }
     }

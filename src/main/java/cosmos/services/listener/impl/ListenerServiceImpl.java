@@ -47,25 +47,24 @@ public class ListenerServiceImpl implements ListenerService {
             return;
         }
 
-        this.listenerRegistry.entries()
-                .stream()
+        this.listenerRegistry.streamEntries()
                 .filter(entry -> {
-                    if (!entry.getValue().isConfigurable()) {
+                    if (!entry.value().isConfigurable()) {
                         return true;
                     }
 
-                    final String listenerNode = this.configurationService.formatListener(entry.getKey());
+                    final String listenerNode = this.configurationService.formatListener(entry.key());
 
                     return this.configurationService.getNode(ConfigurationNodes.PER_WORLD, listenerNode)
                             .map(this.configurationService::isEnabled)
                             .orElse(false);
                 })
-                .forEach(entry -> this.register(entry.getKey()));
+                .forEach(entry -> this.register(entry.key()));
     }
 
     @Override
     public boolean isRegistered(final Class<? extends Listener> clazz) {
-        return this.listenerRegistry.has(clazz) && this.listenerRegistry.get(clazz).isRegistered();
+        return this.listenerRegistry.has(clazz) && this.listenerRegistry.value(clazz).isRegistered();
     }
 
     @Override
@@ -74,7 +73,7 @@ public class ListenerServiceImpl implements ListenerService {
             return;
         }
 
-        final Listener listener = this.listenerRegistry.get(clazz);
+        final Listener listener = this.listenerRegistry.value(clazz);
 
         if (listener instanceof ToggleListener) {
             ((ToggleListener) listener).start();
@@ -87,7 +86,7 @@ public class ListenerServiceImpl implements ListenerService {
     }
 
     private void saveTaskExecutor() {
-        this.listenerRegistry.values().forEach(listener -> {
+        this.listenerRegistry.stream().forEach(listener -> {
             if (!listener.isRegistered()) {
                 return;
             }
@@ -117,7 +116,7 @@ public class ListenerServiceImpl implements ListenerService {
                 .plugin(Cosmos.getPluginContainer())
                 .build();
 
-        this.saveTaskUuid = Sponge.getServer().getScheduler().submit(task).getUniqueId();
+        this.saveTaskUuid = Sponge.getAsyncScheduler().submit(task).getUniqueId();
     }
 
     @Override
@@ -126,7 +125,7 @@ public class ListenerServiceImpl implements ListenerService {
             return;
         }
 
-        final Listener listener = this.listenerRegistry.get(clazz);
+        final Listener listener = this.listenerRegistry.value(clazz);
 
         listener.setRegistered(false);
         Sponge.getEventManager().unregisterListeners(listener);
@@ -135,8 +134,7 @@ public class ListenerServiceImpl implements ListenerService {
             ((ToggleListener) listener).stop();
         }
 
-        final boolean hasScheduledSaveListenerRegistered = this.listenerRegistry.values()
-                .stream()
+        final boolean hasScheduledSaveListenerRegistered = this.listenerRegistry.stream()
                 .filter(l -> l instanceof ScheduledSaveListener)
                 .anyMatch(Listener::isRegistered);
 
@@ -147,7 +145,7 @@ public class ListenerServiceImpl implements ListenerService {
 
     @Override
     public void unregisterAll() {
-        this.listenerRegistry.entries().forEach(entry -> Sponge.getEventManager().unregisterListeners(entry.getValue()));
+        this.listenerRegistry.streamEntries().forEach(entry -> Sponge.getEventManager().unregisterListeners(entry.value()));
     }
 
 }

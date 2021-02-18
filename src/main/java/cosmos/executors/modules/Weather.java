@@ -13,7 +13,7 @@ import cosmos.executors.parameters.impl.world.WorldAll;
 class Weather extends AbstractModule {
 
     @Inject
-    public Weather(final Injector injector) {
+    Weather(final Injector injector) {
         super(
                 injector.getInstance(WorldAll.class).optional().build(),
                 injector.getInstance(Forecast.class),

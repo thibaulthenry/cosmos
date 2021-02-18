@@ -37,7 +37,7 @@ public class Move extends AbstractCommand {
         super(
                 CosmosParameters.ENTITY_TARGETS_OPTIONAL,
                 injector.getInstance(WorldOnline.class).optional().build(),
-                Parameter.vector3d().setKey(CosmosKeys.XYZ).optional().build(),
+                Parameter.vector3d().setKey(CosmosKeys.X_Y_Z).optional().build(),
                 Parameter.vector3d().setKey(CosmosKeys.PITCH_YAW_ROLL).optional().build()
         );
     }
@@ -57,7 +57,7 @@ public class Move extends AbstractCommand {
         final ResourceKey worldKey = super.serviceProvider.world().getKeyOrSource(context);
 
         final ServerWorld world = Sponge.getServer().getWorldManager().world(worldKey)
-                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.missing.world", "parameter", worldKey));
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.missing.world", "world", worldKey));
 
         final Optional<List<Entity>> optionalEntities = context.getOne(CosmosParameters.ENTITY_TARGETS_OPTIONAL);
 
@@ -69,7 +69,7 @@ public class Move extends AbstractCommand {
             throw super.serviceProvider.message().getError(src, "error.missing.entities");
         }
 
-        final Optional<Vector3d> optionalPosition = context.getOne(CosmosKeys.XYZ);
+        final Optional<Vector3d> optionalPosition = context.getOne(CosmosKeys.X_Y_Z);
         final ServerLocation location = optionalPosition.map(world::getLocation).orElse(world.getLocation(world.getProperties().spawnPosition()));
         final Vector3d position = location.getPosition();
         final Vector3d rotation = context.getOne(CosmosKeys.PITCH_YAW_ROLL).orElse(null);

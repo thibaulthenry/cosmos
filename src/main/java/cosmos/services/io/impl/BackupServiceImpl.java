@@ -89,7 +89,7 @@ public class BackupServiceImpl implements BackupService {
                     .flatMap(view -> Sponge.getDataManager().deserialize(BackupArchetypeData.class, view))
                     .flatMap(BackupArchetypeData::collect);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An expected error occurred while creating backup data from directory " + backupDirectory, e);
+            Cosmos.getLogger().error("An expected error occurred while creating backup data from directory " + backupDirectory, e);
             return Optional.empty();
         }
     }
@@ -134,7 +134,7 @@ public class BackupServiceImpl implements BackupService {
                                 .allMatch(backupDirectory -> backupPath.resolve(backupDirectory).toFile().exists());
                         return isDirectory && isInBackupsDirectory && hasBackupDirectories;
                     } catch (final Exception e) {
-                        Cosmos.getLogger().warn("An expected error occurred while checking backup", e);
+                        Cosmos.getLogger().error("An expected error occurred while checking backup", e);
                         return false;
                     }
                 }).orElse(false);
@@ -169,7 +169,7 @@ public class BackupServiceImpl implements BackupService {
                         .filter(Optional::isPresent)
                         .map(Optional::get);
             } catch (final Exception e) {
-                Cosmos.getLogger().warn("An unexpected error occurred while looking for existing backups", e);
+                Cosmos.getLogger().error("An unexpected error occurred while looking for existing backups", e);
                 return Stream.<BackupArchetype>empty();
             }
         }).orElse(Stream.empty());

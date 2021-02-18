@@ -33,8 +33,6 @@ public interface ScoreboardsService extends WorldRelatedPerWorldService {
 
     Scoreboard getOrCreateScoreboard(ServerWorld world);
 
-    Collection<Scoreboard> getScoreboards();
-
     Collection<Component> getTargets(CommandContext context, ResourceKey worldKey, boolean returnSource) throws CommandException;
 
     Set<Team> getTeams(ResourceKey worldKey);

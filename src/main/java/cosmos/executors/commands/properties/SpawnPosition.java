@@ -16,12 +16,12 @@ import java.util.Optional;
 public class SpawnPosition extends AbstractPropertiesCommand {
 
     public SpawnPosition() {
-        super(Parameter.vector3d().setKey(CosmosKeys.XYZ).optional().build());
+        super(Parameter.vector3d().setKey(CosmosKeys.X_Y_Z).optional().build());
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties) throws CommandException {
-        final Optional<Vector3d> optionalInput = context.getOne(CosmosKeys.XYZ);
+        final Optional<Vector3d> optionalInput = context.getOne(CosmosKeys.X_Y_Z);
         Vector3i value = properties.spawnPosition();
 
         if (optionalInput.isPresent()) {

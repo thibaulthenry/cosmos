@@ -37,7 +37,7 @@ public class Save extends AbstractCommand {
         try {
             super.serviceProvider.backup().save(backupArchetype);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while saving backup", e);
+            Cosmos.getLogger().error("An unexpected error occurred while saving backup", e);
             throw super.serviceProvider.message().getError(src, "error.backup.save", "backup", backupArchetype);
         }
 

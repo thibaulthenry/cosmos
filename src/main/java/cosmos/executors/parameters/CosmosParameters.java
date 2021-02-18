@@ -4,18 +4,20 @@ import cosmos.constants.Operands;
 import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.command.parameter.managed.standard.ResourceKeyedValueParameters;
+import org.spongepowered.api.effect.particle.ParticleType;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.registry.RegistryTypes;
-import org.spongepowered.api.scoreboard.CollisionRule;
 import org.spongepowered.api.scoreboard.Visibility;
 import org.spongepowered.api.scoreboard.criteria.Criterion;
 import org.spongepowered.api.scoreboard.displayslot.DisplaySlot;
 import org.spongepowered.api.scoreboard.objective.displaymode.ObjectiveDisplayMode;
 import org.spongepowered.api.world.difficulty.Difficulty;
 import org.spongepowered.api.world.gamerule.GameRule;
+import org.spongepowered.api.world.portal.PortalType;
 import org.spongepowered.math.vector.Vector2d;
 
 import java.time.temporal.ChronoUnit;
@@ -65,11 +67,23 @@ public class CosmosParameters {
 
     public static final Parameter.Value<GameRule<?>> GAME_RULE = Parameter.registryElement(new TypeToken<GameRule<?>>() {}, RegistryTypes.GAME_RULE)
             .setKey(CosmosKeys.GAME_RULE)
-            .optional()
             .build(); // todo check pr
 
+    public static final Parameter.Value<ParticleType> PARTICLE_TYPE = Parameter.registryElement(TypeToken.get(ParticleType.class), RegistryTypes.PARTICLE_TYPE)
+            .setKey(CosmosKeys.PARTICLE_TYPE)
+            .build();
+
+    public static final Parameter.Value<BlockType> PORTAL_BLOCK_TYPE = Parameter.builder(BlockType.class)
+            .setKey(CosmosKeys.BLOCK_TYPE)
+            .parser(CosmosValueParameters.PORTAL_BLOCK_TYPES)
+            .build();
+
+    public static final Parameter.Value<PortalType> PORTAL_TYPE = Parameter.registryElement(TypeToken.get(PortalType.class), RegistryTypes.PORTAL_TYPE)
+            .setKey(CosmosKeys.PORTAL_TYPE)
+            .build();
+
     public static final Parameter.Value<Vector2d> POSITION_2D_OPTIONAL = Parameter.builder(Vector2d.class)
-            .setKey(CosmosKeys.XZ)
+            .setKey(CosmosKeys.X_Z)
             .parser(ResourceKeyedValueParameters.VECTOR2D)
             .optional()
             .build();
@@ -102,6 +116,10 @@ public class CosmosParameters {
             .setKey(CosmosKeys.TIME_UNIT)
             .parser(CosmosValueParameters.TIME_UNIT)
             .optional()
+            .build();
+
+    public static final Parameter DURATION_WITH_TIME_UNIT = Parameter.seqBuilder(DURATION)
+            .then(TIME_UNIT_OPTIONAL)
             .build();
 
     public static final Parameter DURATION_WITH_TIME_UNIT_OPTIONAL = Parameter.seqBuilder(DURATION)

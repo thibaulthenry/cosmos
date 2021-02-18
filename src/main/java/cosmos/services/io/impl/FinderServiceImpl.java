@@ -6,7 +6,6 @@ import cosmos.constants.Directories;
 import cosmos.registries.backup.BackupArchetype;
 import cosmos.services.io.FinderService;
 import org.spongepowered.api.ResourceKey;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.data.persistence.DataSerializable;
@@ -16,12 +15,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Optional;
@@ -64,7 +60,7 @@ public class FinderServiceImpl implements FinderService {
 
     @Override
     public Optional<Path> getCosmosPath(final String... subs) {
-        return this.getPath(Directories.COSMOS_MODS_DIRECTORY_NAME, subs);
+        return this.getPath(Directories.COSMOS_DIRECTORY_NAME, subs);
     }
 
     @Override
@@ -135,7 +131,7 @@ public class FinderServiceImpl implements FinderService {
 
             return Optional.of(dataContainer);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An error occurred while reading data container at " + path, e);
+            Cosmos.getLogger().error("An error occurred while reading data container at " + path, e);
             return Optional.empty();
         }
     }
@@ -153,7 +149,7 @@ public class FinderServiceImpl implements FinderService {
         try (OutputStream outputStream = Files.newOutputStream(path)) {
             DataFormats.NBT.get().writeTo(outputStream, dataContainer);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An error occurred while saving data container at " + path, e);
+            Cosmos.getLogger().error("An error occurred while saving data container at " + path, e);
         }
     }
 

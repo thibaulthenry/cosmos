@@ -18,7 +18,7 @@ import cosmos.executors.parameters.impl.world.WorldAll;
 class Time extends AbstractModule {
 
     @Inject
-    public Time(final Injector injector) {
+    Time(final Injector injector) {
         super(
                 injector.getInstance(WorldAll.class).optional().build(),
                 injector.getInstance(Calendar.class),

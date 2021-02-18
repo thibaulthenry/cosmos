@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.registries.CosmosRegistry;
+import cosmos.registries.CosmosRegistryEntry;
 import cosmos.registries.listener.impl.perworld.AdvancementsListener;
 import cosmos.registries.listener.impl.perworld.ChatsListener;
 import cosmos.registries.listener.impl.perworld.CommandBlocksListener;
@@ -16,10 +17,9 @@ import cosmos.registries.listener.impl.perworld.ScoreboardsListener;
 import cosmos.registries.listener.impl.perworld.TabListsListener;
 import cosmos.registries.listener.impl.portal.PortalListener;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Stream;
 
 @Singleton
 public class ListenerRegistry implements CosmosRegistry<Class<? extends Listener>, Listener> {
@@ -36,27 +36,22 @@ public class ListenerRegistry implements CosmosRegistry<Class<? extends Listener
         this.listenerMap.put(HealthsListener.class, injector.getInstance(HealthsListener.class));
         this.listenerMap.put(HungersListener.class, injector.getInstance(HungersListener.class));
         this.listenerMap.put(InventoriesListener.class, injector.getInstance(InventoriesListener.class));
-        //this.listenerMap.put(PortalListener.class, injector.getInstance(PortalListener.class));
+        this.listenerMap.put(PortalListener.class, injector.getInstance(PortalListener.class));
         this.listenerMap.put(ScoreboardsListener.class, injector.getInstance(ScoreboardsListener.class));
         this.listenerMap.put(TabListsListener.class, injector.getInstance(TabListsListener.class));
     }
 
-    public Set<Map.Entry<Class<? extends Listener>, Listener>> entries() {
-        return this.listenerMap.entrySet();
+    public Stream<Listener> stream() {
+        return this.listenerMap.values().stream();
+    }
+
+    public Stream<CosmosRegistryEntry<Class<? extends Listener>, Listener>> streamEntries() {
+        return this.listenerMap.entrySet().stream().map(entry -> CosmosRegistryEntry.of(entry.getKey(), entry.getValue()));
     }
 
     @Override
-    public Listener get(final Class<? extends Listener> key) {
+    public Listener value(final Class<? extends Listener> key) {
         return this.listenerMap.get(key);
-    }
-
-    @Override
-    public boolean has(final Class<? extends Listener> key) {
-        return this.listenerMap.containsKey(key);
-    }
-
-    public Collection<Listener> values() {
-        return this.listenerMap.values();
     }
 
 }

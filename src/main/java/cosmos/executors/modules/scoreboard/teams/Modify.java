@@ -19,9 +19,10 @@ import cosmos.executors.parameters.impl.scoreboard.TeamAll;
 public class Modify extends AbstractModule {
 
     @Inject
-    public Modify(final Injector injector) {
+    Modify(final Injector injector) {
         super(
                 injector.getInstance(TeamAll.class).build(),
+                false,
                 injector.getInstance(CollisionRule.class),
                 injector.getInstance(Color.class),
                 injector.getInstance(DeathMessageVisibility.class),

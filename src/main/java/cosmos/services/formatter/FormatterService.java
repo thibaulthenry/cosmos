@@ -19,4 +19,5 @@ public interface FormatterService extends CosmosService {
     <T> TextComponent asText(T value, Locale locale, boolean keepOverflow);
 
     <T> TextComponent asText(T value, boolean keepOverflow);
+
 }

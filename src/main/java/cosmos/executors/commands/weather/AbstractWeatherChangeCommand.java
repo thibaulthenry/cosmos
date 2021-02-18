@@ -15,7 +15,7 @@ import org.spongepowered.api.world.weather.WeatherType;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-abstract class AbstractWeatherChangeCommand extends AbstractWeatherCommand {
+abstract class AbstractWeatherChangeCommand extends AbstractWeatherCommand { // todo weather time modify
 
     AbstractWeatherChangeCommand() {
         super(CosmosParameters.DURATION_WITH_TIME_UNIT_OPTIONAL);
