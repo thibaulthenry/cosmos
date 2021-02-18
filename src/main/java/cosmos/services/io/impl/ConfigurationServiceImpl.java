@@ -1,12 +1,10 @@
 package cosmos.services.io.impl;
 
-import com.google.common.base.CaseFormat;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
 import cosmos.constants.Directories;
-import cosmos.registries.listener.Listener;
 import cosmos.services.io.ConfigurationService;
 import cosmos.services.io.FinderService;
 import org.spongepowered.api.Sponge;
@@ -47,26 +45,25 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     private HoconConfigurationLoader buildLoader() {
         try {
-            final Optional<Path> optionalConfigPath = this.finderService.getConfigPath(Directories.COSMOS_CONFIG_FILE_NAME);
+            final Optional<Path> optionalConfigPath = this.finderService.findConfigPath(Directories.Files.COSMOS_CONFIG);
 
             if (!optionalConfigPath.isPresent()) {
-                Cosmos.getLogger().error("Unable to find configuration file");
+                Cosmos.logger().error("Unable to find configuration file");
                 return null;
             }
 
             final Path configPath = optionalConfigPath.get();
-
-            final Optional<Asset> optionalDefaultConfigAsset = Sponge.getAssetManager().getAsset(Cosmos.getPluginContainer(), Directories.DEFAULT_CONFIG_FILE_NAME);
+            final Optional<Asset> optionalDefaultConfigAsset = Sponge.assetManager().asset(Cosmos.pluginContainer(), Directories.Files.DEFAULT_CONFIG);
 
             if (!optionalDefaultConfigAsset.isPresent()) {
-                Cosmos.getLogger().error("Default configuration loading failed");
+                Cosmos.logger().error("Default configuration loading failed");
                 return null;
             }
 
             final File configFile = configPath.toFile();
 
             if (!configFile.exists() && !configFile.getParentFile().mkdirs() && !configFile.createNewFile()) {
-                Cosmos.getLogger().error("Unable to find or generate configuration file");
+                Cosmos.logger().error("Unable to find or generate configuration file");
                 return null;
             }
 
@@ -74,18 +71,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
             return HoconConfigurationLoader.builder().path(configPath).build();
         } catch (final Exception e) {
-            Cosmos.getLogger().error("An error occurred while loading configuration file", e);
+            Cosmos.logger().error("An error occurred while loading configuration file", e);
             return null;
         }
     }
 
     @Override
-    public String formatListener(final Class<? extends Listener> listenerClass) {
-        return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, listenerClass.getSimpleName().replace("Listener", ""));
-    }
-
-    @Override
-    public Optional<ConfigurationNode> getNode(final Object... paths) {
+    public Optional<ConfigurationNode> findNode(final Object... paths) {
         if (!this.isLoaded()) {
             return Optional.empty();
         }
@@ -112,7 +104,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         try {
             return this.loader.load();
         } catch (final Exception e) {
-            Cosmos.getLogger().error("An unexpected error occurred while loading configuration file", e);
+            Cosmos.logger().error("An unexpected error occurred while loading configuration file", e);
             return null;
         }
     }
@@ -138,9 +130,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
         try {
             this.loader.save(node);
+
             return true;
         } catch (final Exception e) {
-            Cosmos.getLogger().error("An error occurred while saving configuration file", e);
+            Cosmos.logger().error("An error occurred while saving configuration file", e);
             return false;
         }
     }
@@ -156,14 +149,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             return false;
         }
 
-        return this.getNode(Arrays.copyOfRange(paths, 0, parentIndex))
+        return this.findNode(Arrays.copyOfRange(paths, 0, parentIndex))
                 .map(node -> this.saveValue(value, node, paths))
                 .orElse(false);
     }
 
     @Override
     public boolean saveValue(final Object value, final ConfigurationNode savedNode, final Object... paths) {
-        return this.getNode(paths).map(node -> this.saveValue(value, savedNode, node)).orElse(false);
+        return this.findNode(paths).map(node -> this.saveValue(value, savedNode, node)).orElse(false);
     }
 
     @Override
@@ -174,15 +167,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private boolean setValue(final Object value, final ConfigurationNode node) {
         try {
             node.set(value);
+
             return true;
         } catch (final Exception e) {
-            Cosmos.getLogger().error("An error occurred while setting value to configuration file", e);
+            Cosmos.logger().error("An error occurred while setting value to configuration file", e);
             return false;
         }
     }
 
     private boolean setValue(final Object value, final Object... paths) {
-        return this.getNode(paths).map(node -> this.setValue(value, node)).orElse(false);
+        return this.findNode(paths).map(node -> this.setValue(value, node)).orElse(false);
     }
 
 }

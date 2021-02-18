@@ -1,12 +1,9 @@
 package cosmos.executors.commands.scoreboard.players;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.constants.CosmosKeys;
+import cosmos.constants.CosmosParameters;
 import cosmos.executors.commands.scoreboard.AbstractMultiTargetCommand;
-import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.scoreboard.ObjectiveAll;
-import cosmos.executors.parameters.impl.scoreboard.Targets;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -23,21 +20,20 @@ import java.util.stream.Collectors;
 @Singleton
 public class Reset extends AbstractMultiTargetCommand {
 
-    @Inject
-    public Reset(final Injector injector) {
+    public Reset() {
         super(
-                injector.getInstance(Targets.class).build(),
-                injector.getInstance(ObjectiveAll.class).optional().build()
+                CosmosParameters.TARGETS.get().build(),
+                CosmosParameters.OBJECTIVE_ALL.get().build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Collection<Component> targets) throws CommandException {
-        final Optional<Objective> optionalObjective = context.getOne(CosmosKeys.OBJECTIVE);
+        final Optional<Objective> optionalObjective = context.one(CosmosKeys.OBJECTIVE);
 
         final Collection<Objective> objectives = optionalObjective
                 .map(Collections::singleton)
-                .orElse(super.serviceProvider.perWorld().scoreboards().getObjectives(worldKey));
+                .orElse(super.serviceProvider.scoreboards().objectives(worldKey));
 
         final Collection<Component> contents = targets
                 .stream()
@@ -46,7 +42,7 @@ public class Reset extends AbstractMultiTargetCommand {
                         .filter(objective -> objective.hasScore(target))
                         .map(objective -> {
                             objective.removeScore(target);
-                            super.success();
+                            super.addSuccess();
 
                             return super.serviceProvider.message()
                                     .getMessage(src, "success.scoreboard.players.reset")

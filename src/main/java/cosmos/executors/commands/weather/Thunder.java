@@ -5,10 +5,10 @@ import org.spongepowered.api.world.weather.WeatherType;
 import org.spongepowered.api.world.weather.WeatherTypes;
 
 @Singleton
-public class Thunder extends AbstractWeatherChangeCommand {
+public class Thunder extends AbstractWeatherModifyCommand {
 
     @Override
-    protected WeatherType getNewWeather() {
+    protected WeatherType newWeather() {
         return WeatherTypes.THUNDER.get();
     }
 

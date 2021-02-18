@@ -1,9 +1,6 @@
 package cosmos.services;
 
 import com.google.inject.ImplementedBy;
-import cosmos.services.data.DataProvider;
-import cosmos.services.data.builder.DataBuilderService;
-import cosmos.services.data.selector.SelectorService;
 import cosmos.services.formatter.FormatterService;
 import cosmos.services.io.BackupService;
 import cosmos.services.io.ConfigurationService;
@@ -11,7 +8,9 @@ import cosmos.services.io.FinderService;
 import cosmos.services.listener.ListenerService;
 import cosmos.services.message.MessageService;
 import cosmos.services.pagination.PaginationService;
-import cosmos.services.perworld.PerWorldProvider;
+import cosmos.services.perworld.ScoreboardsService;
+import cosmos.services.portal.PortalService;
+import cosmos.services.registry.RegistryProvider;
 import cosmos.services.serializer.SerializerProvider;
 import cosmos.services.template.TemplateService;
 import cosmos.services.time.TimeService;
@@ -26,8 +25,6 @@ public interface ServiceProvider {
 
     ConfigurationService configuration();
 
-    DataProvider data();
-
     FinderService finder();
 
     FormatterService format();
@@ -38,7 +35,11 @@ public interface ServiceProvider {
 
     PaginationService pagination();
 
-    PerWorldProvider perWorld();
+    PortalService portal();
+
+    RegistryProvider registry();
+
+    ScoreboardsService scoreboards();
 
     SerializerProvider serializer();
 

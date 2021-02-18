@@ -2,12 +2,12 @@ package cosmos.registries.listener;
 
 public interface Listener {
 
-    boolean isConfigurable();
+    boolean configurable();
 
-    void setConfigurable(boolean configurable);
+    void configurable(boolean configurable);
 
-    boolean isRegistered();
+    boolean registeredToSponge();
 
-    void setRegistered(boolean registered);
+    void registeredToSponge(boolean registered);
 
 }

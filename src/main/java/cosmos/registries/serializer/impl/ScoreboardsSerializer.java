@@ -23,11 +23,6 @@ public class ScoreboardsSerializer implements Serializer<ScoreboardData> {
     }
 
     @Override
-    public void serialize(final Path path, final ScoreboardData data) {
-        this.finderService.writeToFile(data, path);
-    }
-
-    @Override
     public Optional<ScoreboardData> deserialize(final Path path) {
         final DataContainer dataContainer = this.finderService.readFromFile(path).orElse(DataContainer.createNew());
 
@@ -35,7 +30,12 @@ public class ScoreboardsSerializer implements Serializer<ScoreboardData> {
             return Optional.empty();
         }
 
-        return Sponge.getDataManager().deserialize(ScoreboardData.class, dataContainer);
+        return Sponge.dataManager().deserialize(ScoreboardData.class, dataContainer);
+    }
+
+    @Override
+    public void serialize(final Path path, final ScoreboardData data) {
+        this.finderService.writeToFile(data, path);
     }
 
 }

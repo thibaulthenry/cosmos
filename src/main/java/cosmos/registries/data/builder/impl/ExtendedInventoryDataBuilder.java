@@ -29,19 +29,19 @@ public class ExtendedInventoryDataBuilder extends AbstractDataBuilder<ExtendedIn
     @Override
     protected Optional<ExtendedInventoryData> buildContent(final DataView container) throws InvalidDataException {
         final InventoryData playerInventoryData = container.getView(Queries.Inventories.Extended.PLAYER_INVENTORY)
-                .flatMap(view -> Sponge.getDataManager().deserialize(InventoryData.class, view))
+                .flatMap(view -> Sponge.dataManager().deserialize(InventoryData.class, view))
                 .orElse(null);
 
         final InventoryData enderChestInventoryData = container.getView(Queries.Inventories.Extended.ENDER_CHEST_INVENTORY)
-                .flatMap(view -> Sponge.getDataManager().deserialize(InventoryData.class, view))
+                .flatMap(view -> Sponge.dataManager().deserialize(InventoryData.class, view))
                 .orElse(null);
 
         final InventoryData craftingInventoryData = container.getView(Queries.Inventories.Extended.CRAFTING_INVENTORY)
-                .flatMap(view -> Sponge.getDataManager().deserialize(InventoryData.class, view))
+                .flatMap(view -> Sponge.dataManager().deserialize(InventoryData.class, view))
                 .orElse(null);
 
         final ItemStack pickedItem = container.getView(Queries.Inventories.Extended.PICKED_ITEM)
-                .flatMap(view -> Sponge.getDataManager().deserialize(ItemStack.class, view))
+                .flatMap(view -> Sponge.dataManager().deserialize(ItemStack.class, view))
                 .orElse(null);
 
         return Optional.of(new ExtendedInventoryData(playerInventoryData, enderChestInventoryData, craftingInventoryData, pickedItem));

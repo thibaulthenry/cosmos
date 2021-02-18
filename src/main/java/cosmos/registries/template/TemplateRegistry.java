@@ -17,18 +17,18 @@ public class TemplateRegistry implements CosmosRegistry<String, Template> {
     }
 
     @Override
-    public Template get(final String key) {
-        try {
-            return new Template(this.locale, this.resourceBundle.getString(key));
-        } catch (Exception e) {
-            Cosmos.getLogger().error("Failed to retrieve template from key " + key, e);
-            return null;
-        }
+    public boolean has(final String key) {
+        return this.resourceBundle.containsKey(key);
     }
 
     @Override
-    public boolean has(final String key) {
-        return this.resourceBundle.containsKey(key);
+    public Template value(final String key) {
+        try {
+            return new Template(this.locale, this.resourceBundle.getString(key));
+        } catch (final Exception e) {
+            Cosmos.logger().error("Failed to retrieve template from key " + key, e);
+            return null;
+        }
     }
 
 }

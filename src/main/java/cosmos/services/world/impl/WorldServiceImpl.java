@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
-import cosmos.executors.parameters.CosmosKeys;
+import cosmos.constants.CosmosKeys;
 import cosmos.registries.backup.BackupArchetype;
 import cosmos.services.io.BackupService;
 import cosmos.services.message.MessageService;
@@ -42,22 +42,23 @@ public class WorldServiceImpl implements WorldService {
 
     @Override
     public void copy(final Audience src, final ResourceKey worldKey, final ResourceKey copyKey, final boolean checkNonexistent) throws CommandException {
-        if (checkNonexistent && Sponge.getServer().getWorldManager().worldExists(copyKey)) {
+        if (checkNonexistent && Sponge.server().worldManager().worldExists(copyKey)) {
             throw this.messageService.getError(src, "error.world.already-existing", "world", copyKey);
         }
 
-        final CommandException errorException = this.messageService.getMessage(src, "error.root.copy")
-                .replace("copy", copyKey)
-                .replace("world", worldKey)
-                .asError();
-
         try {
-            if (!Sponge.getServer().getWorldManager().copyWorld(worldKey, copyKey).join()) {
-                throw errorException;
+            if (!Sponge.server().worldManager().copyWorld(worldKey, copyKey).join()) {
+                throw this.messageService.getMessage(src, "error.root.copy")
+                        .replace("copy", copyKey)
+                        .replace("world", worldKey)
+                        .asError();
             }
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while duplicating world", e);
-            throw errorException;
+            Cosmos.logger().error("An unexpected error occurred while duplicating world", e);
+            throw this.messageService.getMessage(src, "error.root.copy")
+                    .replace("copy", copyKey)
+                    .replace("world", worldKey)
+                    .asError();
         }
     }
 
@@ -67,15 +68,13 @@ public class WorldServiceImpl implements WorldService {
             throw this.messageService.getError(src, "error.world.already-loaded", "world", worldKey);
         }
 
-        final CommandException errorException = this.messageService.getError(src, "error.root.delete", "world", worldKey);
-
         try {
-            if (!Sponge.getServer().getWorldManager().deleteWorld(worldKey).join()) {
-                throw errorException;
+            if (!Sponge.server().worldManager().deleteWorld(worldKey).join()) {
+                throw this.messageService.getError(src, "error.root.delete", "world", worldKey);
             }
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while deleting world", e);
-            throw errorException;
+            Cosmos.logger().error("An unexpected error occurred while deleting world", e);
+            throw this.messageService.getError(src, "error.root.delete", "world", worldKey);
         }
     }
 
@@ -86,43 +85,44 @@ public class WorldServiceImpl implements WorldService {
 
     @Override
     public Optional<ResourceKey> findKeyOrSource(final CommandContext context, final Parameter.Key<ResourceKey> worldKey) {
-        return context.getOne(worldKey)
+        return context.one(worldKey)
                 .map(Optional::of)
-                .orElse(this.locateSourceKey(context.getCause().getAudience()));
+                .orElse(this.locateSourceKey(context.cause().audience()));
     }
 
     @Override
-    public ResourceKey getKeyOrSource(final CommandContext context) throws CommandException {
-        return this.getKeyOrSource(context, CosmosKeys.WORLD);
+    public ResourceKey keyOrSource(final CommandContext context) throws CommandException {
+        return this.keyOrSource(context, CosmosKeys.WORLD);
     }
 
     @Override
-    public ResourceKey getKeyOrSource(final CommandContext context, final Parameter.Key<ResourceKey> worldKey) throws CommandException {
+    public ResourceKey keyOrSource(final CommandContext context, final Parameter.Key<ResourceKey> worldKey) throws CommandException {
         return this.findKeyOrSource(context, worldKey)
-                .orElseThrow(this.messageService.getMessage(context, "error.missing.world.key").asSupplier());
+                .orElseThrow(this.messageService.getMessage(context, "error.missing.world.any").asSupplier());
     }
 
     @Override
-    public ServerWorldProperties getPropertiesOrSource(final CommandContext context) throws CommandException {
-        return context.getOne(CosmosKeys.WORLD)
+    public ServerWorldProperties propertiesOrSource(final CommandContext context) throws CommandException {
+        return context.one(CosmosKeys.WORLD)
                 .map(this::loadProperties)
-                .orElse(this.locateSourceProperties(context.getCause().getAudience()))
+                .orElse(this.locateSourceProperties(context.cause().audience()))
                 .orElseThrow(this.messageService.getMessage(context, "error.missing.world.properties").asSupplier());
     }
 
+    // TODO https://github.com/SpongePowered/Sponge/issues/3268
     @Override
     public boolean isImported(final ResourceKey worldKey) {
-        return true; //Sponge.getServer().getWorldManager().templateExists(worldKey);
+        return true; //Sponge.server().worldManager().templateExists(worldKey);
     }
 
     @Override
     public boolean isOnline(final ResourceKey worldKey) {
-        return this.isImported(worldKey) && Sponge.getServer().getWorldManager().world(worldKey).isPresent();
+        return this.isImported(worldKey) && Sponge.server().worldManager().world(worldKey).isPresent();
     }
 
     @Override
     public boolean isOffline(final ResourceKey worldKey) {
-        final WorldManager worldManager = Sponge.getServer().getWorldManager();
+        final WorldManager worldManager = Sponge.server().worldManager();
         return this.isImported(worldKey) && worldManager.worldExists(worldKey) && !worldManager.world(worldKey).isPresent();
     }
 
@@ -133,62 +133,63 @@ public class WorldServiceImpl implements WorldService {
         }
 
         try {
-            Sponge.getServer().getWorldManager().loadWorld(worldKey).join().getProperties().setLoadOnStartup(true);
+            Sponge.server().worldManager().loadWorld(worldKey).join().properties().setLoadOnStartup(true);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while loading world", e);
+            Cosmos.logger().error("An unexpected error occurred while loading world", e);
             throw this.messageService.getError(src, "error.root.load", "world", worldKey);
         }
     }
 
     private Optional<ServerWorldProperties> loadProperties(final ResourceKey worldKey) {
         if (this.isOnline(worldKey)) {
-            return Sponge.getServer().getWorldManager().world(worldKey).map(ServerWorld::getProperties);
+            return Sponge.server().worldManager().world(worldKey).map(ServerWorld::properties);
         }
 
         try {
-            return Sponge.getServer().getWorldManager().loadProperties(worldKey).join();
+            return Sponge.server().worldManager().loadProperties(worldKey).join();
         } catch (final Exception e) {
             return Optional.empty();
         }
     }
 
     private Optional<ResourceKey> locateSourceKey(final Audience src) {
-        return this.locateSourceWorld(src).map(ServerWorld::getKey);
+        return this.locateSourceWorld(src).map(ServerWorld::key);
     }
 
     private Optional<ServerWorldProperties> locateSourceProperties(final Audience src) {
-        return this.locateSourceWorld(src).map(ServerWorld::getProperties);
+        return this.locateSourceWorld(src).map(ServerWorld::properties);
     }
 
     private Optional<ServerWorld> locateSourceWorld(final Audience src) {
-        return Optional.ofNullable(src instanceof Locatable ? ((Locatable) src).getServerLocation().getWorld() : null);
+        return Optional.ofNullable(src instanceof Locatable ? ((Locatable) src).serverLocation().world() : null);
     }
 
     @Override
     public void rename(final Audience src, final ResourceKey worldKey, final ResourceKey renameKey, final boolean checkNonexistent) throws CommandException {
-        if (checkNonexistent && Sponge.getServer().getWorldManager().worldExists(renameKey)) {
+        if (checkNonexistent && Sponge.server().worldManager().worldExists(renameKey)) {
             throw this.messageService.getError(src, "error.world.already-existing", "world", renameKey);
         }
 
-        final CommandException errorException = this.messageService.getMessage(src, "error.root.rename")
-                .replace("rename", renameKey)
-                .replace("world", worldKey)
-                .asError();
-
         try {
-            if (!Sponge.getServer().getWorldManager().moveWorld(worldKey, renameKey).join()) {
-                throw errorException;
+            if (!Sponge.server().worldManager().moveWorld(worldKey, renameKey).join()) {
+                throw this.messageService.getMessage(src, "error.root.rename")
+                        .replace("rename", renameKey)
+                        .replace("world", worldKey)
+                        .asError();
             }
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while renaming world", e);
-            throw errorException;
+            Cosmos.logger().error("An unexpected error occurred while renaming world", e);
+            throw this.messageService.getMessage(src, "error.root.rename")
+                    .replace("rename", renameKey)
+                    .replace("world", worldKey)
+                    .asError();
         }
     }
 
     @Override
     public void restore(final Audience src, final BackupArchetype backupArchetype, final boolean checkExistent) throws CommandException {
-        final ResourceKey defaultWorldKey = Sponge.getServer().getWorldManager().defaultWorld().getKey();
-        final ResourceKey worldKey = backupArchetype.getWorldKey();
+        final ResourceKey defaultWorldKey = Sponge.server().worldManager().defaultWorld().key();
+        final ResourceKey worldKey = backupArchetype.worldKey();
 
         if (defaultWorldKey.equals(worldKey)) {
             throw this.messageService.getError(src, "error.backup.restore.default", "world", defaultWorldKey);
@@ -202,30 +203,30 @@ public class WorldServiceImpl implements WorldService {
             throw this.messageService.getError(src, "error.backup.restore.loaded", "world", worldKey);
         }
 
-        if (checkExistent && !this.backupService.hasBackup(backupArchetype.getWorldKey())) {
+        if (checkExistent && !this.backupService.hasBackup(backupArchetype.worldKey())) {
             throw this.messageService.getError(src, "error.missing.backup", "backup", backupArchetype);
         }
 
         try {
             this.backupService.restore(backupArchetype);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while restoring backup", e);
+            Cosmos.logger().error("An unexpected error occurred while restoring backup", e);
             throw this.messageService.getError(src, "error.backup.restore", "backup", backupArchetype);
         }
     }
 
     @Override
     public void saveProperties(final Audience src, final ServerWorldProperties properties) throws CommandException {
-        if (this.isOnline(properties.getKey())) {
+        if (this.isOnline(properties.key())) {
             return;
         }
 
         boolean success = false;
 
         try {
-            success = Sponge.getServer().getWorldManager().saveProperties(properties).join();
+            success = Sponge.server().worldManager().saveProperties(properties).join();
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An error occurred while saving world properties", e);
+            Cosmos.logger().error("An error occurred while saving world properties", e);
         }
 
         if (!success) {
@@ -239,7 +240,7 @@ public class WorldServiceImpl implements WorldService {
             throw this.messageService.getError(src, "error.world.already-unloaded", "world", worldKey);
         }
 
-        final ServerWorld world = Sponge.getServer().getWorldManager().world(worldKey)
+        final ServerWorld world = Sponge.server().worldManager().world(worldKey)
                 .orElseThrow(this.messageService.supplyError(src, "error.missing.world", "world", worldKey));
 
         this.unload(src, world);
@@ -247,34 +248,34 @@ public class WorldServiceImpl implements WorldService {
 
     @Override
     public void unload(final Audience src, final ServerWorld world) throws CommandException {
-        final ServerWorld defaultWorld = Sponge.getServer().getWorldManager().defaultWorld();
+        final ServerWorld defaultWorld = Sponge.server().worldManager().defaultWorld();
 
-        if (defaultWorld.getKey().equals(world.getKey())) {
+        if (defaultWorld.key().equals(world.key())) {
             throw this.messageService.getError(src, "error.root.unload.default", "world", world);
         }
 
-        final ServerLocation defaultSpawnLocation = defaultWorld.getLocation(defaultWorld.getProperties().spawnPosition());
+        final ServerLocation defaultSpawnLocation = defaultWorld.location(defaultWorld.properties().spawnPosition());
 
-        if (!world.getPlayers().stream().allMatch(player -> this.transportationService.teleport(player, defaultSpawnLocation, false))) {
+        if (!world.players().stream().allMatch(player -> this.transportationService.teleport(player, defaultSpawnLocation, false))) {
             throw this.messageService.getError(src, "error.root.unload.remaining-players", "world", world);
         }
 
-        final ServerWorldProperties properties = world.getProperties();
+        final ServerWorldProperties properties = world.properties();
         final boolean loadOnStartupFallback = properties.loadOnStartup();
 
         try {
             properties.setLoadOnStartup(false);
-            Sponge.getServer().getWorldManager().unloadWorld(world).join();
+            Sponge.server().worldManager().unloadWorld(world).join();
         } catch (final Exception e) {
             properties.setLoadOnStartup(loadOnStartupFallback);
-            Cosmos.getLogger().warn("An unexpected error occurred while unloading world", e);
+            Cosmos.logger().error("An unexpected error occurred while unloading world", e);
             throw this.messageService.getError(src, "error.root.unload", "world", world);
         }
     }
 
     @Override
     public Collection<ResourceKey> worldKeysOffline() {
-        return Sponge.getServer().getWorldManager().worldKeys()
+        return Sponge.server().worldManager().worldKeys()
                 .stream()
                 .filter(this::isOffline)
                 .collect(Collectors.toList());

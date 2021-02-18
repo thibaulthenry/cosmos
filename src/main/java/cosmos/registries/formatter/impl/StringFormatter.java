@@ -5,7 +5,6 @@ import cosmos.registries.formatter.OverflowFormatter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
 
 @Singleton
 public class StringFormatter implements OverflowFormatter<String> {

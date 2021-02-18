@@ -19,16 +19,16 @@ public class List extends AbstractScoreboardCommand {
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Scoreboard scoreboard) throws CommandException {
-        if (scoreboard.getObjectives().isEmpty()) {
+        if (scoreboard.objectives().isEmpty()) {
             throw super.serviceProvider.message().getError(src, "error.scoreboard.objectives.list.empty", "world", worldKey);
         }
 
-        final Collection<Component> contents = scoreboard.getObjectives()
+        final Collection<Component> contents = scoreboard.objectives()
                 .stream()
                 .map(objective -> super.serviceProvider.message()
                         .getMessage(src, "success.scoreboard.objectives.list")
-                        .replace("criterion", objective.getCriterion().key(RegistryTypes.CRITERION))
-                        .replace("display", objective.getDisplayName())
+                        .replace("criterion", objective.criterion().key(RegistryTypes.CRITERION))
+                        .replace("display", objective.displayName())
                         .replace("obj", objective)
                         .green()
                         .asText()

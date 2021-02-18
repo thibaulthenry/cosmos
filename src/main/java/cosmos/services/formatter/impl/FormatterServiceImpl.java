@@ -40,10 +40,10 @@ public class FormatterServiceImpl implements FormatterService {
     @Override
     @SuppressWarnings("unchecked")
     public <T> TextComponent asText(final T value, final Locale locale, boolean keepOverflow) {
-        final Optional<Formatter<? super T>> optionalFormatter = this.getFormatter(value);
+        final Optional<Formatter<? super T>> optionalFormatter = this.findFormatter(value);
 
         if (!optionalFormatter.isPresent()) {
-            return this.formatterRegistry.getDefaultFormatter().asText(value);
+            return this.formatterRegistry.defaultFormatter().asText(value);
         }
 
         final Formatter<? super T> formatter = optionalFormatter.get();
@@ -60,12 +60,12 @@ public class FormatterServiceImpl implements FormatterService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> Optional<Formatter<? super T>> getFormatter(final T value) {
+    private <T> Optional<Formatter<? super T>> findFormatter(final T value) {
         if (this.formatterRegistry.has(value.getClass())) {
-            return Optional.of((Formatter<T>) this.formatterRegistry.get(value.getClass()));
+            return Optional.of((Formatter<T>) this.formatterRegistry.value(value.getClass()));
         }
 
-        return this.formatterRegistry.getSuper((Class<T>) value.getClass());
+        return this.formatterRegistry.findSuper((Class<T>) value.getClass());
     }
 
 }

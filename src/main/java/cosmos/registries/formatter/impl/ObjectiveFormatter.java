@@ -3,15 +3,11 @@ package cosmos.registries.formatter.impl;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import cosmos.registries.formatter.Formatter;
 import cosmos.registries.formatter.LocaleFormatter;
 import cosmos.services.message.MessageService;
-import cosmos.services.transportation.TransportationService;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.scoreboard.Score;
 import org.spongepowered.api.scoreboard.objective.Objective;
@@ -32,28 +28,26 @@ public class ObjectiveFormatter implements LocaleFormatter<Objective> {
 
     @Override
     public TextComponent asText(final Objective value, final Locale locale) {
-        final Optional<Score> optionalBestScore = value.getScores()
+        final Optional<Score> optionalBestScore = value.scores()
                 .values()
                 .stream()
-                .max(Comparator.comparingInt(Score::getScore));
+                .max(Comparator.comparingInt(Score::score));
 
         final boolean hasBestScore = optionalBestScore.isPresent();
 
         final TextComponent hoverText = this.messageService.getMessage(locale, "formatter.objective.hover")
-                .replace("best1", hasBestScore ? optionalBestScore.get().getScore() : "none")
-                .replace("best3", optionalBestScore.map(Score::getName).orElse(Component.empty()))
-                .replace("criterion", value.getCriterion().key(RegistryTypes.CRITERION).getValue())
-                .replace("display", value.getDisplayName())
-                .replace("mode", value.getDisplayMode().key(RegistryTypes.OBJECTIVE_DISPLAY_MODE).getValue())
-                .replace("scores", value.getScores().size())
+                .replace("best1", hasBestScore ? optionalBestScore.get().score() : "none")
+                .replace("best3", optionalBestScore.map(Score::name).orElse(Component.empty()))
+                .replace("criterion", value.criterion().key(RegistryTypes.CRITERION))
+                .replace("display", value.displayName())
+                .replace("mode", value.displayMode().key(RegistryTypes.OBJECTIVE_DISPLAY_MODE))
+                .replace("scores", value.scores().size())
                 .condition("best2", hasBestScore)
                 .condition("best3", hasBestScore)
                 .gray()
                 .asText();
 
-        // todo add display slot
-
-        return Component.text(value.getName()).hoverEvent(HoverEvent.showText(hoverText));
+        return Component.text(value.name()).hoverEvent(HoverEvent.showText(hoverText));
     }
 
 }

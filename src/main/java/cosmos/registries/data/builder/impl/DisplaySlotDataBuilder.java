@@ -32,6 +32,7 @@ public class DisplaySlotDataBuilder extends AbstractDataBuilder<DisplaySlotData>
 
         final DisplaySlot displaySlot = container.getRegistryValue(Queries.Scoreboards.DisplaySlot.DISPLAY_SLOT, RegistryTypes.DISPLAY_SLOT)
                 .orElseThrow(() -> new InvalidDataException("Missing display slot while building ObjectiveData"));
+
         final String objective = container.getString(Queries.Scoreboards.DisplaySlot.OBJECTIVE)
                 .orElseThrow(() -> new InvalidDataException("Missing objective while building ObjectiveData"));
 

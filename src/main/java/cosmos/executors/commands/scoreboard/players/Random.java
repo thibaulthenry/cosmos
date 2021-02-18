@@ -1,14 +1,10 @@
 package cosmos.executors.commands.scoreboard.players;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.constants.CosmosKeys;
+import cosmos.constants.CosmosParameters;
 import cosmos.constants.Units;
 import cosmos.executors.commands.scoreboard.AbstractMultiTargetCommand;
-import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.scoreboard.Extremum;
-import cosmos.executors.parameters.impl.scoreboard.ObjectiveAll;
-import cosmos.executors.parameters.impl.scoreboard.Targets;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -24,19 +20,18 @@ import java.util.stream.Collectors;
 @Singleton
 public class Random extends AbstractMultiTargetCommand {
 
-    @Inject
-    public Random(final Injector injector) {
+    public Random() {
         super(
-                injector.getInstance(Targets.class).build(),
-                injector.getInstance(ObjectiveAll.class).build(),
-                injector.getInstance(Extremum.class).integerKey(CosmosKeys.MIN).build(),
-                injector.getInstance(Extremum.class).build()
+                CosmosParameters.TARGETS.get().build(),
+                CosmosParameters.OBJECTIVE_ALL.get().build(),
+                CosmosParameters.EXTREMUM.get().integerKey(CosmosKeys.MIN).build(),
+                CosmosParameters.EXTREMUM.get().build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Collection<Component> targets) throws CommandException {
-        final Objective objective = context.getOne(CosmosKeys.OBJECTIVE)
+        final Objective objective = context.one(CosmosKeys.OBJECTIVE)
                 .orElseThrow(
                         super.serviceProvider.message()
                                 .getMessage(src, "error.invalid.objective")
@@ -45,8 +40,8 @@ public class Random extends AbstractMultiTargetCommand {
                                 .asSupplier()
                 );
 
-        final int min = super.serviceProvider.perWorld().scoreboards().getExtremum(context, CosmosKeys.MIN, true);
-        final int max = super.serviceProvider.perWorld().scoreboards().getExtremum(context, CosmosKeys.MAX, false);
+        final int min = super.serviceProvider.scoreboards().extremum(context, CosmosKeys.MIN, true);
+        final int max = super.serviceProvider.scoreboards().extremum(context, CosmosKeys.MAX, false);
 
         if (min >= max) {
             throw super.serviceProvider.message().getError(src, "error.invalid.operation.range-difference", "value", 0);
@@ -62,8 +57,8 @@ public class Random extends AbstractMultiTargetCommand {
             }
 
             final int random = ThreadLocalRandom.current().nextInt(min, max == Integer.MAX_VALUE ? max : max + 1);
-            objective.getOrCreateScore(target).setScore(random);
-            super.success();
+            objective.scoreOrCreate(target).setScore(random);
+            super.addSuccess();
 
             return super.serviceProvider.message()
                     .getMessage(src, "success.scoreboard.players.random")

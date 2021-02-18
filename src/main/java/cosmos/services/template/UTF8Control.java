@@ -1,7 +1,5 @@
 package cosmos.services.template;
 
-import com.google.inject.Singleton;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,7 +10,6 @@ import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
-@Singleton
 public class UTF8Control extends ResourceBundle.Control {
 
     public ResourceBundle newBundle(final String baseName, final Locale locale, final String format, final ClassLoader loader, final boolean reload) throws IOException {

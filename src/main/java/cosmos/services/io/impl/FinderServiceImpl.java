@@ -3,26 +3,22 @@ package cosmos.services.io.impl;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
 import cosmos.constants.Directories;
-import cosmos.registries.backup.BackupArchetype;
 import cosmos.services.io.FinderService;
 import org.spongepowered.api.ResourceKey;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.data.persistence.DataView;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.world.server.ServerWorld;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,12 +27,25 @@ import java.util.stream.Stream;
 @Singleton
 public class FinderServiceImpl implements FinderService {
 
+    private Collection<String> cosmosDirectories() {
+        return Stream.of(
+                Directories.ADVANCEMENTS,
+                Directories.BACKUPS,
+                Directories.EXPERIENCES,
+                Directories.HEALTHS,
+                Directories.HUNGERS,
+                Directories.INVENTORIES,
+                Directories.PORTALS,
+                Directories.SCOREBOARDS
+        ).collect(Collectors.toList());
+    }
+
     @Override
     public void deletePerWorldFiles(final ResourceKey worldKey) throws IOException {
         Optional<Path> optionalPath;
 
-        for (final String directoryName : this.getPerWorldDirectories()) {
-            optionalPath = this.getCosmosPath(directoryName, worldKey.namespace(), worldKey.value());
+        for (final String directoryName : this.perWorldDirectories()) {
+            optionalPath = this.findCosmosPath(directoryName, worldKey);
 
             if (optionalPath.isPresent()) {
                 Files.deleteIfExists(optionalPath.get());
@@ -45,34 +54,48 @@ public class FinderServiceImpl implements FinderService {
     }
 
     @Override
-    public Optional<Path> getBackupPath(final BackupArchetype backupArchetype) {
-        final String directory = backupArchetype.getWorldKey().getFormatted().replaceAll(":", "_")
-                + "_" + backupArchetype.getCreationDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+    public Optional<Path> findConfigPath(final String... subs) {
+        return this.path(Directories.COSMOS_CONFIG, subs);
+    }
 
-        return this.getCosmosPath(Directories.BACKUPS_DIRECTORY_NAME, directory);
+    public Optional<Path> findCosmosPath(final String... subs) {
+        return this.path(Directories.COSMOS, subs);
     }
 
     @Override
-    public Optional<Path> getBackupsPath() {
-        return this.getCosmosPath(Directories.BACKUPS_DIRECTORY_NAME);
+    public Optional<Path> findCosmosPath(final String directory, final ResourceKey worldKey) {
+        if (!this.isCosmosDirectory(directory)) {
+            return Optional.empty();
+        }
+
+        return this.findCosmosPath(directory, worldKey.namespace(), worldKey.value() + ".dat");
     }
 
     @Override
-    public Optional<Path> getConfigPath(final String... subs) {
-        return this.getPath(Directories.COSMOS_CONFIG_DIRECTORY_NAME, subs);
+    public Optional<Path> findCosmosPath(final String directory, final ServerPlayer player) {
+        return this.findCosmosPath(directory, player.world(), player);
     }
 
     @Override
-    public Optional<Path> getCosmosPath(final String... subs) {
-        return this.getPath(Directories.COSMOS_MODS_DIRECTORY_NAME, subs);
+    public Optional<Path> findCosmosPath(final String directory, final ServerWorld world) {
+        return this.findCosmosPath(directory, world.key());
     }
 
     @Override
-    public Optional<Path> getWorldPath(ResourceKey worldKey) {
-        return Optional.empty(); // todo
+    public Optional<Path> findCosmosPath(final String directory, final ResourceKey worldKey, final ServerPlayer player) {
+        if (!this.isCosmosDirectory(directory)) {
+            return Optional.empty();
+        }
+
+        return this.findCosmosPath(directory, worldKey.namespace(), worldKey.value(), player.uniqueId() + ".dat");
     }
 
-    private Optional<Path> getPath(final String first, final String... subs) {
+    @Override
+    public Optional<Path> findCosmosPath(final String directory, final ServerWorld world, final ServerPlayer player) {
+        return this.findCosmosPath(directory, world.key(), player);
+    }
+
+    private Optional<Path> path(final String first, final String... subs) {
         try {
             return Optional.of(Paths.get(first, subs));
         } catch (final Exception ignored) {
@@ -80,32 +103,33 @@ public class FinderServiceImpl implements FinderService {
         }
     }
 
-    private Collection<String> getPerWorldDirectories() {
+    private Collection<String> perWorldDirectories() {
         return Stream.of(
-                Directories.ADVANCEMENTS_DIRECTORY_NAME,
-                Directories.EXPERIENCES_DIRECTORY_NAME,
-                Directories.HEALTHS_DIRECTORY_NAME,
-                Directories.HUNGERS_DIRECTORY_NAME,
-                Directories.INVENTORIES_DIRECTORY_NAME,
-                Directories.SCOREBOARDS_DIRECTORY_NAME
+                Directories.ADVANCEMENTS,
+                Directories.EXPERIENCES,
+                Directories.HEALTHS,
+                Directories.HUNGERS,
+                Directories.INVENTORIES,
+                Directories.SCOREBOARDS
         ).collect(Collectors.toList());
     }
 
     @Override
     public boolean initDirectories() {
         return Stream.of(
-                Directories.ADVANCEMENTS_DIRECTORY_NAME,
-                Directories.BACKUPS_DIRECTORY_NAME,
-                Directories.EXPERIENCES_DIRECTORY_NAME,
-                Directories.HEALTHS_DIRECTORY_NAME,
-                Directories.HUNGERS_DIRECTORY_NAME,
-                Directories.INVENTORIES_DIRECTORY_NAME,
-                Directories.SCOREBOARDS_DIRECTORY_NAME
+                Directories.ADVANCEMENTS,
+                Directories.BACKUPS,
+                Directories.EXPERIENCES,
+                Directories.HEALTHS,
+                Directories.HUNGERS,
+                Directories.INVENTORIES,
+                Directories.PORTALS,
+                Directories.SCOREBOARDS
         ).allMatch(this::initDirectory);
     }
 
     private boolean initDirectory(final String directoryName) {
-        return this.getCosmosPath(directoryName).map(path -> {
+        return this.findCosmosPath(directoryName).map(path -> {
             try {
                 final File directory = path.toFile();
 
@@ -118,6 +142,10 @@ public class FinderServiceImpl implements FinderService {
                 return false;
             }
         }).orElse(false);
+    }
+
+    private boolean isCosmosDirectory(final String directory) {
+        return this.cosmosDirectories().stream().anyMatch(name -> name.equals(directory));
     }
 
     @Override
@@ -135,9 +163,31 @@ public class FinderServiceImpl implements FinderService {
 
             return Optional.of(dataContainer);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An error occurred while reading data container at " + path, e);
+            Cosmos.logger().error("An error occurred while reading data container at " + path, e);
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Stream<Path> stream(final String directory) {
+        if (!this.isCosmosDirectory(directory)) {
+            return Stream.empty();
+        }
+
+        return this.findCosmosPath(directory).map(portalsDirectory -> {
+            try {
+                return Files.walk(portalsDirectory).filter(path -> path.toFile().isFile());
+            } catch (final Exception e) {
+                Cosmos.logger().error("An unexpected error occurred while looking for existing portals", e);
+                return Stream.<Path>empty();
+            }
+        }).orElse(Stream.empty());
+    }
+
+    // TODO https://github.com/SpongePowered/Sponge/issues/3265
+    @Override
+    public Optional<Path> worldPath(final ResourceKey worldKey) {
+        return Optional.empty();
     }
 
     @Override
@@ -150,10 +200,21 @@ public class FinderServiceImpl implements FinderService {
             return;
         }
 
+        try {
+            final Path parentPath = path.getParent();
+
+            if (parentPath != null) {
+                Files.createDirectories(parentPath);
+            }
+        } catch (final Exception e) {
+            Cosmos.logger().error("An error occurred while saving data container at " + path, e);
+            return;
+        }
+
         try (OutputStream outputStream = Files.newOutputStream(path)) {
             DataFormats.NBT.get().writeTo(outputStream, dataContainer);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An error occurred while saving data container at " + path, e);
+            Cosmos.logger().error("An error occurred while saving data container at " + path, e);
         }
     }
 

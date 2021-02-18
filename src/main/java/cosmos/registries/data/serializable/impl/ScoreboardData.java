@@ -1,10 +1,8 @@
 package cosmos.registries.data.serializable.impl;
 
 import cosmos.constants.Queries;
-import cosmos.registries.backup.BackupArchetype;
 import cosmos.registries.data.serializable.CollectorSerializable;
 import org.spongepowered.api.data.persistence.DataContainer;
-import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.Team;
@@ -26,21 +24,21 @@ public class ScoreboardData implements CollectorSerializable<Scoreboard> {
     public ScoreboardData(final Scoreboard scoreboard) {
         this.displaySlotsData = RegistryTypes.DISPLAY_SLOT.get()
                 .stream()
-                .map(displaySlot -> scoreboard.getObjective(displaySlot)
+                .map(displaySlot -> scoreboard.objective(displaySlot)
                         .map(objective -> new DisplaySlotData(displaySlot, objective))
                         .orElse(null)
                 )
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        this.objectivesData = scoreboard.getObjectives()
+        this.objectivesData = scoreboard.objectives()
                 .stream()
                 .map(ObjectiveData::new)
                 .collect(Collectors.toList());
 
-        this.scoresData = scoreboard.getScores()
+        this.scoresData = scoreboard.scores()
                 .stream()
-                .map(score -> score.getObjectives()
+                .map(score -> score.objectives()
                         .stream()
                         .map(objective -> new ScoreData(score, objective))
                         .collect(Collectors.toList())
@@ -48,7 +46,7 @@ public class ScoreboardData implements CollectorSerializable<Scoreboard> {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-        this.teamsData = scoreboard.getTeams()
+        this.teamsData = scoreboard.teams()
                 .stream()
                 .map(TeamData::new)
                 .collect(Collectors.toList());
@@ -86,7 +84,7 @@ public class ScoreboardData implements CollectorSerializable<Scoreboard> {
     }
 
     @Override
-    public int getContentVersion() {
+    public int contentVersion() {
         return 1;
     }
 

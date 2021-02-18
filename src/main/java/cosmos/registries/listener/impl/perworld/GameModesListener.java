@@ -13,13 +13,13 @@ public class GameModesListener extends AbstractPerWorldListener {
 
     @Listener
     public void onPostChangeEntityWorldEvent(final ChangeEntityWorldEvent.Post event, @First final ServerPlayer player) {
-        player.offer(Keys.GAME_MODE, event.getDestinationWorld().getProperties().gameMode());
+        player.offer(Keys.GAME_MODE, event.destinationWorld().properties().gameMode());
     }
 
     @Override
     public void start() {
-        Sponge.getServer().getOnlinePlayers().forEach(player ->
-                player.offer(Keys.GAME_MODE, player.getWorld().getProperties().gameMode())
+        Sponge.server().onlinePlayers().forEach(player ->
+                player.offer(Keys.GAME_MODE, player.world().properties().gameMode())
         );
     }
 

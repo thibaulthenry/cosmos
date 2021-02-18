@@ -7,19 +7,19 @@ public abstract class AbstractListener implements Listener {
     private boolean configurable;
     private boolean registered;
 
-    public boolean isConfigurable() {
+    public boolean configurable() {
         return configurable;
     }
 
-    public void setConfigurable(final boolean configurable) {
+    public void configurable(boolean configurable) {
         this.configurable = configurable;
     }
 
-    public boolean isRegistered() {
-        return registered;
+    public boolean registeredToSponge() {
+        return this.registered;
     }
 
-    public void setRegistered(final boolean registered) {
+    public void registeredToSponge(boolean registered) {
         this.registered = registered;
     }
 

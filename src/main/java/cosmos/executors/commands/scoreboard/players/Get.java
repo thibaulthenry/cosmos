@@ -1,12 +1,9 @@
 package cosmos.executors.commands.scoreboard.players;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.constants.CosmosKeys;
+import cosmos.constants.CosmosParameters;
 import cosmos.executors.commands.scoreboard.AbstractMultiTargetCommand;
-import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.scoreboard.ObjectiveAll;
-import cosmos.executors.parameters.impl.scoreboard.Targets;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -23,17 +20,16 @@ import java.util.stream.Collectors;
 @Singleton
 public class Get extends AbstractMultiTargetCommand {
 
-    @Inject
-    public Get(final Injector injector) {
+    public Get() {
         super(
-                injector.getInstance(Targets.class).build(),
-                injector.getInstance(ObjectiveAll.class).build()
+                CosmosParameters.TARGETS.get().build(),
+                CosmosParameters.OBJECTIVE_ALL.get().build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Collection<Component> targets) throws CommandException {
-        final Objective objective = context.getOne(CosmosKeys.OBJECTIVE)
+        final Objective objective = context.one(CosmosKeys.OBJECTIVE)
                 .orElseThrow(
                         super.serviceProvider.message()
                                 .getMessage(src, "error.invalid.objective")
@@ -44,16 +40,16 @@ public class Get extends AbstractMultiTargetCommand {
 
         final Collection<Component> contents = targets.stream()
                 .map(target -> {
-                    final Optional<Score> optionalScore = objective.getScore(target);
+                    final Optional<Score> optionalScore = objective.score(target);
 
                     return optionalScore
                             .map(score -> {
-                                super.success();
+                                super.addSuccess();
 
                                 return super.serviceProvider.message()
                                         .getMessage(src, "success.scoreboard.players.get")
                                         .replace("obj", objective)
-                                        .replace("score", score.getScore())
+                                        .replace("score", score.score())
                                         .replace("target", target)
                                         .green()
                                         .asText();

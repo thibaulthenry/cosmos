@@ -1,7 +1,7 @@
 package cosmos.executors.commands.properties;
 
 import com.google.inject.Singleton;
-import cosmos.executors.parameters.CosmosKeys;
+import cosmos.constants.CosmosKeys;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -14,12 +14,12 @@ import java.util.Optional;
 public class EnableCommandBlocks extends AbstractPropertiesCommand {
 
     public EnableCommandBlocks() {
-        super(Parameter.bool().setKey(CosmosKeys.STATE).optional().build());
+        super(Parameter.bool().key(CosmosKeys.STATE).optional().build());
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties) throws CommandException {
-        final Optional<Boolean> optionalInput = context.getOne(CosmosKeys.STATE);
+        final Optional<Boolean> optionalInput = context.one(CosmosKeys.STATE);
         boolean value = properties.commands();
 
         if (optionalInput.isPresent()) {

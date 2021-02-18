@@ -46,9 +46,11 @@ public class Message {
 
     public TextComponent asText() {
         return Optional.ofNullable(this.template)
-                .map(t -> t.toText(this.replacementMap, this.conditionMap, this.hoverEventMap, this.clickEventMap, this.defaultColor).color(this.defaultColor))
+                .map(t -> t.asText(this.replacementMap, this.conditionMap, this.hoverEventMap, this.clickEventMap, this.defaultColor))
+                .map(t -> t.color(this.defaultColor))
                 .orElseGet(() -> {
-                    Cosmos.getLogger().info("No template found for message result");
+                    Cosmos.logger().info("No template found for message result");
+
                     return Component.empty();
                 });
     }

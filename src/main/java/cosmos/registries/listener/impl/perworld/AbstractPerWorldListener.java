@@ -6,7 +6,7 @@ import cosmos.registries.listener.impl.AbstractListener;
 public abstract class AbstractPerWorldListener extends AbstractListener implements ToggleListener {
 
     protected AbstractPerWorldListener() {
-        super.setConfigurable(true);
+        super.configurable(true);
     }
 
 }

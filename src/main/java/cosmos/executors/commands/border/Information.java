@@ -25,31 +25,26 @@ import java.util.concurrent.CompletableFuture;
 public class Information extends AbstractBorderCommand {
 
     @Override
-    protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
-        src.sendMessage(CompletableFuture.supplyAsync(() -> getBorderInformation(src, properties, border)).join());
-    }
-
-    @Override
-    protected List<String> aliases() {
+    protected List<String> additionalAliases() {
         return Collections.singletonList("info");
     }
 
     private TextComponent getBorderInformation(final Audience src, final ServerWorldProperties properties, final WorldBorder border) {
-        final ResourceKey worldKey = properties.getKey();
-        final Vector3d center = border.getCenter();
+        final ResourceKey worldKey = properties.key();
+        final Vector3d center = border.center();
 
-        final double y = Sponge.getServer().getWorldManager().world(worldKey)
-                .map(world -> world.getHighestPositionAt(center.toInt()).getY())
+        final double y = Sponge.server().worldManager().world(worldKey)
+                .map(world -> world.highestPositionAt(center.toInt()).getY())
                 .orElse(1);
 
         final String command = MessageFormat.format("/cm move {0} {1} {2} {3} --safe-only", worldKey.asString(), center.getX(), y, center.getZ());
 
-        final long secondsRemaining = border.getTimeRemaining().getSeconds();
+        final long secondsRemaining = border.timeRemaining().getSeconds();
 
         final TextComponent contractingTextDetails = secondsRemaining > 0
                 ? super.serviceProvider.message()
                 .getMessage(src, "success.border.information.contracting.details")
-                .replace("diameter", border.getNewDiameter())
+                .replace("diameter", border.newDiameter())
                 .replace("time", secondsRemaining)
                 .gray()
                 .asText() :
@@ -57,22 +52,27 @@ public class Information extends AbstractBorderCommand {
 
         return super.serviceProvider.message()
                 .getMessage(src, "success.border.information")
-                .replace("amount", border.getDamageAmount())
+                .replace("amount", border.damageAmount())
                 .replace("center", center.toVector2(true))
                 .replace("contracting", secondsRemaining > 0
                         ? Component.text("✓", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true) :
                         Component.text("✗", NamedTextColor.RED).decoration(TextDecoration.BOLD, true)
                 )
                 .replace("details", contractingTextDetails)
-                .replace("diameter", border.getDiameter())
-                .replace("distance", border.getWarningDistance())
-                .replace("threshold", border.getDamageThreshold())
-                .replace("time", border.getWarningTime().getSeconds())
+                .replace("diameter", border.diameter())
+                .replace("distance", border.warningDistance())
+                .replace("threshold", border.damageThreshold())
+                .replace("time", border.warningTime().getSeconds())
                 .replace("world", properties)
                 .clickEvent("center", ClickEvent.suggestCommand(command))
                 .hoverEvent("center", HoverEvent.showText(super.serviceProvider.message().getText(src, "success.border.information.center.hover")))
                 .gray()
                 .asText();
+    }
+
+    @Override
+    protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
+        src.sendMessage(CompletableFuture.supplyAsync(() -> getBorderInformation(src, properties, border)).join());
     }
 
 }

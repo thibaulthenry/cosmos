@@ -12,7 +12,7 @@ public class Calendar extends AbstractTimeCommand {
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final MinecraftDayTime time) throws CommandException {
-        final long ticks = time.asTicks().getTicks();
+        final long ticks = time.asTicks().ticks();
 
         super.serviceProvider.message()
                 .getMessage(src, "success.time.get")

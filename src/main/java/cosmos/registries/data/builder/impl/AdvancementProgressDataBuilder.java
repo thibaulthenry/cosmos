@@ -28,23 +28,23 @@ public class AdvancementProgressDataBuilder extends AbstractDataBuilder<Advancem
 
     @Override
     protected Optional<AdvancementProgressData> buildContent(final DataView container) throws InvalidDataException {
-        final List<CriterionProgressData> criteriaProgressesData = container.getKeys(false)
+        final List<CriterionProgressData> criteriaProgressesData = container.keys(false)
                 .stream()
                 .map(container::getView)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(view -> {
-                    if (view.getKeys(false).size() > 2) {
-                        return Sponge.getDataManager().deserialize(ScoreCriterionProgressData.class, view);
+                    if (view.keys(false).size() > 2) {
+                        return Sponge.dataManager().deserialize(ScoreCriterionProgressData.class, view);
                     }
 
-                    return Sponge.getDataManager().deserialize(CriterionProgressData.class, view);
+                    return Sponge.dataManager().deserialize(CriterionProgressData.class, view);
                 })
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
 
-        return Optional.of(new AdvancementProgressData(criteriaProgressesData, container.getName()));
+        return Optional.of(new AdvancementProgressData(criteriaProgressesData, container.name()));
     }
 
 }

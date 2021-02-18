@@ -23,11 +23,6 @@ public class InventoriesSerializer implements Serializer<ExtendedInventoryData> 
     }
 
     @Override
-    public void serialize(final Path path, final ExtendedInventoryData data) {
-        this.finderService.writeToFile(data, path);
-    }
-
-    @Override
     public Optional<ExtendedInventoryData> deserialize(final Path path) {
         final DataContainer dataContainer = this.finderService.readFromFile(path).orElse(DataContainer.createNew());
 
@@ -35,7 +30,12 @@ public class InventoriesSerializer implements Serializer<ExtendedInventoryData> 
             return Optional.empty();
         }
 
-        return Sponge.getDataManager().deserialize(ExtendedInventoryData.class, dataContainer);
+        return Sponge.dataManager().deserialize(ExtendedInventoryData.class, dataContainer);
+    }
+
+    @Override
+    public void serialize(final Path path, final ExtendedInventoryData data) {
+        this.finderService.writeToFile(data, path);
     }
 
 }

@@ -22,15 +22,16 @@ public class AdvancementProgressData implements DataSerializable {
     private final String key;
 
     public AdvancementProgressData(final AdvancementProgress advancementProgress) {
-        final Advancement advancement = advancementProgress.getAdvancement();
-        final AdvancementCriterion advancementCriterion = advancement.getCriterion();
+        final Advancement advancement = advancementProgress.advancement();
+        final AdvancementCriterion advancementCriterion = advancement.criterion();
 
-        this.criteriaProgressesData = this.getCriterionProgresses(advancementProgress, advancementCriterion)
+        this.criteriaProgressesData = this.extractCriterionProgresses(advancementProgress, advancementCriterion)
                 .stream()
                 .filter(this::isCriterionProgressStarted)
                 .map(CriterionProgressData::new)
                 .collect(Collectors.toList());
-        this.key = advancement.getKey().getFormatted();
+
+        this.key = advancement.key().formatted();
     }
 
     public AdvancementProgressData(final List<CriterionProgressData> criteriaProgressesData, final String key) {
@@ -38,18 +39,23 @@ public class AdvancementProgressData implements DataSerializable {
         this.key = key;
     }
 
-    private Collection<CriterionProgress> getCriterionProgresses(final AdvancementProgress advancementProgress, final AdvancementCriterion rootCriterion) {
+    @Override
+    public int contentVersion() {
+        return 1;
+    }
+
+    private Collection<CriterionProgress> extractCriterionProgresses(final AdvancementProgress advancementProgress, final AdvancementCriterion rootCriterion) {
         if (!(rootCriterion instanceof OperatorCriterion)) {
             return advancementProgress.get(rootCriterion)
                     .map(Collections::singletonList)
                     .orElse(Collections.emptyList());
         }
 
-        return ((OperatorCriterion) rootCriterion).getCriteria()
+        return ((OperatorCriterion) rootCriterion).criteria()
                 .stream()
                 .map(advancementCriterion -> {
                     if (advancementCriterion instanceof OperatorCriterion) {
-                        return this.getCriterionProgresses(advancementProgress, advancementCriterion);
+                        return this.extractCriterionProgresses(advancementProgress, advancementCriterion);
                     }
 
                     return advancementProgress.get(advancementCriterion)
@@ -60,12 +66,7 @@ public class AdvancementProgressData implements DataSerializable {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public int getContentVersion() {
-        return 1;
-    }
-
-    public String getKey() {
+    public String key() {
         return this.key;
     }
 
@@ -75,7 +76,7 @@ public class AdvancementProgressData implements DataSerializable {
 
     private boolean isCriterionProgressStarted(final CriterionProgress criterionProgress) {
         if (criterionProgress instanceof ScoreCriterionProgress) {
-            return ((ScoreCriterionProgress) criterionProgress).getScore() > 0;
+            return ((ScoreCriterionProgress) criterionProgress).score() > 0;
         }
 
         return criterionProgress.achieved();
@@ -84,8 +85,7 @@ public class AdvancementProgressData implements DataSerializable {
     @Override
     public DataContainer toContainer() {
         final DataContainer dataContainer = DataContainer.createNew(DataView.SafetyMode.NO_DATA_CLONED);
-
-        this.criteriaProgressesData.forEach(data -> dataContainer.set(DataQuery.of(data.getName()), data));
+        this.criteriaProgressesData.forEach(data -> dataContainer.set(DataQuery.of(data.name()), data));
 
         return dataContainer;
     }

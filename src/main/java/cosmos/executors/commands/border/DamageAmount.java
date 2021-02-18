@@ -1,7 +1,7 @@
 package cosmos.executors.commands.border;
 
 import com.google.inject.Singleton;
-import cosmos.executors.parameters.CosmosKeys;
+import cosmos.constants.CosmosKeys;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -15,13 +15,13 @@ import java.util.Optional;
 public class DamageAmount extends AbstractBorderCommand {
 
     public DamageAmount() {
-        super(Parameter.doubleNumber().setKey(CosmosKeys.AMOUNT_DOUBLE).optional().build());
+        super(Parameter.doubleNumber().key(CosmosKeys.AMOUNT_DOUBLE).optional().build());
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
-        final Optional<Double> optionalInput = context.getOne(CosmosKeys.AMOUNT_DOUBLE);
-        double value = border.getDamageAmount();
+        final Optional<Double> optionalInput = context.one(CosmosKeys.AMOUNT_DOUBLE);
+        double value = border.damageAmount();
 
         if (optionalInput.isPresent()) {
             value = optionalInput.get();

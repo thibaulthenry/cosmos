@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.registries.CosmosRegistry;
+import cosmos.registries.CosmosRegistryEntry;
 import cosmos.registries.data.builder.impl.AdvancementProgressDataBuilder;
 import cosmos.registries.data.builder.impl.AdvancementTreeDataBuilder;
 import cosmos.registries.data.builder.impl.BackupArchetypeDataBuilder;
@@ -36,12 +37,21 @@ import cosmos.registries.data.serializable.impl.ScoreCriterionProgressData;
 import cosmos.registries.data.serializable.impl.ScoreData;
 import cosmos.registries.data.serializable.impl.ScoreboardData;
 import cosmos.registries.data.serializable.impl.TeamData;
+import cosmos.registries.portal.CosmosButtonPortal;
+import cosmos.registries.portal.CosmosFramePortal;
+import cosmos.registries.portal.CosmosPressurePlatePortal;
+import cosmos.registries.portal.CosmosSignPortal;
+import cosmos.registries.portal.impl.CosmosButtonPortalBuilderImpl;
+import cosmos.registries.portal.impl.CosmosFramePortalBuilderImpl;
+import cosmos.registries.portal.impl.CosmosPressurePlatePortalBuilderImpl;
+import cosmos.registries.portal.impl.CosmosSignPortalBuilderImpl;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.persistence.DataBuilder;
 import org.spongepowered.api.data.persistence.DataSerializable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Stream;
 
 @Singleton
 public class DataBuilderRegistry implements CosmosRegistry<Class<? extends DataSerializable>, DataBuilder<? extends DataSerializable>> {
@@ -53,6 +63,10 @@ public class DataBuilderRegistry implements CosmosRegistry<Class<? extends DataS
         this.dataBuilderMap.put(AdvancementProgressData.class, injector.getInstance(AdvancementProgressDataBuilder.class));
         this.dataBuilderMap.put(AdvancementTreeData.class, injector.getInstance(AdvancementTreeDataBuilder.class));
         this.dataBuilderMap.put(BackupArchetypeData.class, injector.getInstance(BackupArchetypeDataBuilder.class));
+        this.dataBuilderMap.put(CosmosButtonPortal.class, injector.getInstance(CosmosButtonPortalBuilderImpl.class));
+        this.dataBuilderMap.put(CosmosFramePortal.class, injector.getInstance(CosmosFramePortalBuilderImpl.class));
+        this.dataBuilderMap.put(CosmosPressurePlatePortal.class, injector.getInstance(CosmosPressurePlatePortalBuilderImpl.class));
+        this.dataBuilderMap.put(CosmosSignPortal.class, injector.getInstance(CosmosSignPortalBuilderImpl.class));
         this.dataBuilderMap.put(CriterionProgressData.class, injector.getInstance(CriterionProgressDataBuilder.class));
         this.dataBuilderMap.put(DisplaySlotData.class, injector.getInstance(DisplaySlotDataBuilder.class));
         this.dataBuilderMap.put(ExperienceData.class, injector.getInstance(ExperienceDataBuilder.class));
@@ -68,18 +82,21 @@ public class DataBuilderRegistry implements CosmosRegistry<Class<? extends DataS
         this.dataBuilderMap.put(TeamData.class, injector.getInstance(TeamDataBuilder.class));
     }
 
-    public Set<Map.Entry<Class<? extends DataSerializable>, DataBuilder<? extends DataSerializable>>> entries() {
-        return this.dataBuilderMap.entrySet();
+    @SuppressWarnings("unchecked")
+    public <T extends DataSerializable> void registerAll() {
+        this.streamEntries().forEach(entry ->
+                Sponge.dataManager().registerBuilder((Class<T>) entry.key(), (DataBuilder<T>) entry.value())
+        );
     }
 
     @Override
-    public DataBuilder<? extends DataSerializable> get(final Class<? extends DataSerializable> key) {
+    public Stream<CosmosRegistryEntry<Class<? extends DataSerializable>, DataBuilder<? extends DataSerializable>>> streamEntries() {
+        return this.dataBuilderMap.entrySet().stream().map(entry -> CosmosRegistryEntry.of(entry.getKey(), entry.getValue()));
+    }
+
+    @Override
+    public DataBuilder<? extends DataSerializable> value(final Class<? extends DataSerializable> key) {
         return this.dataBuilderMap.get(key);
-    }
-
-    @Override
-    public boolean has(final Class<? extends DataSerializable> key) {
-        return this.dataBuilderMap.containsKey(key);
     }
 
 }

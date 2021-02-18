@@ -17,34 +17,28 @@ import java.util.Optional;
 import java.util.Set;
 
 @ImplementedBy(ScoreboardsServiceImpl.class)
-public interface ScoreboardsService extends WorldRelatedPerWorldService {
+public interface ScoreboardsService {
+
+    int extremum(CommandContext context, Parameter.Key<Integer> integerKey, boolean negativeBound) throws CommandException;
 
     Optional<Integer> findExtremum(CommandContext context, Parameter.Key<Integer> integerKey, boolean negativeBound);
 
     Optional<Component> findComponent(CommandContext context);
 
-    int getExtremum(CommandContext context, Parameter.Key<Integer> integerKey, boolean negativeBound) throws CommandException;
-
-    Set<Objective> getObjectives(ResourceKey worldKey);
-
-    Set<Objective> getObjectives(Scoreboard scoreboard);
-
-    Scoreboard getOrCreateScoreboard(ResourceKey worldKey);
-
-    Scoreboard getOrCreateScoreboard(ServerWorld world);
-
-    Collection<Scoreboard> getScoreboards();
-
-    Collection<Component> getTargets(CommandContext context, ResourceKey worldKey, boolean returnSource) throws CommandException;
-
-    Set<Team> getTeams(ResourceKey worldKey);
-
-    Set<Team> getTeams(Scoreboard scoreboard);
-
-    Collection<Component> getScoreHolders(ResourceKey worldKey);
-
-    Collection<Component> getScoreHolders(Scoreboard scoreboard);
-
     boolean isTargetsParameterFilled(CommandContext context);
+
+    Set<Objective> objectives(ResourceKey worldKey);
+
+    Scoreboard scoreboardOrCreate(ResourceKey worldKey);
+
+    Scoreboard scoreboardOrCreate(ServerWorld world);
+
+    Collection<Component> scoreHolders(ResourceKey worldKey);
+
+    Collection<Component> sources(CommandContext context, ResourceKey worldKey, boolean returnSource) throws CommandException;
+
+    Collection<Component> targets(CommandContext context, ResourceKey worldKey, boolean returnSource) throws CommandException;
+
+    Set<Team> teams(ResourceKey worldKey);
 
 }

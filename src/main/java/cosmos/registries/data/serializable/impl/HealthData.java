@@ -4,7 +4,6 @@ import cosmos.constants.Queries;
 import cosmos.registries.data.serializable.ShareableSerializable;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.data.persistence.DataContainer;
-import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 public class HealthData implements ShareableSerializable<ServerPlayer> {
@@ -19,7 +18,7 @@ public class HealthData implements ShareableSerializable<ServerPlayer> {
         this.maxHealth = player.maxHealth().get();
     }
 
-    public HealthData(final double health, final double maxHealth, final double absorption) {
+    public HealthData(final double absorption, final double health, final double maxHealth) {
         this.absorption = absorption;
         this.health = health;
         this.maxHealth = maxHealth;
@@ -32,7 +31,7 @@ public class HealthData implements ShareableSerializable<ServerPlayer> {
     }
 
     @Override
-    public int getContentVersion() {
+    public int contentVersion() {
         return 1;
     }
 

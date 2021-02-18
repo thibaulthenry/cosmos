@@ -35,7 +35,7 @@ public class ScoreboardDataBuilder extends AbstractDataBuilder<ScoreboardData> {
         final List<DisplaySlotData> displaySlotsData = container.getViewList(Queries.Scoreboards.DISPLAY_SLOTS)
                 .map(viewList -> viewList
                         .stream()
-                        .map(view -> Sponge.getDataManager().deserialize(DisplaySlotData.class, view))
+                        .map(view -> Sponge.dataManager().deserialize(DisplaySlotData.class, view))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(Collectors.toList())
@@ -45,7 +45,7 @@ public class ScoreboardDataBuilder extends AbstractDataBuilder<ScoreboardData> {
         final List<ObjectiveData> objectivesData = container.getViewList(Queries.Scoreboards.OBJECTIVES)
                 .map(viewList -> viewList
                         .stream()
-                        .map(view -> Sponge.getDataManager().deserialize(ObjectiveData.class, view))
+                        .map(view -> Sponge.dataManager().deserialize(ObjectiveData.class, view))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(Collectors.toList())
@@ -55,7 +55,7 @@ public class ScoreboardDataBuilder extends AbstractDataBuilder<ScoreboardData> {
         final List<ScoreData> scoresData = container.getViewList(Queries.Scoreboards.SCORES)
                 .map(viewList -> viewList
                         .stream()
-                        .map(view -> Sponge.getDataManager().deserialize(ScoreData.class, view))
+                        .map(view -> Sponge.dataManager().deserialize(ScoreData.class, view))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(Collectors.toList())
@@ -65,7 +65,7 @@ public class ScoreboardDataBuilder extends AbstractDataBuilder<ScoreboardData> {
         final List<TeamData> teamsData = container.getViewList(Queries.Scoreboards.TEAMS)
                 .map(viewList -> viewList
                         .stream()
-                        .map(view -> Sponge.getDataManager().deserialize(TeamData.class, view))
+                        .map(view -> Sponge.dataManager().deserialize(TeamData.class, view))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(Collectors.toList())

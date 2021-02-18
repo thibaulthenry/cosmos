@@ -1,12 +1,9 @@
 package cosmos.executors.commands.root;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.constants.CosmosKeys;
+import cosmos.constants.CosmosParameters;
 import cosmos.executors.commands.AbstractCommand;
-import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.CosmosParameters;
-import cosmos.executors.parameters.impl.world.WorldOnline;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -22,65 +19,61 @@ import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.api.world.server.ServerWorld;
 import org.spongepowered.math.vector.Vector3d;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
 public class Move extends AbstractCommand {
 
-    @Inject
-    public Move(final Injector injector) {
+    public Move() {
         super(
-                CosmosParameters.ENTITY_TARGETS_OPTIONAL,
-                injector.getInstance(WorldOnline.class).optional().build(),
-                Parameter.vector3d().setKey(CosmosKeys.XYZ).optional().build(),
-                Parameter.vector3d().setKey(CosmosKeys.PITCH_YAW_ROLL).optional().build()
+                CosmosParameters.ENTITIES.get().key(CosmosKeys.ENTITIES).optional().build(),
+                CosmosParameters.WORLD_ONLINE.get().build(),
+                Parameter.vector3d().key(CosmosKeys.X_Y_Z).optional().build(),
+                Parameter.vector3d().key(CosmosKeys.PITCH_YAW_ROLL).optional().build()
         );
     }
 
     @Override
-    protected List<String> aliases() {
+    protected List<String> additionalAliases() {
         return Arrays.asList("mv", "tp");
     }
 
     @Override
     protected Flag[] flags() {
-        return new Flag[]{Flag.of(CosmosKeys.FLAG_SAFE_ONLY)};
+        return new Flag[]{Flag.of(CosmosKeys.Flag.SAFE_ONLY)};
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
-        final ResourceKey worldKey = super.serviceProvider.world().getKeyOrSource(context);
+        final ResourceKey worldKey = super.serviceProvider.world().keyOrSource(context);
 
-        final ServerWorld world = Sponge.getServer().getWorldManager().world(worldKey)
-                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.missing.world", "parameter", worldKey));
+        final ServerWorld world = Sponge.server().worldManager().world(worldKey)
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.missing.world", "world", worldKey));
 
-        final Optional<List<Entity>> optionalEntities = context.getOne(CosmosParameters.ENTITY_TARGETS_OPTIONAL);
+        final Optional<List<Entity>> optionalEntities = context.one(CosmosKeys.ENTITIES);
 
         if (optionalEntities.isPresent() && optionalEntities.get().isEmpty()) {
-            throw super.serviceProvider.message().getError(src, "error.invalid.value", "param", CosmosKeys.ENTITY_TARGETS);
+            throw super.serviceProvider.message().getError(src, "error.invalid.value", "param", CosmosKeys.ENTITIES);
         }
 
         if (!(optionalEntities.isPresent() || src instanceof Entity)) {
-            throw super.serviceProvider.message().getError(src, "error.missing.entities");
+            throw super.serviceProvider.message().getError(src, "error.missing.entities.any");
         }
 
-        final Optional<Vector3d> optionalPosition = context.getOne(CosmosKeys.XYZ);
-        final ServerLocation location = optionalPosition.map(world::getLocation).orElse(world.getLocation(world.getProperties().spawnPosition()));
-        final Vector3d position = location.getPosition();
-        final Vector3d rotation = context.getOne(CosmosKeys.PITCH_YAW_ROLL).orElse(null);
-        final boolean safeOnly = context.hasFlag(CosmosKeys.FLAG_SAFE_ONLY);
+        final Optional<Vector3d> optionalPosition = context.one(CosmosKeys.X_Y_Z);
+        final ServerLocation location = optionalPosition.map(world::location).orElse(world.location(world.properties().spawnPosition()));
+        final Vector3d position = location.position();
+        final Vector3d rotation = context.one(CosmosKeys.PITCH_YAW_ROLL).orElse(null);
+        final boolean safeOnly = context.hasFlag(CosmosKeys.Flag.SAFE_ONLY);
 
-        final Collection<Component> contents = context.getOne(CosmosParameters.ENTITY_TARGETS_OPTIONAL)
+        final Collection<Component> contents = context.one(CosmosKeys.ENTITIES)
                 .orElse(Collections.singletonList((Entity) src))
                 .stream()
                 .map(target -> {
                     final boolean other = !super.serviceProvider.validation().isSelf(src, target);
-                    final String targetName = target instanceof Tamer ? ((Tamer) target).getName() : target.getUniqueId().toString();
+                    final String targetName = target instanceof Tamer ? ((Tamer) target).name() : target.uniqueId().toString();
 
                     if (!super.serviceProvider.transportation().teleport(target, location, rotation, safeOnly)) {
                         return super.serviceProvider.message()

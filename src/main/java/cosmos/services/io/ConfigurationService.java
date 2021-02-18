@@ -1,7 +1,6 @@
 package cosmos.services.io;
 
 import com.google.inject.ImplementedBy;
-import cosmos.registries.listener.Listener;
 import cosmos.services.CosmosService;
 import cosmos.services.io.impl.ConfigurationServiceImpl;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -11,9 +10,7 @@ import java.util.Optional;
 @ImplementedBy(ConfigurationServiceImpl.class)
 public interface ConfigurationService extends CosmosService {
 
-    String formatListener(Class<? extends Listener> listener);
-
-    Optional<ConfigurationNode> getNode(Object... paths);
+    Optional<ConfigurationNode> findNode(Object... paths);
 
     boolean isEnabled(ConfigurationNode configurationNode);
 

@@ -1,6 +1,7 @@
 package cosmos.constants;
 
 public enum Operands {
+
     PLUS("+="),
     MINUS("-="),
     TIMES("*="),
@@ -17,7 +18,7 @@ public enum Operands {
         this.operand = operand;
     }
 
-    public String getOperand() {
+    public String operand() {
         return this.operand;
     }
 

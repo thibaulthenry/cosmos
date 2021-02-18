@@ -5,7 +5,6 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.registries.message.Message;
 import cosmos.registries.template.Template;
-import cosmos.services.io.FinderService;
 import cosmos.services.message.MessageService;
 import cosmos.services.template.TemplateService;
 import net.kyori.adventure.audience.Audience;
@@ -13,7 +12,6 @@ import net.kyori.adventure.text.TextComponent;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.data.Keys;
-import org.spongepowered.api.entity.living.player.client.ClientPlayer;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 import java.util.Locale;
@@ -55,12 +53,12 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Message getMessage(final CommandContext context, final String key) {
-        return this.getMessage(context.getCause().getAudience(), key);
+        return this.getMessage(context.cause().audience(), key);
     }
 
     @Override
     public Message getMessage(final Locale locale, final String key) {
-        return this.getMessage(this.templateService.getTemplateRegistry(locale).get(key));
+        return this.getMessage(this.templateService.templateRegistry(locale).value(key));
     }
 
     @Override

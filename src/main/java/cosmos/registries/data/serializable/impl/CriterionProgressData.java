@@ -15,10 +15,8 @@ public class CriterionProgressData implements DataSerializable {
     private final String name;
 
     public CriterionProgressData(final CriterionProgress criterionProgress) {
-        this.date = DateTimeFormatter.ISO_OFFSET_DATE_TIME
-                .withZone(ZoneId.systemDefault())
-                .format(criterionProgress.get().orElse(Instant.now()));
-        this.name = criterionProgress.getCriterion().getName();
+        this.date = DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(ZoneId.systemDefault()).format(criterionProgress.get().orElse(Instant.now()));
+        this.name = criterionProgress.criterion().name();
     }
 
     public CriterionProgressData(final String date, final String name) {
@@ -27,11 +25,11 @@ public class CriterionProgressData implements DataSerializable {
     }
 
     @Override
-    public int getContentVersion() {
+    public int contentVersion() {
         return 1;
     }
 
-    public String getName() {
+    public String name() {
         return this.name;
     }
 

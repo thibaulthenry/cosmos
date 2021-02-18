@@ -5,8 +5,8 @@ import java.util.Optional;
 
 public interface Serializer<T> {
 
-    void serialize(Path path, T data);
-
     Optional<T> deserialize(Path path);
+
+    void serialize(Path path, T data);
 
 }

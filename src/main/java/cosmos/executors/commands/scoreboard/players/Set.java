@@ -1,13 +1,10 @@
 package cosmos.executors.commands.scoreboard.players;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.constants.CosmosKeys;
+import cosmos.constants.CosmosParameters;
 import cosmos.constants.Units;
 import cosmos.executors.commands.scoreboard.AbstractMultiTargetCommand;
-import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.scoreboard.ObjectiveAll;
-import cosmos.executors.parameters.impl.scoreboard.Targets;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -23,18 +20,17 @@ import java.util.stream.Collectors;
 @Singleton
 public class Set extends AbstractMultiTargetCommand {
 
-    @Inject
-    public Set(final Injector injector) {
+    public Set() {
         super(
-                injector.getInstance(Targets.class).build(),
-                injector.getInstance(ObjectiveAll.class).build(),
-                Parameter.integerNumber().setKey(CosmosKeys.SCORE).build()
+                CosmosParameters.TARGETS.get().build(),
+                CosmosParameters.OBJECTIVE_ALL.get().build(),
+                Parameter.integerNumber().key(CosmosKeys.SCORE).build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Collection<Component> targets) throws CommandException {
-        final Objective objective = context.getOne(CosmosKeys.OBJECTIVE)
+        final Objective objective = context.one(CosmosKeys.OBJECTIVE)
                 .orElseThrow(
                         super.serviceProvider.message()
                                 .getMessage(src, "error.invalid.objective")
@@ -43,7 +39,7 @@ public class Set extends AbstractMultiTargetCommand {
                                 .asSupplier()
                 );
 
-        final int score = context.getOne(CosmosKeys.SCORE)
+        final int score = context.one(CosmosKeys.SCORE)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.SCORE));
 
         final Collection<Component> contents = targets.stream().map(target -> {
@@ -55,8 +51,8 @@ public class Set extends AbstractMultiTargetCommand {
                         .asText();
             }
 
-            objective.getOrCreateScore(target).setScore(score);
-            super.success();
+            objective.scoreOrCreate(target).setScore(score);
+            super.addSuccess();
 
             return super.serviceProvider.message()
                     .getMessage(src, "success.scoreboard.players.set")

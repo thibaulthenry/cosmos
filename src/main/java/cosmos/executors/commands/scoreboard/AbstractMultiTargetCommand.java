@@ -30,7 +30,7 @@ public abstract class AbstractMultiTargetCommand extends AbstractScoreboardComma
 
     @Override
     protected final void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Scoreboard scoreboard) throws CommandException {
-        this.run(src, context, worldKey, super.serviceProvider.perWorld().scoreboards().getTargets(context, worldKey, this.returnSource));
+        this.run(src, context, worldKey, super.serviceProvider.scoreboards().targets(context, worldKey, this.returnSource));
     }
 
     protected abstract void run(Audience src, CommandContext context, ResourceKey worldKey, Collection<Component> targets) throws CommandException;

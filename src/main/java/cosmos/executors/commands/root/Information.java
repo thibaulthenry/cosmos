@@ -13,7 +13,7 @@ import java.util.List;
 public class Information extends AbstractCommand {
 
     @Override
-    protected List<String> aliases() {
+    protected List<String> additionalAliases() {
         return Collections.singletonList("info");
     }
 

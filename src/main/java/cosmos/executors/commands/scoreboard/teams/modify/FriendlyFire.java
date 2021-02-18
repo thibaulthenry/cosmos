@@ -1,9 +1,8 @@
 package cosmos.executors.commands.scoreboard.teams.modify;
 
 import com.google.common.base.CaseFormat;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import cosmos.executors.parameters.CosmosKeys;
+import cosmos.constants.CosmosKeys;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
@@ -15,14 +14,13 @@ import org.spongepowered.api.scoreboard.Team;
 @Singleton
 public class FriendlyFire extends AbstractTeamModifyCommand {
 
-    @Inject
     public FriendlyFire() {
-        super(Parameter.bool().setKey(CosmosKeys.STATE).build());
+        super(Parameter.bool().key(CosmosKeys.STATE).build());
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Scoreboard scoreboard, final Team team) throws CommandException {
-        final boolean state = context.getOne(CosmosKeys.STATE)
+        final boolean state = context.one(CosmosKeys.STATE)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.STATE));
 
         team.setAllowFriendlyFire(state);

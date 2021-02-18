@@ -3,7 +3,6 @@ package cosmos.registries.data.selector.impl;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
 import org.spongepowered.api.ResourceKey;
-import org.spongepowered.api.ResourceKeyed;
 import org.spongepowered.api.command.selector.Selector;
 import org.spongepowered.api.command.selector.SelectorType;
 

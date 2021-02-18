@@ -23,11 +23,6 @@ public class ExperiencesSerializer implements Serializer<ExperienceData> {
     }
 
     @Override
-    public void serialize(final Path path, final ExperienceData data) {
-        this.finderService.writeToFile(data, path);
-    }
-
-    @Override
     public Optional<ExperienceData> deserialize(Path path) {
         final DataContainer dataContainer = this.finderService.readFromFile(path).orElse(new ExperienceData().toContainer());
 
@@ -35,7 +30,12 @@ public class ExperiencesSerializer implements Serializer<ExperienceData> {
             return Optional.empty();
         }
 
-        return Sponge.getDataManager().deserialize(ExperienceData.class, dataContainer);
+        return Sponge.dataManager().deserialize(ExperienceData.class, dataContainer);
+    }
+
+    @Override
+    public void serialize(final Path path, final ExperienceData data) {
+        this.finderService.writeToFile(data, path);
     }
 
 }

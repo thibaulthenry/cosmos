@@ -26,19 +26,19 @@ public interface WorldService extends CosmosService {
 
     Optional<ResourceKey> findKeyOrSource(CommandContext context, Parameter.Key<ResourceKey> worldKey);
 
-    ResourceKey getKeyOrSource(CommandContext context) throws CommandException;
-
-    ResourceKey getKeyOrSource(CommandContext context, Parameter.Key<ResourceKey> worldKey) throws CommandException;
-
-    ServerWorldProperties getPropertiesOrSource(CommandContext context) throws CommandException;
-
     boolean isImported(ResourceKey worldKey);
 
     boolean isOnline(ResourceKey worldKey);
 
     boolean isOffline(ResourceKey worldKey);
 
+    ResourceKey keyOrSource(CommandContext context) throws CommandException;
+
+    ResourceKey keyOrSource(CommandContext context, Parameter.Key<ResourceKey> worldKey) throws CommandException;
+
     void load(Audience src, ResourceKey worldKey, boolean checkOffline) throws CommandException;
+
+    ServerWorldProperties propertiesOrSource(CommandContext context) throws CommandException;
 
     void rename(Audience src, ResourceKey worldKey, ResourceKey renameKey, boolean checkNonexistent) throws CommandException;
 

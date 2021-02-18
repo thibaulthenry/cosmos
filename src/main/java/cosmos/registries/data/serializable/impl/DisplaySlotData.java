@@ -15,7 +15,7 @@ public class DisplaySlotData implements ShareableSerializable<Scoreboard> {
 
     public DisplaySlotData(final DisplaySlot displaySlot, final Objective objective) {
         this.displaySlot = displaySlot;
-        this.objective = objective.getName();
+        this.objective = objective.name();
     }
 
     public DisplaySlotData(final DisplaySlot displaySlot, final String objective) {
@@ -24,13 +24,13 @@ public class DisplaySlotData implements ShareableSerializable<Scoreboard> {
     }
 
     @Override
-    public int getContentVersion() {
+    public int contentVersion() {
         return 1;
     }
 
     @Override
     public void share(final Scoreboard data) {
-        data.getObjective(this.objective).ifPresent(objective -> data.updateDisplaySlot(objective, this.displaySlot));
+        data.objective(this.objective).ifPresent(objective -> data.updateDisplaySlot(objective, this.displaySlot));
     }
 
     @Override

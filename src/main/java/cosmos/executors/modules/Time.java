@@ -3,24 +3,16 @@ package cosmos.executors.modules;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import cosmos.executors.commands.time.Calendar;
-import cosmos.executors.commands.time.Dawn;
-import cosmos.executors.commands.time.Dusk;
-import cosmos.executors.commands.time.IgnorePlayersSleeping;
-import cosmos.executors.commands.time.Midday;
-import cosmos.executors.commands.time.Midnight;
-import cosmos.executors.commands.time.RealTime;
-import cosmos.executors.commands.time.Set;
-import cosmos.executors.commands.time.Tomorrow;
-import cosmos.executors.parameters.impl.world.WorldAll;
+import cosmos.constants.CosmosParameters;
+import cosmos.executors.commands.time.*;
 
 @Singleton
 class Time extends AbstractModule {
 
     @Inject
-    public Time(final Injector injector) {
+    Time(final Injector injector) {
         super(
-                injector.getInstance(WorldAll.class).optional().build(),
+                CosmosParameters.WORLD_ALL.get().optional().build(),
                 injector.getInstance(Calendar.class),
                 injector.getInstance(Dawn.class),
                 injector.getInstance(Dusk.class),

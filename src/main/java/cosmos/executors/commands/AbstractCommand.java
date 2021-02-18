@@ -2,7 +2,6 @@ package cosmos.executors.commands;
 
 import cosmos.executors.AbstractExecutor;
 import net.kyori.adventure.audience.Audience;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.exception.CommandException;
@@ -26,50 +25,50 @@ public abstract class AbstractCommand extends AbstractExecutor {
         this.permission = this.getClass().getPackage().getName().replace(".executors", "") + "." + commandName;
     }
 
+    protected void addSuccess() {
+        this.addSuccess(1);
+    }
+
+    protected void addSuccess(final int successAmount) {
+        this.successCount += successAmount;
+    }
+
     @Override
     public final CommandResult execute(final Audience src, final CommandContext context) throws CommandException {
         this.successCount = this.initializeSuccessCount();
-        this.run(context.getCause().getAudience(), context);
+        this.run(context.cause().audience(), context);
 
-        return CommandResult.builder().setResult(this.successCount).build();
+        return CommandResult.builder().result(this.successCount).build();
     }
 
     protected Flag[] flags() {
         return new Flag[0];
     }
 
+    protected int initializeSuccessCount() {
+        return 1;
+    }
+
     @Override
-    public Command.Parameterized getParametrized() {
+    public Command.Parameterized parametrized() {
         if (this.parameterized != null) {
             return this.parameterized;
         }
 
         this.parameterized = Command.builder()
-                // todo
-                .parameters(this.parameters)
-                .setPermission(this.permission)
-                .setExecutor(this)
+                .addFlags(this.flags)
+                .addParameters(this.parameters)
+                .executor(this)
+                .permission(this.permission)
                 .build();
 
         return this.parameterized;
     }
 
-    public String getPermission() {
+    public String permission() {
         return this.permission;
     }
 
-    protected int initializeSuccessCount() {
-        return 1;
-    }
-
     protected abstract void run(Audience src, CommandContext context) throws CommandException;
-
-    protected void success() {
-        this.success(1);
-    }
-
-    protected void success(int successAmount) {
-        this.successCount += successAmount;
-    }
 
 }

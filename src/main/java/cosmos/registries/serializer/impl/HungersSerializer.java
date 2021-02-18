@@ -23,11 +23,6 @@ public class HungersSerializer implements Serializer<HungerData> {
     }
 
     @Override
-    public void serialize(final Path path, final HungerData data) {
-        this.finderService.writeToFile(data, path);
-    }
-
-    @Override
     public Optional<HungerData> deserialize(final Path path) {
         final DataContainer dataContainer = this.finderService.readFromFile(path).orElse(new HungerData().toContainer());
 
@@ -35,7 +30,12 @@ public class HungersSerializer implements Serializer<HungerData> {
             return Optional.empty();
         }
 
-        return Sponge.getDataManager().deserialize(HungerData.class, dataContainer);
+        return Sponge.dataManager().deserialize(HungerData.class, dataContainer);
+    }
+
+    @Override
+    public void serialize(final Path path, final HungerData data) {
+        this.finderService.writeToFile(data, path);
     }
 
 }

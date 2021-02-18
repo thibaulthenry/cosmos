@@ -34,12 +34,15 @@ public class ObjectiveDataBuilder extends AbstractDataBuilder<ObjectiveData> {
 
         final Criterion criterion = container.getRegistryValue(Queries.Scoreboards.Objective.CRITERION, RegistryTypes.CRITERION)
                 .orElseThrow(() -> new InvalidDataException("Missing criterion while building ObjectiveData"));
-        final String displayName = container.getString(Queries.Scoreboards.Objective.DISPLAY_NAME)
-                .orElseThrow(() -> new InvalidDataException("Missing display name while building ObjectiveData"));
-        final String name = container.getString(Queries.Scoreboards.Objective.NAME)
-                .orElseThrow(() -> new InvalidDataException("Missing name while building ObjectiveData"));
+
         final ObjectiveDisplayMode displayMode = container.getRegistryValue(Queries.Scoreboards.Objective.DISPLAY_MODE, RegistryTypes.OBJECTIVE_DISPLAY_MODE)
                 .orElseThrow(() -> new InvalidDataException("Missing display mode while building ObjectiveData"));
+
+        final String displayName = container.getString(Queries.Scoreboards.Objective.DISPLAY_NAME)
+                .orElseThrow(() -> new InvalidDataException("Missing display name while building ObjectiveData"));
+
+        final String name = container.getString(Queries.Scoreboards.Objective.NAME)
+                .orElseThrow(() -> new InvalidDataException("Missing name while building ObjectiveData"));
 
         return Optional.of(new ObjectiveData(criterion, displayMode, displayName, name));
     }

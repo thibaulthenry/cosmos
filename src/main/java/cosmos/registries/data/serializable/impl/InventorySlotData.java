@@ -5,10 +5,10 @@ import cosmos.constants.Queries;
 import cosmos.registries.data.serializable.ShareableSerializable;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.data.persistence.DataContainer;
-import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.Slot;
+import org.spongepowered.api.registry.RegistryTypes;
 
 public class InventorySlotData implements ShareableSerializable<Inventory> {
 
@@ -26,7 +26,7 @@ public class InventorySlotData implements ShareableSerializable<Inventory> {
     }
 
     @Override
-    public int getContentVersion() {
+    public int contentVersion() {
         return 1;
     }
 
@@ -40,13 +40,9 @@ public class InventorySlotData implements ShareableSerializable<Inventory> {
             return;
         }
 
-        final int fail = data.set(this.slotIndex, this.slotStack).getRejectedItems().size();
-
-        // todo
-
-        if (fail > 0) {
-            Cosmos.getLogger().warn("Fail for " + fail + " items");
-        }
+        data.set(this.slotIndex, this.slotStack)
+                .rejectedItems()
+                .forEach(items -> Cosmos.logger().warn("Failed to share " + items.quantity() + " " + items.type().key(RegistryTypes.ITEM_TYPE)));
     }
 
     @Override

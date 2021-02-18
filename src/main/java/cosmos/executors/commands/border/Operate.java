@@ -1,9 +1,9 @@
 package cosmos.executors.commands.border;
 
 import com.google.inject.Singleton;
+import cosmos.constants.CosmosKeys;
+import cosmos.constants.CosmosParameters;
 import cosmos.constants.Operands;
-import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -18,22 +18,22 @@ public class Operate extends AbstractBorderCommand {
 
     public Operate() {
         super(
-                CosmosParameters.STANDARD_OPERAND,
-                Parameter.doubleNumber().setKey(CosmosKeys.AMOUNT_DOUBLE).build(),
-                CosmosParameters.DURATION_WITH_TIME_UNIT_OPTIONAL
+                CosmosParameters.STANDARD_OPERAND.get().key(CosmosKeys.OPERAND).build(),
+                Parameter.doubleNumber().key(CosmosKeys.AMOUNT_DOUBLE).build(),
+                CosmosParameters.DURATION_WITH_UNIT.get().optional().build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
-        final Operands operand = context.getOne(CosmosParameters.STANDARD_OPERAND)
+        final Operands operand = context.one(CosmosKeys.OPERAND)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.OPERAND));
-        final double value = context.getOne(CosmosKeys.AMOUNT_DOUBLE)
+        final double value = context.one(CosmosKeys.AMOUNT_DOUBLE)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.AMOUNT_DOUBLE));
-        final long duration = context.getOne(CosmosKeys.DURATION).orElse(0L);
-        final ChronoUnit unit = context.getOne(CosmosKeys.TIME_UNIT).orElse(ChronoUnit.SECONDS);
+        final long duration = context.one(CosmosKeys.DURATION).orElse(0L);
+        final ChronoUnit unit = context.one(CosmosKeys.TIME_UNIT).orElse(ChronoUnit.SECONDS);
 
-        final double startDiameter = border.getDiameter();
+        final double startDiameter = border.diameter();
         final double endDiameter;
 
         switch (operand) {

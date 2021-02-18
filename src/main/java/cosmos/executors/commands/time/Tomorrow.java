@@ -7,11 +7,12 @@ import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.util.MinecraftDayTime;
 
 @Singleton
-public class Tomorrow extends AbstractTimeChangeCommand {
+public class Tomorrow extends AbstractTimeModifyCommand {
 
     @Override
-    protected long getNewTime(final Audience src, final CommandContext context, final MinecraftDayTime time) {
-        final long worldTime = time.asTicks().getTicks();
+    protected long newTime(final Audience src, final CommandContext context, final MinecraftDayTime time) {
+        final long worldTime = time.asTicks().ticks();
+
         return worldTime + super.serviceProvider.time().getFutureTickDifference(worldTime, Units.DAWN, true);
     }
 

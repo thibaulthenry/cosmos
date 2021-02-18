@@ -1,7 +1,7 @@
 package cosmos.executors.commands.properties;
 
 import com.google.inject.Singleton;
-import cosmos.executors.parameters.CosmosKeys;
+import cosmos.constants.CosmosKeys;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -14,12 +14,12 @@ import java.util.Optional;
 public class Seed extends AbstractPropertiesCommand {
 
     public Seed() {
-        super(Parameter.longNumber().setKey(CosmosKeys.SEED).optional().build());
+        super(Parameter.longNumber().key(CosmosKeys.SEED).optional().build());
     }
 
     @Override
     protected void run(Audience src, CommandContext context, ServerWorldProperties properties) throws CommandException {
-        final Optional<Long> optionalInput = context.getOne(CosmosKeys.SEED);
+        final Optional<Long> optionalInput = context.one(CosmosKeys.SEED);
         long value = properties.worldGenerationConfig().seed();
 
         if (optionalInput.isPresent()) {

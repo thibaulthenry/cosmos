@@ -1,13 +1,9 @@
 package cosmos.executors.commands.scoreboard.players;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.constants.CosmosKeys;
+import cosmos.constants.CosmosParameters;
 import cosmos.executors.commands.scoreboard.AbstractMultiTargetCommand;
-import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.scoreboard.Extremum;
-import cosmos.executors.parameters.impl.scoreboard.ObjectiveAll;
-import cosmos.executors.parameters.impl.scoreboard.Targets;
 import cosmos.registries.message.Message;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -25,19 +21,18 @@ import java.util.stream.Collectors;
 @Singleton
 public class Test extends AbstractMultiTargetCommand {
 
-    @Inject
-    public Test(final Injector injector) {
+    public Test() {
         super(
-                injector.getInstance(Targets.class).build(),
-                injector.getInstance(ObjectiveAll.class).build(),
-                injector.getInstance(Extremum.class).integerKey(CosmosKeys.MIN).build(),
-                injector.getInstance(Extremum.class).optional().build()
+                CosmosParameters.TARGETS.get().build(),
+                CosmosParameters.OBJECTIVE_ALL.get().build(),
+                CosmosParameters.EXTREMUM.get().integerKey(CosmosKeys.MIN).build(),
+                CosmosParameters.EXTREMUM.get().optional().build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Collection<Component> targets) throws CommandException {
-        final Objective objective = context.getOne(CosmosKeys.OBJECTIVE)
+        final Objective objective = context.one(CosmosKeys.OBJECTIVE)
                 .orElseThrow(
                         super.serviceProvider.message()
                                 .getMessage(src, "error.invalid.objective")
@@ -46,8 +41,9 @@ public class Test extends AbstractMultiTargetCommand {
                                 .asSupplier()
                 );
 
-        final int min = super.serviceProvider.perWorld().scoreboards().getExtremum(context, CosmosKeys.MIN, true);
-        final int max = super.serviceProvider.perWorld().scoreboards()
+        final int min = super.serviceProvider.scoreboards().extremum(context, CosmosKeys.MIN, true);
+
+        final int max = super.serviceProvider.scoreboards()
                 .findExtremum(context, CosmosKeys.MAX, false)
                 .orElse(Integer.MAX_VALUE);
 
@@ -57,7 +53,7 @@ public class Test extends AbstractMultiTargetCommand {
 
         final Collection<Component> contents = targets.stream()
                 .map(target -> {
-                    final Optional<Score> optionalScore = objective.getScore(target);
+                    final Optional<Score> optionalScore = objective.score(target);
 
                     if (!optionalScore.isPresent()) {
                         return super.serviceProvider.message()
@@ -69,7 +65,7 @@ public class Test extends AbstractMultiTargetCommand {
                                 .asText();
                     }
 
-                    final int score = optionalScore.get().getScore();
+                    final int score = optionalScore.get().score();
                     final boolean inRange = score >= min && score <= max;
 
                     final Message message = super.serviceProvider.message()
@@ -84,7 +80,7 @@ public class Test extends AbstractMultiTargetCommand {
 
                     if (inRange) {
                         message.green();
-                        super.success();
+                        super.addSuccess();
                     }
 
                     return message.asText();

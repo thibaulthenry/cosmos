@@ -1,12 +1,10 @@
 package cosmos.executors.commands.backup;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
+import cosmos.constants.CosmosKeys;
+import cosmos.constants.CosmosParameters;
 import cosmos.executors.commands.AbstractCommand;
-import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.world.WorldOffline;
 import cosmos.registries.backup.BackupArchetype;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
@@ -17,34 +15,32 @@ import org.spongepowered.api.command.parameter.Parameter;
 @Singleton
 public class Save extends AbstractCommand {
 
-    @Inject
-    public Save(final Injector injector) {
+    public Save() {
         super(
-                injector.getInstance(WorldOffline.class).build(),
-                Parameter.string().setKey(CosmosKeys.TAG).optional().build()
+                CosmosParameters.WORLD_ONLINE.get().build(),
+                Parameter.string().key(CosmosKeys.TAG).optional().build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
-        final ResourceKey worldKey = context.getOne(CosmosKeys.WORLD)
+        final ResourceKey worldKey = context.one(CosmosKeys.WORLD)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.WORLD));
 
         final BackupArchetype backupArchetype = new BackupArchetype(worldKey);
-
-        context.getOne(CosmosKeys.TAG).ifPresent(backupArchetype::setTag);
+        context.one(CosmosKeys.TAG).ifPresent(backupArchetype::tag);
 
         try {
             super.serviceProvider.backup().save(backupArchetype);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while saving backup", e);
+            Cosmos.logger().error("An unexpected error occurred while saving backup", e);
             throw super.serviceProvider.message().getError(src, "error.backup.save", "backup", backupArchetype);
         }
 
         super.serviceProvider.message()
                 .getMessage(src, "success.backup.save")
                 .replace("backup", backupArchetype)
-                .replace("world", backupArchetype.getWorldKey())
+                .replace("world", backupArchetype.worldKey())
                 .green()
                 .sendTo(src);
     }

@@ -27,10 +27,10 @@ public class AdvancementTreeDataBuilder extends AbstractDataBuilder<AdvancementT
 
     @Override
     protected Optional<AdvancementTreeData> buildContent(final DataView container) throws InvalidDataException {
-        final List<AdvancementProgressData> advancementProgressesData = container.getKeys(false)
+        final List<AdvancementProgressData> advancementProgressesData = container.keys(false)
                 .stream()
                 .map(query -> container.getView(query)
-                        .flatMap(view -> Sponge.getDataManager().deserialize(AdvancementProgressData.class, view))
+                        .flatMap(view -> Sponge.dataManager().deserialize(AdvancementProgressData.class, view))
                 )
                 .filter(Optional::isPresent)
                 .map(Optional::get)

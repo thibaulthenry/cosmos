@@ -2,31 +2,36 @@ package cosmos;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import cosmos.constants.CosmosKeys;
+import cosmos.constants.CosmosParameters;
 import cosmos.executors.commands.root.New;
 import cosmos.executors.modules.Root;
-import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.world.Test;
+import cosmos.executors.parameters.scoreboard.ScoreHolders;
+import cosmos.registries.portal.CosmosButtonPortal;
+import cosmos.registries.portal.CosmosFramePortal;
+import cosmos.registries.portal.CosmosPressurePlatePortal;
+import cosmos.registries.portal.CosmosSignPortal;
+import cosmos.registries.portal.impl.CosmosButtonPortalBuilderImpl;
+import cosmos.registries.portal.impl.CosmosFramePortalBuilderImpl;
+import cosmos.registries.portal.impl.CosmosPressurePlatePortalBuilderImpl;
+import cosmos.registries.portal.impl.CosmosSignPortalBuilderImpl;
 import cosmos.services.ServiceProvider;
 import io.leangen.geantyref.TypeToken;
+import net.kyori.adventure.text.Component;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.parameter.Parameter;
-import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.event.EventContextKeys;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.block.CollideBlockEvent;
-import org.spongepowered.api.event.cause.entity.MovementType;
-import org.spongepowered.api.event.cause.entity.MovementTypes;
-import org.spongepowered.api.event.entity.ChangeEntityWorldEvent;
+import org.spongepowered.api.event.lifecycle.RegisterBuilderEvent;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.api.event.lifecycle.RegisterDataEvent;
+import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
 import org.spongepowered.api.event.lifecycle.StartingEngineEvent;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.jvm.Plugin;
 
 import java.util.List;
-import java.util.Optional;
 
 @Plugin(value = "cosmos")
 public class Cosmos {
@@ -36,57 +41,61 @@ public class Cosmos {
     private static Logger logger;
     private static PluginContainer pluginContainer;
     private static ServiceProvider serviceProvider;
+
     private final Injector injector;
 
     @Inject
-    public Cosmos(final Injector injector, final PluginContainer pluginContainer, final Logger logger) {
-        Cosmos.logger = logger;
-        Cosmos.pluginContainer = pluginContainer;
+    public Cosmos(final Injector injector) {
+        Cosmos.logger = injector.getInstance(Logger.class);
+        Cosmos.pluginContainer = injector.getInstance(PluginContainer.class);
         Cosmos.serviceProvider = injector.getInstance(ServiceProvider.class);
         this.injector = injector;
     }
 
-    public static Logger getLogger() {
+    public static Logger logger() {
         return Cosmos.logger;
     }
 
-    public static PluginContainer getPluginContainer() {
+    public static PluginContainer pluginContainer() {
         return Cosmos.pluginContainer;
     }
 
-    public static ServiceProvider getServices() {
+    public static ServiceProvider services() {
         return Cosmos.serviceProvider;
     }
 
     @Listener
+    public void onRegisterBuilderEvent(final RegisterBuilderEvent event) {
+        event.register(CosmosButtonPortal.Builder.class, () -> this.injector.getInstance(CosmosButtonPortalBuilderImpl.class));
+        event.register(CosmosFramePortal.Builder.class, () -> this.injector.getInstance(CosmosFramePortalBuilderImpl.class));
+        event.register(CosmosPressurePlatePortal.Builder.class, () -> this.injector.getInstance(CosmosPressurePlatePortalBuilderImpl.class));
+        event.register(CosmosSignPortal.Builder.class, () -> this.injector.getInstance(CosmosSignPortalBuilderImpl.class));
+    }
+
+    @Listener
     public void onRegisterCommandEvent(final RegisterCommandEvent<Command.Parameterized> event) {
-        event.register(Cosmos.pluginContainer, this.injector.getInstance(Root.class).getParametrized(), "cosmos", "cm");
-
-        Command.Parameterized cmd = Command.builder()
-                .parameter( Parameter.builder(new TypeToken<List<Entity>>() {})
-                        .setKey(CosmosKeys.ENTITY_TARGETS)
-                        .parser(new Test())
-                        .build())
-                .setExecutor(injector.getInstance(New.class))
-                .build();
-
-        event.register(Cosmos.pluginContainer, cmd, "test");
+        event.register(Cosmos.pluginContainer, this.injector.getInstance(Root.class).parametrized(), "cosmos", "cm");
     }
 
     @Listener
     public void onRegisterDataEvent(final RegisterDataEvent event) {
-        Cosmos.serviceProvider.data().dataBuilder().registerAll();
-        //Cosmos.serviceProvider.data().portal().registerAll();
-        Cosmos.serviceProvider.data().selector().registerAll();
+        Cosmos.serviceProvider.registry().dataBuilder().registerAll();
+        Cosmos.serviceProvider.registry().portalType().registerAll();
+        Cosmos.serviceProvider.registry().selector().registerAll();
     }
 
     @Listener
     public void onStartingServerEvent(final StartingEngineEvent<Server> event) {
-        Cosmos.serviceProvider.listener().initializeAll();
+        Cosmos.serviceProvider.registry().listener().registerAll();
 
         if (!Cosmos.serviceProvider.finder().initDirectories()) {
-            Cosmos.logger.warn("An unexpected error occurred while initializing Cosmos directories");
+            Cosmos.logger.error("An unexpected error occurred while initializing Cosmos directories");
         }
+    }
+
+    @Listener
+    public void onStartedServerEvent(final StartedEngineEvent<Server> event) {
+        Cosmos.serviceProvider.registry().portal().registerAll();
     }
 
 }

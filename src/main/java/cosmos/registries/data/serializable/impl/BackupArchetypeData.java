@@ -7,10 +7,7 @@ import cosmos.registries.data.serializable.CollectorSerializable;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.data.persistence.DataContainer;
-import org.spongepowered.api.data.persistence.DataSerializable;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,11 +20,9 @@ public class BackupArchetypeData implements CollectorSerializable<BackupArchetyp
     private final ResourceKey worldKey;
 
     public BackupArchetypeData(final BackupArchetype backupArchetype) {
-        this.date = DateTimeFormatter.ISO_OFFSET_DATE_TIME
-                .withZone(ZoneId.systemDefault())
-                .format(backupArchetype.getCreationDateTime());
-        this.tag = backupArchetype.getTag().orElse(null);
-        this.worldKey = backupArchetype.getWorldKey();
+        this.date = DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(ZoneId.systemDefault()).format(backupArchetype.creationDateTime());
+        this.tag = backupArchetype.tag().orElse(null);
+        this.worldKey = backupArchetype.worldKey();
     }
 
     public BackupArchetypeData(final String date, final ResourceKey worldKey, @Nullable final String tag) {
@@ -43,7 +38,7 @@ public class BackupArchetypeData implements CollectorSerializable<BackupArchetyp
         try {
             creationDateTime = ZonedDateTime.parse(this.date, DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(ZoneId.systemDefault()));
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while collecting BackupArchetype data", e);
+            Cosmos.logger().error("An unexpected error occurred while collecting BackupArchetype data", e);
             return Optional.empty();
         }
 
@@ -51,7 +46,7 @@ public class BackupArchetypeData implements CollectorSerializable<BackupArchetyp
     }
 
     @Override
-    public int getContentVersion() {
+    public int contentVersion() {
         return 1;
     }
 

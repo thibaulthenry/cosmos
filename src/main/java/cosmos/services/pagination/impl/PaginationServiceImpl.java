@@ -6,12 +6,10 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.services.message.MessageService;
 import cosmos.services.pagination.PaginationService;
-import cosmos.services.template.TemplateService;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.service.pagination.PaginationList;
-
 
 @Singleton
 public class PaginationServiceImpl implements PaginationService {
@@ -43,7 +41,7 @@ public class PaginationServiceImpl implements PaginationService {
 
     @Override
     public void send(final Audience src, final PaginationList pagination, final boolean flattenSingle) throws CommandException {
-        this.send(src, pagination.getTitle().orElse(Component.empty()), pagination.getContents(), flattenSingle);
+        this.send(src, pagination.title().orElse(Component.empty()), pagination.contents(), flattenSingle);
     }
 
 }

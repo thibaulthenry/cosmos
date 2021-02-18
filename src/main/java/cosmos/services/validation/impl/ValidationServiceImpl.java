@@ -29,7 +29,7 @@ public class ValidationServiceImpl implements ValidationService {
         }
 
         if (target != null) {
-            return ((Tamer) src).getName().equals(LegacyComponentSerializer.legacyAmpersand().serialize(target));
+            return ((Tamer) src).name().equals(LegacyComponentSerializer.legacyAmpersand().serialize(target));
         }
 
         return false;
@@ -42,7 +42,7 @@ public class ValidationServiceImpl implements ValidationService {
         }
 
         if (target != null) {
-            return ((Identifiable) src).getUniqueId().equals(target.getUniqueId());
+            return ((Identifiable) src).uniqueId().equals(target.uniqueId());
         }
 
         return false;
@@ -50,7 +50,7 @@ public class ValidationServiceImpl implements ValidationService {
 
     @Override
     public boolean isSelf(final Identifiable src, final Identifiable target) {
-        return target != null && src.getUniqueId().equals(target.getUniqueId());
+        return target != null && src.uniqueId().equals(target.uniqueId());
     }
 
 }

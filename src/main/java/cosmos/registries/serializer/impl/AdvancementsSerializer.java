@@ -6,8 +6,6 @@ import com.google.inject.Singleton;
 import cosmos.registries.data.serializable.impl.AdvancementTreeData;
 import cosmos.registries.serializer.Serializer;
 import cosmos.services.io.FinderService;
-import cosmos.services.perworld.InventoriesService;
-import cosmos.services.serializer.SerializerProvider;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.persistence.DataContainer;
 
@@ -25,11 +23,6 @@ public class AdvancementsSerializer implements Serializer<AdvancementTreeData> {
     }
 
     @Override
-    public void serialize(final Path path, final AdvancementTreeData data) {
-        this.finderService.writeToFile(data, path);
-    }
-
-    @Override
     public Optional<AdvancementTreeData> deserialize(final Path path) {
         final DataContainer dataContainer = this.finderService.readFromFile(path).orElse(DataContainer.createNew());
 
@@ -37,7 +30,12 @@ public class AdvancementsSerializer implements Serializer<AdvancementTreeData> {
             return Optional.empty();
         }
 
-        return Sponge.getDataManager().deserialize(AdvancementTreeData.class, dataContainer);
+        return Sponge.dataManager().deserialize(AdvancementTreeData.class, dataContainer);
+    }
+
+    @Override
+    public void serialize(final Path path, final AdvancementTreeData data) {
+        this.finderService.writeToFile(data, path);
     }
 
 }

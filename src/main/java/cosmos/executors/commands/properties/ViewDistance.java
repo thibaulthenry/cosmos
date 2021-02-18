@@ -1,7 +1,7 @@
 package cosmos.executors.commands.properties;
 
 import com.google.inject.Singleton;
-import cosmos.executors.parameters.CosmosKeys;
+import cosmos.constants.CosmosKeys;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -14,12 +14,12 @@ import java.util.Optional;
 public class ViewDistance extends AbstractPropertiesCommand {
 
     public ViewDistance() {
-        super(Parameter.rangedInteger(3, 32).setKey(CosmosKeys.CHUNKS).optional().build());
+        super(Parameter.rangedInteger(3, 32).key(CosmosKeys.CHUNKS).optional().build());
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties) throws CommandException {
-        final Optional<Integer> optionalInput = context.getOne(CosmosKeys.CHUNKS);
+        final Optional<Integer> optionalInput = context.one(CosmosKeys.CHUNKS);
         int value = properties.viewDistance();
 
         if (optionalInput.isPresent()) {

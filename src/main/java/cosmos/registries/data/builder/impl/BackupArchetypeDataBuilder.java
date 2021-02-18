@@ -31,7 +31,9 @@ public class BackupArchetypeDataBuilder extends AbstractDataBuilder<BackupArchet
 
         final String date = container.getString(Queries.Backup.DATE)
                 .orElseThrow(() -> new InvalidDataException("Missing date while building BackupArchetypeData"));
+
         final String tag = container.getString(Queries.Backup.TAG).orElse(null);
+
         final ResourceKey worldKey = container.getResourceKey(Queries.Backup.WORLD)
                 .orElseThrow(() -> new InvalidDataException("Missing world level while building BackupArchetypeData"));
 

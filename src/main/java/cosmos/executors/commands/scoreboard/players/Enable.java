@@ -1,11 +1,8 @@
 package cosmos.executors.commands.scoreboard.players;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.constants.CosmosParameters;
 import cosmos.executors.commands.scoreboard.AbstractMultiTargetCommand;
-import cosmos.executors.parameters.impl.scoreboard.ObjectiveTrigger;
-import cosmos.executors.parameters.impl.scoreboard.Targets;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -23,11 +20,10 @@ import java.util.stream.Collectors;
 @Singleton
 public class Enable extends AbstractMultiTargetCommand {
 
-    @Inject
-    public Enable(final Injector injector) {
+    public Enable() {
         super(
-                injector.getInstance(Targets.class).build(),
-                injector.getInstance(ObjectiveTrigger.class).key("trigger-objective").build()
+                CosmosParameters.TARGETS.get().build(),
+                CosmosParameters.OBJECTIVE_TRIGGER.get().key("trigger-objective").build()
         );
     }
 
@@ -35,7 +31,7 @@ public class Enable extends AbstractMultiTargetCommand {
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Collection<Component> targets) throws CommandException {
         final Parameter.Key<Objective> triggerObjectiveKey = Parameter.key("trigger-objective", Objective.class);
 
-        final Objective objective = context.getOne(triggerObjectiveKey)
+        final Objective objective = context.one(triggerObjectiveKey)
                 .orElseThrow(
                         super.serviceProvider.message()
                                 .getMessage(src, "error.invalid.objective.type")
@@ -48,8 +44,8 @@ public class Enable extends AbstractMultiTargetCommand {
         final Collection<Component> contents = targets
                 .stream()
                 .map(target -> {
-                    objective.getOrCreateScore(target).setLocked(false);
-                    super.success();
+                    objective.scoreOrCreate(target).setLocked(false);
+                    super.addSuccess();
 
                     return super.serviceProvider.message()
                             .getMessage(src, "success.scoreboard.players.enable")

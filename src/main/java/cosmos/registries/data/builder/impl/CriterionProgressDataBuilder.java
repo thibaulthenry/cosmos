@@ -30,8 +30,9 @@ public class CriterionProgressDataBuilder extends AbstractDataBuilder<CriterionP
 
         final String date = container.getString(Queries.Advancements.Criterion.DATE)
                 .orElseThrow(() -> new InvalidDataException("Missing date while building CriterionProgressData"));
-        final String name = container.getParent()
-                .map(DataView::getName)
+
+        final String name = container.parent()
+                .map(DataView::name)
                 .orElseThrow(() -> new InvalidDataException("Missing name while building CriterionProgressData"));
 
         return Optional.of(new CriterionProgressData(date, name));

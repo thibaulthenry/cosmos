@@ -1,7 +1,7 @@
 package cosmos.executors.commands.scoreboard.teams.modify;
 
+import cosmos.constants.CosmosKeys;
 import cosmos.executors.commands.scoreboard.AbstractScoreboardCommand;
-import cosmos.executors.parameters.CosmosKeys;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
@@ -18,7 +18,7 @@ abstract class AbstractTeamModifyCommand extends AbstractScoreboardCommand {
 
     @Override
     protected final void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Scoreboard scoreboard) throws CommandException {
-        final Team team = context.getOne(CosmosKeys.TEAM)
+        final Team team = context.one(CosmosKeys.TEAM)
                 .orElseThrow(
                         super.serviceProvider.message()
                                 .getMessage(src, "error.invalid.team")

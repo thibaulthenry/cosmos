@@ -17,12 +17,12 @@ public abstract class AbstractScoreboardCommand extends AbstractCommand {
 
     @Override
     protected final void run(final Audience src, final CommandContext context) throws CommandException {
-        if (!super.serviceProvider.listener().isRegistered(ScoreboardsListener.class)) {
+        if (!super.serviceProvider.registry().listener().isRegisteredToSponge(ScoreboardsListener.class)) {
             throw super.serviceProvider.message().getError(src, "error.per-world.scoreboards.disabled");
         }
 
-        final ResourceKey worldKey = super.serviceProvider.world().getKeyOrSource(context);
-        this.run(src, context, worldKey, super.serviceProvider.perWorld().scoreboards().getOrCreateScoreboard(worldKey));
+        final ResourceKey worldKey = super.serviceProvider.world().keyOrSource(context);
+        this.run(src, context, worldKey, super.serviceProvider.scoreboards().scoreboardOrCreate(worldKey));
     }
 
     protected abstract void run(Audience src, CommandContext context, ResourceKey worldKey, Scoreboard scoreboard) throws CommandException;

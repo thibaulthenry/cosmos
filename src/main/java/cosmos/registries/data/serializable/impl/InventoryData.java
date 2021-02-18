@@ -3,7 +3,6 @@ package cosmos.registries.data.serializable.impl;
 import cosmos.constants.Queries;
 import cosmos.registries.data.serializable.ShareableSerializable;
 import org.spongepowered.api.data.persistence.DataContainer;
-import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.item.inventory.Inventory;
 
 import java.util.List;
@@ -29,7 +28,7 @@ public class InventoryData implements ShareableSerializable<Inventory> {
     }
 
     @Override
-    public int getContentVersion() {
+    public int contentVersion() {
         return 1;
     }
 

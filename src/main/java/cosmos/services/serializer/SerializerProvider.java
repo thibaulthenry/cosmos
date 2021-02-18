@@ -6,6 +6,7 @@ import cosmos.registries.serializer.impl.ExperiencesSerializer;
 import cosmos.registries.serializer.impl.HealthsSerializer;
 import cosmos.registries.serializer.impl.HungersSerializer;
 import cosmos.registries.serializer.impl.InventoriesSerializer;
+import cosmos.registries.serializer.impl.PortalsSerializer;
 import cosmos.registries.serializer.impl.ScoreboardsSerializer;
 import cosmos.services.CosmosService;
 import cosmos.services.serializer.impl.SerializerProviderImpl;
@@ -22,6 +23,8 @@ public interface SerializerProvider extends CosmosService {
     HungersSerializer hungers();
 
     InventoriesSerializer inventories();
+
+    PortalsSerializer portals();
 
     ScoreboardsSerializer scoreboards();
 

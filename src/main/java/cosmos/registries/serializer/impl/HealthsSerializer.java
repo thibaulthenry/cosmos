@@ -23,11 +23,6 @@ public class HealthsSerializer implements Serializer<HealthData> {
     }
 
     @Override
-    public void serialize(final Path path, final HealthData data) {
-        this.finderService.writeToFile(data, path);
-    }
-
-    @Override
     public Optional<HealthData> deserialize(final Path path) {
         final DataContainer dataContainer = this.finderService.readFromFile(path).orElse(new HealthData().toContainer());
 
@@ -35,7 +30,12 @@ public class HealthsSerializer implements Serializer<HealthData> {
             return Optional.empty();
         }
 
-        return Sponge.getDataManager().deserialize(HealthData.class, dataContainer);
+        return Sponge.dataManager().deserialize(HealthData.class, dataContainer);
+    }
+
+    @Override
+    public void serialize(final Path path, final HealthData data) {
+        this.finderService.writeToFile(data, path);
     }
 
 }

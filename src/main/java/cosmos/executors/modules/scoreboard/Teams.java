@@ -16,7 +16,7 @@ import cosmos.executors.modules.scoreboard.teams.Modify;
 public class Teams extends AbstractModule {
 
     @Inject
-    public Teams(final Injector injector) {
+    Teams(final Injector injector) {
         super(
                 injector.getInstance(Add.class),
                 injector.getInstance(Empty.class),

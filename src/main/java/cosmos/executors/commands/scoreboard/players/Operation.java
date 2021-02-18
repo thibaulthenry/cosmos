@@ -1,15 +1,11 @@
 package cosmos.executors.commands.scoreboard.players;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.constants.CosmosKeys;
+import cosmos.constants.CosmosParameters;
 import cosmos.constants.Operands;
 import cosmos.constants.Units;
 import cosmos.executors.commands.scoreboard.AbstractMultiTargetCommand;
-import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.CosmosParameters;
-import cosmos.executors.parameters.impl.scoreboard.ObjectiveAll;
-import cosmos.executors.parameters.impl.scoreboard.Targets;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -27,14 +23,18 @@ import java.util.stream.Collectors;
 @Singleton
 public class Operation extends AbstractMultiTargetCommand {
 
-    @Inject
-    public Operation(final Injector injector) {
+    public Operation() {
         super(
-                injector.getInstance(Targets.class).build(),
-                injector.getInstance(ObjectiveAll.class).build(),
-                CosmosParameters.SCOREBOARD_OPERANDS,
-                injector.getInstance(Targets.class).build(), // todo source
-                injector.getInstance(ObjectiveAll.class).key("source-objective").build()
+                CosmosParameters.TARGETS.get().build(),
+                CosmosParameters.OBJECTIVE_ALL.get().build(),
+                CosmosParameters.SCOREBOARD_OPERANDS.get().key(CosmosKeys.OPERAND).build(),
+                CosmosParameters.TARGETS.get()
+                        .entitiesKey("sources")
+                        .scoreHoldersKey("source-score-holders")
+                        .textAmpersandKey("source-text-ampersand")
+                        .textJsonKey("source-text-json")
+                        .build(),
+                CosmosParameters.OBJECTIVE_ALL.get().key("source-objective").build()
         );
     }
 
@@ -47,8 +47,8 @@ public class Operation extends AbstractMultiTargetCommand {
                     .asSingleton();
         }
 
-        final Score targetScore = targetObjective.getOrCreateScore(target);
-        final int targetScoreValue = targetScore.getScore();
+        final Score targetScore = targetObjective.scoreOrCreate(target);
+        final int targetScoreValue = targetScore.score();
 
         if (super.serviceProvider.validation().doesOverflowMaxLength(source, Units.SCORE_HOLDER_MAX_LENGTH)) {
             return super.serviceProvider.message()
@@ -58,12 +58,12 @@ public class Operation extends AbstractMultiTargetCommand {
                     .asSingleton();
         }
 
-        final Score sourceScore = sourceObjective.getOrCreateScore(source);
+        final Score sourceScore = sourceObjective.scoreOrCreate(source);
         final int mutationResult;
 
         try {
-            mutationResult = operate(targetScoreValue, operand, sourceScore.getScore());
-            super.success();
+            mutationResult = operate(targetScoreValue, operand, sourceScore.score());
+            super.addSuccess();
             targetScore.setScore(mutationResult);
         } catch (final ArithmeticException ignored) {
             return super.serviceProvider.message()
@@ -87,14 +87,14 @@ public class Operation extends AbstractMultiTargetCommand {
         );
 
         if (operand == Operands.SWAPS) {
-            super.success();
+            super.addSuccess();
             sourceScore.setScore(targetScoreValue);
             operationOutputs.add(
                     super.serviceProvider.message()
                             .getMessage(src, "success.scoreboard.players.operation")
                             .replace("obj", sourceObjective)
                             .replace("target", source)
-                            .replace("score", sourceScore.getScore())
+                            .replace("score", sourceScore.score())
                             .condition("source", true)
                             .green()
                             .asText()
@@ -134,7 +134,7 @@ public class Operation extends AbstractMultiTargetCommand {
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Collection<Component> targets) throws CommandException {
-        final Objective targetObjective = context.getOne(CosmosKeys.OBJECTIVE)
+        final Objective targetObjective = context.one(CosmosKeys.OBJECTIVE)
                 .orElseThrow(
                         super.serviceProvider.message()
                                 .getMessage(src, "error.invalid.objective")
@@ -145,7 +145,7 @@ public class Operation extends AbstractMultiTargetCommand {
 
         final Parameter.Key<Objective> sourceObjectiveKey = Parameter.key("source-objective", Objective.class);
 
-        final Objective sourceObjective = context.getOne(sourceObjectiveKey)
+        final Objective sourceObjective = context.one(sourceObjectiveKey)
                 .orElseThrow(
                         super.serviceProvider.message()
                                 .getMessage(src, "error.invalid.objective")
@@ -154,14 +154,13 @@ public class Operation extends AbstractMultiTargetCommand {
                                 .asSupplier()
                 );
 
-        final Collection<Component> sources = super.serviceProvider.perWorld().scoreboards()
-                .getTargets(context, worldKey, false); // todo add source targets
+        final Collection<Component> sources = super.serviceProvider.scoreboards().sources(context, worldKey, false);
 
         if (targets.size() > 1 && sources.size() > 1) {
             throw super.serviceProvider.message().getError(src, "error.invalid.operation.cross");
         }
 
-        final Operands operand = context.getOne(CosmosParameters.SCOREBOARD_OPERANDS)
+        final Operands operand = context.one(CosmosKeys.OPERAND)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.OPERAND));
 
         final Collection<Component> contents = targets

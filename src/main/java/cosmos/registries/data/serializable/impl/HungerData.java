@@ -4,7 +4,6 @@ import cosmos.constants.Queries;
 import cosmos.registries.data.serializable.ShareableSerializable;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.data.persistence.DataContainer;
-import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 public class HungerData implements ShareableSerializable<ServerPlayer> {
@@ -40,7 +39,7 @@ public class HungerData implements ShareableSerializable<ServerPlayer> {
     }
 
     @Override
-    public int getContentVersion() {
+    public int contentVersion() {
         return 1;
     }
 

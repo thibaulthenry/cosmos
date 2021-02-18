@@ -1,7 +1,7 @@
 package cosmos.executors.commands.scoreboard.objectives.modify;
 
+import cosmos.constants.CosmosKeys;
 import cosmos.executors.commands.scoreboard.AbstractScoreboardCommand;
-import cosmos.executors.parameters.CosmosKeys;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
@@ -18,7 +18,7 @@ abstract class AbstractObjectiveModifyCommand extends AbstractScoreboardCommand 
 
     @Override
     protected final void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Scoreboard scoreboard) throws CommandException {
-        final Objective objective = context.getOne(CosmosKeys.OBJECTIVE)
+        final Objective objective = context.one(CosmosKeys.OBJECTIVE)
                 .orElseThrow(
                         super.serviceProvider.message()
                                 .getMessage(src, "error.invalid.objective")
@@ -31,6 +31,5 @@ abstract class AbstractObjectiveModifyCommand extends AbstractScoreboardCommand 
     }
 
     protected abstract void run(Audience src, CommandContext context, ResourceKey worldKey, Scoreboard scoreboard, Objective objective) throws CommandException;
-
 
 }

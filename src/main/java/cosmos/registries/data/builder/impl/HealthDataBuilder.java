@@ -28,14 +28,16 @@ public class HealthDataBuilder extends AbstractDataBuilder<HealthData> {
             return Optional.empty();
         }
 
-        final double health = container.getDouble(Queries.Healths.HEALTH)
-                .orElseThrow(() -> new InvalidDataException("Missing health while building HealthData"));
-        final double maxHealth = container.getDouble(Queries.Healths.MAX_HEALTH)
-                .orElseThrow(() -> new InvalidDataException("Missing max health while building HealthData"));
         final double absorption = container.getDouble(Queries.Healths.ABSORPTION)
                 .orElseThrow(() -> new InvalidDataException("Missing absorption while building HealthData"));
 
-        return Optional.of(new HealthData(health, maxHealth, absorption));
+        final double health = container.getDouble(Queries.Healths.HEALTH)
+                .orElseThrow(() -> new InvalidDataException("Missing health while building HealthData"));
+
+        final double maxHealth = container.getDouble(Queries.Healths.MAX_HEALTH)
+                .orElseThrow(() -> new InvalidDataException("Missing max health while building HealthData"));
+
+        return Optional.of(new HealthData(absorption, health, maxHealth));
     }
 
 }

@@ -31,12 +31,16 @@ public class HungerDataBuilder extends AbstractDataBuilder<HungerData> {
 
         final double exhaustion = container.getInt(Queries.Hungers.EXHAUSTION)
                 .orElseThrow(() -> new InvalidDataException("Missing exhaustion while building HungerData"));
+
         final int foodLevel = container.getInt(Queries.Hungers.FOOD_LEVEL)
                 .orElseThrow(() -> new InvalidDataException("Missing food level building HungerData"));
+
         final double maxExhaustion = container.getInt(Queries.Hungers.MAX_EXHAUSTION)
                 .orElseThrow(() -> new InvalidDataException("Missing max exhaustion building HungerData"));
+
         final int maxFoodLevel = container.getInt(Queries.Hungers.MAX_FOOD_LEVEL)
                 .orElseThrow(() -> new InvalidDataException("Missing max food level while building HungerData"));
+
         final double saturation = container.getInt(Queries.Hungers.SATURATION)
                 .orElseThrow(() -> new InvalidDataException("Missing saturation while building HungerData"));
 

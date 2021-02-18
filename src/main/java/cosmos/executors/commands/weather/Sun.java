@@ -8,15 +8,15 @@ import java.util.Collections;
 import java.util.List;
 
 @Singleton
-public class Sun extends AbstractWeatherChangeCommand {
+public class Sun extends AbstractWeatherModifyCommand {
 
     @Override
-    protected List<String> aliases() {
+    protected List<String> additionalAliases() {
         return Collections.singletonList("clear");
     }
 
     @Override
-    protected WeatherType getNewWeather() {
+    protected WeatherType newWeather() {
         return WeatherTypes.CLEAR.get();
     }
 

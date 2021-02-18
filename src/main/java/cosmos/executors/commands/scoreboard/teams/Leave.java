@@ -1,10 +1,8 @@
 package cosmos.executors.commands.scoreboard.teams;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.constants.CosmosParameters;
 import cosmos.executors.commands.scoreboard.AbstractMultiTargetCommand;
-import cosmos.executors.parameters.impl.scoreboard.Targets;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -20,11 +18,10 @@ import java.util.stream.Collectors;
 @Singleton
 public class Leave extends AbstractMultiTargetCommand {
 
-    @Inject
-    public Leave(final Injector injector) {
+    public Leave() {
         super(
                 true,
-                injector.getInstance(Targets.class).optional().build()
+                CosmosParameters.TARGETS.get().optional().build()
         );
     }
 
@@ -33,15 +30,16 @@ public class Leave extends AbstractMultiTargetCommand {
         final Collection<Component> contents = targets
                 .stream()
                 .map(target -> {
-                    final Optional<Team> optionalTeam = super.serviceProvider.perWorld().scoreboards()
-                            .getOrCreateScoreboard(worldKey)
-                            .getMemberTeam(target);
+                    final Optional<Team> optionalTeam = super.serviceProvider.scoreboards()
+                            .scoreboardOrCreate(worldKey)
+                            .memberTeam(target);
+
                     final boolean sourceIsNotTarget = !super.serviceProvider.validation().isSelf(src, target);
 
                     if (optionalTeam.isPresent()) {
                         final Team team = optionalTeam.get();
                         team.removeMember(target);
-                        super.success();
+                        super.addSuccess();
 
                         return super.serviceProvider.message()
                                 .getMessage(src, "success.scoreboard.teams.leave")

@@ -1,7 +1,7 @@
 package cosmos.executors.commands.border;
 
 import com.google.inject.Singleton;
-import cosmos.executors.parameters.CosmosKeys;
+import cosmos.constants.CosmosKeys;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -15,13 +15,13 @@ import java.util.Optional;
 public class Size extends AbstractBorderCommand {
 
     public Size() {
-        super(Parameter.doubleNumber().setKey(CosmosKeys.DIAMETER).optional().build());
+        super(Parameter.doubleNumber().key(CosmosKeys.DIAMETER).optional().build());
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
-        final Optional<Double> optionalInput = context.getOne(CosmosKeys.DIAMETER);
-        double value = border.getDiameter();
+        final Optional<Double> optionalInput = context.one(CosmosKeys.DIAMETER);
+        double value = border.diameter();
 
         if (optionalInput.isPresent()) {
             value = optionalInput.get();

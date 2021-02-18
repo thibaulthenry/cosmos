@@ -1,13 +1,11 @@
 package cosmos.executors.commands.backup;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
+import cosmos.constants.CosmosKeys;
+import cosmos.constants.CosmosParameters;
 import cosmos.constants.Units;
 import cosmos.executors.commands.AbstractCommand;
-import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.backup.Backup;
 import cosmos.registries.backup.BackupArchetype;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
@@ -17,20 +15,19 @@ import org.spongepowered.api.command.parameter.Parameter;
 @Singleton
 public class Tag extends AbstractCommand {
 
-    @Inject
-    public Tag(final Injector injector) {
+    public Tag() {
         super(
-                injector.getInstance(Backup.class).build(),
-                Parameter.string().setKey(CosmosKeys.TAG).build()
+                CosmosParameters.BACKUP.get().build(),
+                Parameter.string().key(CosmosKeys.TAG).build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
-        final BackupArchetype backupArchetype = context.getOne(CosmosKeys.BACKUP)
+        final BackupArchetype backupArchetype = context.one(CosmosKeys.BACKUP)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.backup", "param", CosmosKeys.BACKUP));
 
-        final String tag = context.getOne(CosmosKeys.TAG)
+        final String tag = context.one(CosmosKeys.TAG)
                 .map(input -> input.replaceAll("_", "-"))
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value"));
 
@@ -41,7 +38,7 @@ public class Tag extends AbstractCommand {
         try {
             super.serviceProvider.backup().tag(backupArchetype, tag);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while tagging backup", e);
+            Cosmos.logger().error("An unexpected error occurred while tagging backup", e);
             throw super.serviceProvider.message().getError(src, "error.backup.tag", "backup", backupArchetype);
         }
 

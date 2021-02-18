@@ -20,7 +20,6 @@ public class DefaultSettings extends AbstractBorderCommand {
         border.setDiameter(Double.POSITIVE_INFINITY);
         border.setWarningDistance(5);
         border.setWarningTime(15, ChronoUnit.SECONDS);
-
         super.serviceProvider.world().saveProperties(src, properties);
 
         super.serviceProvider.message()

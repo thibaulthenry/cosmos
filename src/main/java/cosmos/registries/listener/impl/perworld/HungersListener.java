@@ -3,10 +3,11 @@ package cosmos.registries.listener.impl.perworld;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.constants.Directories;
 import cosmos.registries.data.serializable.impl.HungerData;
 import cosmos.registries.listener.ScheduledAsyncSaveListener;
-import cosmos.services.perworld.HungersService;
-import cosmos.services.serializer.SerializerProvider;
+import cosmos.registries.serializer.impl.HungersSerializer;
+import cosmos.services.io.FinderService;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.Listener;
@@ -16,29 +17,30 @@ import org.spongepowered.api.event.filter.cause.First;
 @Singleton
 public class HungersListener extends AbstractPerWorldListener implements ScheduledAsyncSaveListener {
 
-    private final HungersService hungersService;
-    private final SerializerProvider serializerProvider;
+    private final FinderService finderService;
+    private final HungersSerializer hungersSerializer;
 
     @Inject
     public HungersListener(final Injector injector) {
-        this.hungersService = injector.getInstance(HungersService.class);
-        this.serializerProvider = injector.getInstance(SerializerProvider.class);
+        this.finderService = injector.getInstance(FinderService.class);
+        this.hungersSerializer = injector.getInstance(HungersSerializer.class);
     }
 
     @Listener
     public void onPostChangeEntityWorldEvent(final ChangeEntityWorldEvent.Post event, @First final ServerPlayer player) {
-        this.hungersService.getPath(event.getOriginalWorld(), player)
-                .ifPresent(path -> this.serializerProvider.hungers().serialize(path, new HungerData(player)));
-        this.hungersService.getPath(event.getDestinationWorld(), player)
-                .flatMap(path -> this.serializerProvider.hungers().deserialize(path))
+        this.finderService.findCosmosPath(Directories.HUNGERS, event.originalWorld(), player)
+                .ifPresent(path -> this.hungersSerializer.serialize(path, new HungerData(player)));
+
+        this.finderService.findCosmosPath(Directories.HUNGERS, event.destinationWorld(), player)
+                .flatMap(this.hungersSerializer::deserialize)
                 .ifPresent(data -> data.share(player));
     }
 
     @Override
     public void save() {
-        Sponge.getServer().getOnlinePlayers().forEach(player ->
-                this.hungersService.getPath(player)
-                        .ifPresent(path -> this.serializerProvider.hungers().serialize(path, new HungerData(player)))
+        Sponge.server().onlinePlayers().forEach(player ->
+                this.finderService.findCosmosPath(Directories.HUNGERS, player)
+                        .ifPresent(path -> this.hungersSerializer.serialize(path, new HungerData(player)))
         );
     }
 

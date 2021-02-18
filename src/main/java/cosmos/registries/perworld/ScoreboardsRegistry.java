@@ -2,40 +2,33 @@ package cosmos.registries.perworld;
 
 import com.google.inject.Singleton;
 import cosmos.registries.CosmosRegistry;
+import cosmos.registries.CosmosRegistryEntry;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.scoreboard.Scoreboard;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @Singleton
 public class ScoreboardsRegistry implements CosmosRegistry<ResourceKey, Scoreboard> {
 
     private final Map<ResourceKey, Scoreboard> scoreboardMap = new HashMap<>();
 
-    public Scoreboard computeIfAbsent(final ResourceKey key, final Function<ResourceKey, Scoreboard> mappingFunction) {
-        return this.scoreboardMap.computeIfAbsent(key, mappingFunction);
-    }
-
-    public Set<Map.Entry<ResourceKey, Scoreboard>> entries() {
-        return this.scoreboardMap.entrySet();
+    @Override
+    public Optional<CosmosRegistryEntry<ResourceKey, Scoreboard>> register(final ResourceKey key, final Scoreboard value) {
+        return Optional.ofNullable(this.scoreboardMap.computeIfAbsent(key, k -> value)).map(v -> CosmosRegistryEntry.of(key, v));
     }
 
     @Override
-    public Scoreboard get(final ResourceKey key) {
+    public Stream<CosmosRegistryEntry<ResourceKey, Scoreboard>> streamEntries() {
+        return this.scoreboardMap.entrySet().stream().map(entry -> CosmosRegistryEntry.of(entry.getKey(), entry.getValue()));
+    }
+
+    @Override
+    public Scoreboard value(final ResourceKey key) {
         return this.scoreboardMap.get(key);
-    }
-
-    @Override
-    public boolean has(final ResourceKey key) {
-        return this.scoreboardMap.containsKey(key);
-    }
-
-    public Collection<Scoreboard> values() {
-        return this.scoreboardMap.values();
     }
 
 }

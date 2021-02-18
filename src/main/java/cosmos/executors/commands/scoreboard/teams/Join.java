@@ -1,13 +1,10 @@
 package cosmos.executors.commands.scoreboard.teams;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.constants.CosmosKeys;
+import cosmos.constants.CosmosParameters;
 import cosmos.constants.Units;
 import cosmos.executors.commands.scoreboard.AbstractMultiTargetCommand;
-import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.scoreboard.Targets;
-import cosmos.executors.parameters.impl.scoreboard.TeamAll;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -22,18 +19,17 @@ import java.util.stream.Collectors;
 @Singleton
 public class Join extends AbstractMultiTargetCommand {
 
-    @Inject
-    public Join(final Injector injector) {
+    public Join() {
         super(
                 true,
-                injector.getInstance(TeamAll.class).build(),
-                injector.getInstance(Targets.class).optional().build()
+                CosmosParameters.TEAM_ALL.get().build(),
+                CosmosParameters.TARGETS.get().optional().build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Collection<Component> targets) throws CommandException {
-        final Team team = context.getOne(CosmosKeys.TEAM)
+        final Team team = context.one(CosmosKeys.TEAM)
                 .orElseThrow(
                         super.serviceProvider.message()
                                 .getMessage(src, "error.invalid.team")
@@ -55,7 +51,7 @@ public class Join extends AbstractMultiTargetCommand {
 
                     final boolean sourceIsNotTarget = !super.serviceProvider.validation().isSelf(src, target);
                     team.addMember(target);
-                    super.success();
+                    super.addSuccess();
 
                     return super.serviceProvider.message()
                             .getMessage(src, "success.scoreboard.teams.join")

@@ -8,6 +8,7 @@ import cosmos.registries.serializer.impl.ExperiencesSerializer;
 import cosmos.registries.serializer.impl.HealthsSerializer;
 import cosmos.registries.serializer.impl.HungersSerializer;
 import cosmos.registries.serializer.impl.InventoriesSerializer;
+import cosmos.registries.serializer.impl.PortalsSerializer;
 import cosmos.registries.serializer.impl.ScoreboardsSerializer;
 import cosmos.services.serializer.SerializerProvider;
 
@@ -19,6 +20,7 @@ public class SerializerProviderImpl implements SerializerProvider {
     private final HealthsSerializer healthsSerializer;
     private final HungersSerializer hungersSerializer;
     private final InventoriesSerializer inventoriesSerializer;
+    private final PortalsSerializer portalsSerializer;
     private final ScoreboardsSerializer scoreboardsSerializer;
 
     @Inject
@@ -28,6 +30,7 @@ public class SerializerProviderImpl implements SerializerProvider {
         this.healthsSerializer = injector.getInstance(HealthsSerializer.class);
         this.hungersSerializer = injector.getInstance(HungersSerializer.class);
         this.inventoriesSerializer = injector.getInstance(InventoriesSerializer.class);
+        this.portalsSerializer = injector.getInstance(PortalsSerializer.class);
         this.scoreboardsSerializer = injector.getInstance(ScoreboardsSerializer.class);
     }
 
@@ -54,6 +57,11 @@ public class SerializerProviderImpl implements SerializerProvider {
     @Override
     public InventoriesSerializer inventories() {
         return this.inventoriesSerializer;
+    }
+
+    @Override
+    public PortalsSerializer portals() {
+        return this.portalsSerializer;
     }
 
     @Override

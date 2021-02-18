@@ -4,7 +4,7 @@ import net.kyori.adventure.text.TextComponent;
 
 public interface OverflowFormatter<T> extends Formatter<T> {
 
-    default TextComponent asText(T value) {
+    default TextComponent asText(final T value) {
         return this.asText(value, false);
     }
 

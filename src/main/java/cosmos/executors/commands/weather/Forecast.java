@@ -16,8 +16,8 @@ public class Forecast extends AbstractWeatherCommand {
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final Weather weather) throws CommandException {
         super.serviceProvider.message()
                 .getMessage(src, "success.weather.get")
-                .replace("remaining", properties.weather().remainingDuration().getExpectedDuration(Sponge.getServer()).getSeconds()) // todo test
-                .replace("running", properties.weather().runningDuration().getExpectedDuration(Sponge.getServer()).getSeconds()) // todo test
+                .replace("remaining", properties.weather().remainingDuration().expectedDuration(Sponge.server()).getSeconds()) // todo test
+                .replace("running", properties.weather().runningDuration().expectedDuration(Sponge.server()).getSeconds()) // todo test
                 .replace("value", weather.type().key(RegistryTypes.WEATHER_TYPE))
                 .replace("world", properties)
                 .green()

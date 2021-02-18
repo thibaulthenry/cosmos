@@ -18,11 +18,11 @@ public class AdvancementTreeData implements ShareableSerializable<ServerPlayer> 
     private final List<AdvancementProgressData> advancementProgressesData;
 
     public AdvancementTreeData(final ServerPlayer player) {
-        this.advancementProgressesData = player.getUnlockedAdvancementTrees()
+        this.advancementProgressesData = player.unlockedAdvancementTrees()
                 .stream()
-                .map(advancementTree -> this.getRecursiveChildren(advancementTree.getRootAdvancement()))
+                .map(advancementTree -> this.extractChildren(advancementTree.rootAdvancement()))
                 .flatMap(Collection::stream)
-                .map(player::getProgress)
+                .map(player::progress)
                 .map(AdvancementProgressData::new)
                 .filter(AdvancementProgressData::isAdvancementStarted)
                 .collect(Collectors.toList());
@@ -33,12 +33,12 @@ public class AdvancementTreeData implements ShareableSerializable<ServerPlayer> 
     }
 
     @Override
-    public int getContentVersion() {
+    public int contentVersion() {
         return 1;
     }
 
-    public Collection<Advancement> getRecursiveChildren(final Advancement rootAdvancement) {
-        final Collection<Advancement> children = rootAdvancement.getChildren();
+    public Collection<Advancement> extractChildren(final Advancement rootAdvancement) {
+        final Collection<Advancement> children = rootAdvancement.children();
 
         if (children == null || children.isEmpty()) {
             return Collections.emptyList();
@@ -46,20 +46,19 @@ public class AdvancementTreeData implements ShareableSerializable<ServerPlayer> 
 
         return Stream.concat(
                 children.stream(),
-                children.stream().map(this::getRecursiveChildren).flatMap(Collection::stream)
+                children.stream().map(this::extractChildren).flatMap(Collection::stream)
         ).collect(Collectors.toList());
     }
 
     @Override
     public void share(final ServerPlayer data) {
-        // TODO Retrieve advancements via ResourceKey
+        // TODO https://github.com/SpongePowered/SpongeAPI/issues/2299
     }
 
     @Override
     public DataContainer toContainer() {
         final DataContainer dataContainer = DataContainer.createNew(DataView.SafetyMode.NO_DATA_CLONED);
-
-        this.advancementProgressesData.forEach(data -> dataContainer.set(DataQuery.of(data.getKey()), data));
+        this.advancementProgressesData.forEach(data -> dataContainer.set(DataQuery.of(data.key()), data));
 
         return dataContainer;
     }

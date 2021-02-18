@@ -31,11 +31,14 @@ public class ScoreCriterionProgressDataBuilder extends AbstractDataBuilder<Score
 
         final String date = container.getString(Queries.Advancements.Criterion.DATE)
                 .orElseThrow(() -> new InvalidDataException("Missing date while building ScoreCriterionProgressData"));
+
         final int goal = container.getInt(Queries.Advancements.Criterion.GOAL)
                 .orElseThrow(() -> new InvalidDataException("Missing goal while building ScoreCriterionProgressData"));
-        final String name = container.getParent()
-                .map(DataView::getName)
+
+        final String name = container.parent()
+                .map(DataView::name)
                 .orElseThrow(() -> new InvalidDataException("Missing name while building ScoreCriterionProgressData"));
+
         final int score = container.getInt(Queries.Advancements.Criterion.SCORE)
                 .orElseThrow(() -> new InvalidDataException("Missing score while building ScoreCriterionProgressData"));
 

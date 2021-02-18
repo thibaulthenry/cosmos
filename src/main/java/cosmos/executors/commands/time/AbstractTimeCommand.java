@@ -16,7 +16,7 @@ abstract class AbstractTimeCommand extends AbstractCommand {
 
     @Override
     protected final void run(final Audience src, final CommandContext context) throws CommandException {
-        final ServerWorldProperties properties = super.serviceProvider.world().getPropertiesOrSource(context);
+        final ServerWorldProperties properties = super.serviceProvider.world().propertiesOrSource(context);
         this.run(src, context, properties, properties.dayTime());
     }
 

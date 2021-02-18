@@ -35,7 +35,7 @@ public class ExperienceData implements ShareableSerializable<ServerPlayer> {
     }
 
     @Override
-    public int getContentVersion() {
+    public int contentVersion() {
         return 1;
     }
 

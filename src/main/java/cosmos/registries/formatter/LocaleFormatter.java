@@ -6,7 +6,7 @@ import java.util.Locale;
 
 public interface LocaleFormatter<T> extends Formatter<T> {
 
-    default TextComponent asText(T value) {
+    default TextComponent asText(final T value) {
         return this.asText(value, Locale.ROOT);
     }
 

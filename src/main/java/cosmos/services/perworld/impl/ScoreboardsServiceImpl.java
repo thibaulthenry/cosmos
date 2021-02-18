@@ -3,14 +3,17 @@ package cosmos.services.perworld.impl;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.Cosmos;
+import cosmos.constants.CosmosKeys;
 import cosmos.constants.Directories;
-import cosmos.executors.parameters.CosmosKeys;
+import cosmos.registries.CosmosRegistryEntry;
 import cosmos.registries.data.serializable.impl.ScoreboardData;
 import cosmos.registries.perworld.ScoreboardsRegistry;
 import cosmos.registries.serializer.impl.ScoreboardsSerializer;
 import cosmos.services.io.FinderService;
 import cosmos.services.message.MessageService;
 import cosmos.services.perworld.ScoreboardsService;
+import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
@@ -18,6 +21,7 @@ import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Tamer;
 import org.spongepowered.api.scoreboard.Score;
 import org.spongepowered.api.scoreboard.Scoreboard;
@@ -26,7 +30,6 @@ import org.spongepowered.api.scoreboard.objective.Objective;
 import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.world.server.ServerWorld;
 
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,88 +51,107 @@ public class ScoreboardsServiceImpl implements ScoreboardsService {
 
     @Override
     public Optional<Integer> findExtremum(final CommandContext context, final Parameter.Key<Integer> integerKey, final boolean negativeBound) {
-        return context.getOne(integerKey)
+        return context.one(integerKey)
                 .map(Optional::of)
-                .orElse(context.getOne(CosmosKeys.WILDCARD).map(value -> negativeBound ? Integer.MIN_VALUE : Integer.MAX_VALUE));
+                .orElse(context.one(CosmosKeys.WILDCARD).map(value -> negativeBound ? Integer.MIN_VALUE : Integer.MAX_VALUE));
     }
 
     @Override
     public Optional<Component> findComponent(final CommandContext context) {
-        return context.getOne(CosmosKeys.TEXT_JSON)
+        return context.one(CosmosKeys.TEXT_JSON)
                 .map(Optional::of)
-                .orElse(context.getOne(CosmosKeys.TEXT_AMPERSAND));
+                .orElse(context.one(CosmosKeys.TEXT_AMPERSAND));
     }
 
     @Override
-    public int getExtremum(final CommandContext context, final Parameter.Key<Integer> integerKey, final boolean negativeBound) throws CommandException {
-        final Audience src = context.getCause().getAudience();
+    public int extremum(final CommandContext context, final Parameter.Key<Integer> integerKey, final boolean negativeBound) throws CommandException {
+        final Audience src = context.cause().audience();
 
         return this.findExtremum(context, integerKey, negativeBound)
                 .orElseThrow(this.messageService.supplyError(src, "error.invalid.value", "param", integerKey));
     }
 
     @Override
-    public Set<Objective> getObjectives(final ResourceKey worldKey) {
-        return this.getObjectives(this.getOrCreateScoreboard(worldKey));
+    public boolean isTargetsParameterFilled(final CommandContext context) {
+        return context.hasAny(CosmosKeys.ENTITIES) || context.hasAny(CosmosKeys.MANY_SCORE_HOLDER)
+                || context.hasAny(CosmosKeys.TEXT_AMPERSAND) || context.hasAny(CosmosKeys.TEXT_JSON);
     }
 
     @Override
-    public Set<Objective> getObjectives(final Scoreboard scoreboard) {
-        return scoreboard.getObjectives();
+    public Set<Objective> objectives(final ResourceKey worldKey) {
+        return this.scoreboardOrCreate(worldKey).objectives();
     }
 
     @Override
-    public Scoreboard getOrCreateScoreboard(final ResourceKey worldKey) {
-        return this.scoreboardsRegistry.computeIfAbsent(worldKey, key -> this.getPath(worldKey)
-                .flatMap(this.scoreboardsSerializer::deserialize)
-                .flatMap(ScoreboardData::collect)
-                .orElse(Scoreboard.builder().build())
+    public Scoreboard scoreboardOrCreate(final ResourceKey worldKey) {
+        return this.scoreboardsRegistry.find(worldKey)
+                .map(Optional::of)
+                .orElse(
+                        this.finderService.findCosmosPath(Directories.SCOREBOARDS, worldKey)
+                                .flatMap(this.scoreboardsSerializer::deserialize)
+                                .flatMap(ScoreboardData::collect)
+                )
+                .flatMap(scoreboard -> this.scoreboardsRegistry.register(worldKey, scoreboard).map(CosmosRegistryEntry::value))
+                .orElseGet(() -> {
+                    final Scoreboard scoreboard = Scoreboard.builder().build();
+
+                    if (!this.scoreboardsRegistry.register(worldKey, scoreboard).isPresent()) {
+                        Cosmos.logger().error("An unexpected error occurred while registering a new scoreboard for world " + worldKey);
+                    }
+
+                    return scoreboard;
+                });
+    }
+
+    @Override
+    public Scoreboard scoreboardOrCreate(final ServerWorld world) {
+        return this.scoreboardOrCreate(world.key());
+    }
+
+    @Override
+    public Collection<Component> scoreHolders(final ResourceKey worldKey) {
+        return this.scoreboardOrCreate(worldKey)
+                .scores()
+                .stream()
+                .map(Score::name)
+                .sorted(Comparator.comparing(component -> PlainComponentSerializer.plain().serialize(component)))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Component> targets(final CommandContext context, final ResourceKey worldKey, final boolean returnSource) throws CommandException {
+        return this.targetsOrSources(
+                context, CosmosKeys.ENTITIES, CosmosKeys.MANY_SCORE_HOLDER,
+                CosmosKeys.TEXT_AMPERSAND, CosmosKeys.TEXT_JSON, worldKey, returnSource
         );
     }
 
-    @Override
-    public Scoreboard getOrCreateScoreboard(final ServerWorld world) {
-        return this.getOrCreateScoreboard(world.getKey());
-    }
-
-    @Override
-    public Optional<Path> getPath(final ResourceKey worldKey) {
-        final String fileName = worldKey.getFormatted().replaceAll(":", "_") + ".dat";
-        return this.finderService.getCosmosPath(Directories.SCOREBOARDS_DIRECTORY_NAME, fileName);
-    }
-
-    @Override
-    public Optional<Path> getPath(final ServerWorld world) {
-        return this.getPath(world.getKey());
-    }
-
-    @Override
-    public Collection<Scoreboard> getScoreboards() {
-        return this.scoreboardsRegistry.values();
-    }
-
-    @Override
-    public Collection<Component> getTargets(final CommandContext context, final ResourceKey worldKey, final boolean returnSource) throws CommandException {
-        final Audience src = context.getCause().getAudience();
+    private Collection<Component> targetsOrSources(final CommandContext context, final Parameter.Key<List<Entity>> entitiesKey,
+                                                   final Parameter.Key<List<Component>> scoreHoldersKey, final Parameter.Key<Component> textAmpersandKey,
+                                                   final Parameter.Key<Component> textJsonKey, final ResourceKey worldKey,
+                                                   final boolean returnSource) throws CommandException {
+        final Audience src = context.cause().audience();
 
         if (!this.isTargetsParameterFilled(context)) {
-            return returnSource ? this.tryReturnSource(src) : this.getScoreHolders(worldKey);
+            return returnSource ? this.tryReturnSource(src) : this.scoreHolders(worldKey);
         }
 
-        final Optional<List<Component>> optionalSingleInputs = context.getOne(CosmosKeys.TEXT_AMPERSAND)
+        final Optional<List<Component>> optionalSingleInputs = context.one(textAmpersandKey)
                 .map(Optional::of)
-                .orElse(context.getOne(CosmosKeys.TEXT_JSON))
+                .orElse(context.one(textJsonKey))
                 .map(Collections::singletonList);
 
-        final Optional<List<Component>> optionalTargets = context.getOne(CosmosKeys.ENTITY_TARGETS) // todo entity is catching text
+        // TODO https://github.com/SpongePowered/Sponge/pull/3286
+
+        final Optional<List<Component>> optionalTargets = context.one(entitiesKey)
                 .map(entities -> entities
                         .stream()
-                        .map(entity -> entity instanceof Tamer ? ((Tamer) entity).getName() : entity.getUniqueId().toString())
+                        .map(entity -> entity instanceof Tamer ? ((Tamer) entity).name() : entity.uniqueId().toString())
                         .map(Component::text)
                         .collect(Collectors.<Component>toList())
                 )
                 .map(Optional::of)
-                .orElse(context.getOne(CosmosKeys.MANY_SCORE_HOLDER))
+                .orElse(context.one(scoreHoldersKey))
                 .map(Optional::of)
                 .orElse(optionalSingleInputs);
 
@@ -141,43 +163,28 @@ public class ScoreboardsServiceImpl implements ScoreboardsService {
     }
 
     @Override
-    public Set<Team> getTeams(final ResourceKey worldKey) {
-        return this.getTeams(this.getOrCreateScoreboard(worldKey));
+    public Collection<Component> sources(final CommandContext context, final ResourceKey worldKey, final boolean returnSource) throws CommandException {
+        final Parameter.Key<List<Entity>> entitiesKey = Parameter.key("sources", new TypeToken<List<Entity>>() {});
+        final Parameter.Key<List<Component>> scoreHoldersKey = Parameter.key("source-score-holders", new TypeToken<List<Component>>() {});
+        final Parameter.Key<Component> textAmpersandKey = Parameter.key("source-text-ampersand", new TypeToken<Component>() {});
+        final Parameter.Key<Component> textJsonKey = Parameter.key("source-text-json", new TypeToken<Component>() {});
+
+        return this.targetsOrSources(context, entitiesKey, scoreHoldersKey, textAmpersandKey, textJsonKey, worldKey, returnSource);
     }
 
     @Override
-    public Set<Team> getTeams(final Scoreboard scoreboard) {
-        return scoreboard.getTeams();
-    }
-
-    @Override
-    public Collection<Component> getScoreHolders(final ResourceKey worldKey) {
-        return this.getScoreHolders(this.getOrCreateScoreboard(worldKey));
-    }
-
-    @Override
-    public Collection<Component> getScoreHolders(final Scoreboard scoreboard) {
-        return scoreboard.getScores()
-                .stream()
-                .map(Score::getName)
-                .sorted(Comparator.comparing(component -> PlainComponentSerializer.plain().serialize(component)))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean isTargetsParameterFilled(final CommandContext context) {
-        return context.hasAny(CosmosKeys.ENTITY_TARGETS) || context.hasAny(CosmosKeys.MANY_SCORE_HOLDER)
-                || context.hasAny(CosmosKeys.TEXT_AMPERSAND) || context.hasAny(CosmosKeys.TEXT_JSON);
+    public Set<Team> teams(final ResourceKey worldKey) {
+        return this.scoreboardOrCreate(worldKey).teams();
     }
 
     private List<Component> tryReturnSource(final Audience src) throws CommandException {
         if (src instanceof Tamer) {
-            return Collections.singletonList(Component.text(((Tamer) src).getName()));
+            return Collections.singletonList(Component.text(((Tamer) src).name()));
         } else if (src instanceof Identifiable) {
-            return Collections.singletonList(Component.text(((Identifiable) src).getUniqueId().toString()));
+            return Collections.singletonList(Component.text(((Identifiable) src).uniqueId().toString()));
         }
 
-        throw this.messageService.getError(src, "error.missing.entities");
+        throw this.messageService.getError(src, "error.missing.entities.any");
     }
 
 }

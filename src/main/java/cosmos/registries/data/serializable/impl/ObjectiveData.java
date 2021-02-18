@@ -14,15 +14,15 @@ import java.util.Optional;
 public class ObjectiveData implements CollectorSerializable<Objective> {
 
     private final Criterion criterion;
+    private final ObjectiveDisplayMode displayMode;
     private final String displayName;
     private final String name;
-    private final ObjectiveDisplayMode displayMode;
 
     public ObjectiveData(final Objective objective) {
-        this.criterion = objective.getCriterion();
-        this.displayName = GsonComponentSerializer.gson().serialize(objective.getDisplayName());
-        this.name = objective.getName();
-        this.displayMode = objective.getDisplayMode();
+        this.criterion = objective.criterion();
+        this.displayMode = objective.displayMode();
+        this.displayName = GsonComponentSerializer.gson().serialize(objective.displayName());
+        this.name = objective.name();
     }
 
     public ObjectiveData(final Criterion criterion, final ObjectiveDisplayMode displayMode, final String displayName, final String name) {
@@ -41,15 +41,15 @@ public class ObjectiveData implements CollectorSerializable<Objective> {
         return Optional.of(
                 Objective.builder()
                         .criterion(this.criterion)
-                        .objectiveDisplayMode(this.displayMode)
                         .displayName(GsonComponentSerializer.gson().deserialize(this.displayName))
                         .name(this.name)
+                        .objectiveDisplayMode(this.displayMode)
                         .build()
         );
     }
 
     @Override
-    public int getContentVersion() {
+    public int contentVersion() {
         return 1;
     }
 
@@ -57,9 +57,9 @@ public class ObjectiveData implements CollectorSerializable<Objective> {
     public DataContainer toContainer() {
         return DataContainer.createNew()
                 .set(Queries.Scoreboards.Objective.CRITERION, this.criterion.key(RegistryTypes.CRITERION))
+                .set(Queries.Scoreboards.Objective.DISPLAY_MODE, this.displayMode.key(RegistryTypes.OBJECTIVE_DISPLAY_MODE))
                 .set(Queries.Scoreboards.Objective.DISPLAY_NAME, this.displayName)
-                .set(Queries.Scoreboards.Objective.NAME, this.name)
-                .set(Queries.Scoreboards.Objective.DISPLAY_MODE, this.displayMode.key(RegistryTypes.OBJECTIVE_DISPLAY_MODE));
+                .set(Queries.Scoreboards.Objective.NAME, this.name);
     }
 
 }

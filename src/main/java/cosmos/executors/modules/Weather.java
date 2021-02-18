@@ -3,19 +3,19 @@ package cosmos.executors.modules;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.constants.CosmosParameters;
 import cosmos.executors.commands.weather.Forecast;
 import cosmos.executors.commands.weather.Rain;
 import cosmos.executors.commands.weather.Sun;
 import cosmos.executors.commands.weather.Thunder;
-import cosmos.executors.parameters.impl.world.WorldAll;
 
 @Singleton
 class Weather extends AbstractModule {
 
     @Inject
-    public Weather(final Injector injector) {
+    Weather(final Injector injector) {
         super(
-                injector.getInstance(WorldAll.class).optional().build(),
+                CosmosParameters.WORLD_ALL.get().optional().build(),
                 injector.getInstance(Forecast.class),
                 injector.getInstance(Rain.class),
                 injector.getInstance(Sun.class),

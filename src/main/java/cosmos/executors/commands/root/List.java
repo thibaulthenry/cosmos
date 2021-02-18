@@ -15,10 +15,6 @@ import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
-import org.spongepowered.api.command.parameter.Parameter;
-import org.spongepowered.api.command.parameter.managed.ValueParameter;
-import org.spongepowered.api.command.parameter.managed.ValueParser;
-import org.spongepowered.api.entity.Entity;
 
 import java.util.stream.Collectors;
 
@@ -27,17 +23,18 @@ public class List extends AbstractCommand {
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
+        // TODO Translate
         final HoverEvent<Component> hoverEvent = HoverEvent.showText(Component.text("Click to teleport yourself (dangerously)"));
-        final HoverEvent<Component> hoverEventSafely = HoverEvent.showText(Component.text("Click to teleport yourself (dangerously)"));
+        final HoverEvent<Component> hoverEventSafely = HoverEvent.showText(Component.text("Click to teleport yourself (safely)"));
         final Component dashText = Component.text(" - ");
         final Component infoText = Component.text("Info", NamedTextColor.GRAY).decorate(TextDecoration.UNDERLINED);
         final Component moveText = Component.text("Move", NamedTextColor.GRAY).decorate(TextDecoration.UNDERLINED);
         final Component safeText = Component.text("Safe", NamedTextColor.GRAY).decorate(TextDecoration.UNDERLINED);
 
-        final Iterable<Component> loadedWorlds = Sponge.getServer().getWorldManager().worlds()
+        final Iterable<Component> loadedWorlds = Sponge.server().worldManager().worlds()
                 .stream()
                 .map(world -> {
-                    final ResourceKey worldKey = world.getKey();
+                    final ResourceKey worldKey = world.key();
                     final String moveCommand = super.serviceProvider.transportation()
                             .buildCommand(null, worldKey, null, null, false);
                     final String moveSafelyCommand = super.serviceProvider.transportation()
@@ -45,7 +42,7 @@ public class List extends AbstractCommand {
 
                     return Component.text()
                             .append(
-                                    super.serviceProvider.format().asText(worldKey, true).color(WorldStates.LOADED.getColor()),
+                                    super.serviceProvider.format().asText(worldKey, true).color(WorldStates.LOADED.color()),
                                     Component.text()
                                             .append(dashText)
                                             .append(infoText)
@@ -67,8 +64,10 @@ public class List extends AbstractCommand {
 
         final Iterable<Component> unloadedWorlds = super.serviceProvider.world().worldKeysOffline()
                 .stream()
-                .map(worldKey -> super.serviceProvider.format().asText(worldKey, true).color(WorldStates.UNLOADED.getColor()))
+                .map(worldKey -> super.serviceProvider.format().asText(worldKey, true).color(WorldStates.UNLOADED.color()))
                 .collect(Collectors.toList());
+
+        // TODO https://github.com/SpongePowered/Sponge/issues/3267
 
 //        Iterable<Text> exportedWorlds = FinderWorldName.getExportedWorldNames()
 //                .stream()
@@ -76,10 +75,8 @@ public class List extends AbstractCommand {
 //                .map(worldName -> Text.builder(worldName).color(WorldStates.EXPORTED.getColor()).build())
 //                .collect(Collectors.toList());
 
-        final Iterable<Component> allWorlds = Iterables.concat(loadedWorlds, unloadedWorlds/*, exportedWorlds todo */);
-
+        final Iterable<Component> allWorlds = Iterables.concat(loadedWorlds, unloadedWorlds/*, exportedWorlds */);
         final TextComponent title = super.serviceProvider.message().getText(src, "success.root.list.header");
-
         super.serviceProvider.pagination().send(src, title, allWorlds, false);
     }
 

@@ -34,25 +34,27 @@ public class TeamData implements CollectorSerializable<Team> {
         final GsonComponentSerializer jsonSerializer = GsonComponentSerializer.gson();
 
         this.allowFriendlyFire = team.allowFriendlyFire();
-        this.collisionRule = team.getCollisionRule();
-        // todo this.color = team.getColor().toString();
-        this.color = "white";
-        this.deathMessageVisibility = team.getDeathMessageVisibility();
-        this.displayName = jsonSerializer.serialize(team.getDisplayName());
-        this.name = team.getName();
-        this.nameTagVisibility = team.getNameTagVisibility();
-        this.players = team.getMembers()
+        this.collisionRule = team.collisionRule();
+        this.color = team.color().toString();
+        this.deathMessageVisibility = team.deathMessageVisibility();
+        this.displayName = jsonSerializer.serialize(team.displayName());
+        this.name = team.name();
+        this.nameTagVisibility = team.nameTagVisibility();
+
+        this.players = team.members()
                 .stream()
                 .map(jsonSerializer::serialize)
                 .collect(Collectors.toList());
-        this.prefix = jsonSerializer.serialize(team.getPrefix());
+
+        this.prefix = jsonSerializer.serialize(team.prefix());
         this.seeFriendlyInvisibles = team.canSeeFriendlyInvisibles();
-        this.suffix = jsonSerializer.serialize(team.getSuffix());
+        this.suffix = jsonSerializer.serialize(team.suffix());
     }
 
-    public TeamData(final boolean allowFriendlyFire, final CollisionRule collisionRule, final String color, final Visibility deathMessageVisibility,
-                    final String displayName, final String name, final Visibility nameTagVisibility, final List<String> players,
-                    final String prefix, final boolean seeFriendlyInvisibles, final String suffix) {
+    public TeamData(final boolean allowFriendlyFire, final CollisionRule collisionRule, final String color,
+                    final Visibility deathMessageVisibility, final String displayName, final String name,
+                    final Visibility nameTagVisibility, final List<String> players, final String prefix,
+                    final boolean seeFriendlyInvisibles, final String suffix) {
         this.allowFriendlyFire = allowFriendlyFire;
         this.collisionRule = collisionRule;
         this.color = color;
@@ -109,7 +111,7 @@ public class TeamData implements CollectorSerializable<Team> {
     }
 
     @Override
-    public int getContentVersion() {
+    public int contentVersion() {
         return 1;
     }
 

@@ -31,10 +31,13 @@ public class ScoreDataBuilder extends AbstractDataBuilder<ScoreData> {
 
         final boolean locked = container.getBoolean(Queries.Scoreboards.Score.LOCKED)
                 .orElseThrow(() -> new InvalidDataException("Missing locked while building ScoreData"));
+
         final String objective = container.getString(Queries.Scoreboards.Score.OBJECTIVE)
                 .orElseThrow(() -> new InvalidDataException("Missing objective while building ScoreData"));
+
         final int score = container.getInt(Queries.Scoreboards.Score.SCORE)
                 .orElseThrow(() -> new InvalidDataException("Missing score while building ScoreData"));
+
         final String targetName = container.getString(Queries.Scoreboards.Score.TARGET_NAME)
                 .orElseThrow(() -> new InvalidDataException("Missing target name while building ScoreData"));
 

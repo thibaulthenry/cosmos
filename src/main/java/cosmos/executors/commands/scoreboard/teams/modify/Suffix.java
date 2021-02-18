@@ -1,10 +1,8 @@
 package cosmos.executors.commands.scoreboard.teams.modify;
 
 import com.google.common.base.CaseFormat;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import cosmos.constants.Units;
-import cosmos.executors.parameters.CosmosParameters;
+import cosmos.constants.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.spongepowered.api.ResourceKey;
@@ -16,23 +14,14 @@ import org.spongepowered.api.scoreboard.Team;
 @Singleton
 public class Suffix extends AbstractTeamModifyCommand {
 
-    @Inject
     public Suffix() {
-        super(CosmosParameters.TEXTS_ALL);
+        super(CosmosParameters.TEXTS_ALL.get().build());
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Scoreboard scoreboard, final Team team) throws CommandException {
-        final Component suffix = super.serviceProvider.perWorld().scoreboards().findComponent(context)
+        final Component suffix = super.serviceProvider.scoreboards().findComponent(context)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.text"));
-
-        if (super.serviceProvider.validation().doesOverflowMaxLength(suffix, Units.NAME_MAX_LENGTH)) {
-            throw super.serviceProvider.message()
-                    .getMessage(src, "error.invalid.objective.overflow")
-                    .condition("display2", false)
-                    .condition("display1", false)
-                    .asError();
-        }
 
         team.setSuffix(suffix);
 

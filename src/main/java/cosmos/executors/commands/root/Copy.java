@@ -1,12 +1,10 @@
 package cosmos.executors.commands.root;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
+import cosmos.constants.CosmosKeys;
+import cosmos.constants.CosmosParameters;
 import cosmos.executors.commands.AbstractCommand;
-import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.world.WorldAll;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
@@ -19,25 +17,24 @@ import java.util.List;
 @Singleton
 public class Copy extends AbstractCommand {
 
-    @Inject
-    public Copy(final Injector injector) {
+    public Copy() {
         super(
-                injector.getInstance(WorldAll.class).build(),
-                Parameter.string().setKey(CosmosKeys.NAME).build()
+                CosmosParameters.WORLD_ALL.get().build(),
+                Parameter.string().key(CosmosKeys.NAME).build()
         );
     }
 
     @Override
-    protected List<String> aliases() {
+    protected List<String> additionalAliases() {
         return Collections.singletonList("copy");
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
-        final ResourceKey worldKey = context.getOne(CosmosKeys.WORLD)
+        final ResourceKey worldKey = context.one(CosmosKeys.WORLD)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.world.online"));
 
-        final ResourceKey copyKey = context.getOne(CosmosKeys.NAME)
+        final ResourceKey copyKey = context.one(CosmosKeys.NAME)
                 .map(name -> ResourceKey.of(Cosmos.NAMESPACE, name))
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "parameter", CosmosKeys.NAME));
 

@@ -10,14 +10,8 @@ public interface ListenerService extends CosmosService {
 
     void cancelSaveTaskIfNot();
 
-    void initializeAll();
+    String format(Class<? extends Listener> listenerClass);
 
-    boolean isRegistered(Class<? extends Listener> clazz);
-
-    void register(Class<? extends Listener> clazz);
-
-    void unregister(Class<? extends Listener> clazz);
-
-    void unregisterAll();
+    void submitSaveTaskIfNot();
 
 }

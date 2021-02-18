@@ -16,7 +16,12 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -25,19 +30,30 @@ public abstract class AbstractModule extends AbstractExecutor {
     private final Map<List<String>, AbstractExecutor> childExecutorMap;
     private final String moduleName;
     private final Parameter prefixedParameter;
+    private final boolean terminal;
+
     private Command.Parameterized parameterized;
 
-    protected AbstractModule(@Nullable final Parameter prefixedParameter, final AbstractExecutor... childExecutors) {
+    protected AbstractModule(@Nullable final Parameter prefixedParameter, boolean terminal, final AbstractExecutor... childExecutors) {
+        this.childExecutorMap = Arrays.stream(childExecutors).collect(Collectors.toMap(AbstractExecutor::aliases, Function.identity()));
         this.moduleName = this.getClass().getName()
                 .replace(AbstractModule.class.getPackage().getName() + ".", "")
                 .replaceAll("\\.", "-")
                 .toLowerCase(Locale.ROOT);
-        this.childExecutorMap = Arrays.stream(childExecutors).collect(Collectors.toMap(AbstractExecutor::getAliases, Function.identity()));
         this.prefixedParameter = prefixedParameter;
+        this.terminal = terminal;
+    }
+
+    protected AbstractModule(@Nullable final Parameter prefixedParameter, final AbstractExecutor... childExecutors) {
+        this(prefixedParameter, true, childExecutors);
+    }
+
+    protected AbstractModule(final boolean terminal, final AbstractExecutor... childExecutors) {
+        this(null, terminal, childExecutors);
     }
 
     protected AbstractModule(final AbstractExecutor... childExecutors) {
-        this(null, childExecutors);
+        this(null, true, childExecutors);
     }
 
     @Override
@@ -45,6 +61,7 @@ public abstract class AbstractModule extends AbstractExecutor {
         final Comparator<TextComponent> comparator = (t1, t2) -> {
             final String s1 = PlainComponentSerializer.plain().serialize(t1);
             final String s2 = PlainComponentSerializer.plain().serialize(t2);
+
             return s1.compareToIgnoreCase(s2);
         };
 
@@ -52,7 +69,7 @@ public abstract class AbstractModule extends AbstractExecutor {
                 Component.text(" | ", NamedTextColor.GRAY),
                 this.childExecutorMap.entrySet()
                         .stream()
-                        .filter(entry -> entry.getValue().getParametrized().canExecute(context.getCause()))
+                        .filter(entry -> entry.getValue().parametrized().canExecute(context.cause()))
                         .map(entry -> entry.getKey().stream().map(Component::text).sorted(comparator).collect(Collectors.toList()))
                         .map(aliases -> Component.join(Component.text("-", NamedTextColor.DARK_GRAY), aliases))
                         .sorted(comparator)
@@ -75,8 +92,24 @@ public abstract class AbstractModule extends AbstractExecutor {
         return CommandResult.success();
     }
 
+    public boolean hasPrefixedParameter() {
+        return this.prefixedParameter != null;
+    }
+
+    private boolean hasSubPermission(final CommandCause commandCause) {
+        return this.childExecutorMap.values()
+                .stream()
+                .anyMatch(executor -> {
+                    if (executor instanceof AbstractModule) {
+                        return ((AbstractModule) executor).hasSubPermission(commandCause);
+                    }
+
+                    return executor instanceof AbstractCommand && commandCause.hasPermission(((AbstractCommand) executor).permission());
+                });
+    }
+
     @Override
-    public Command.Parameterized getParametrized() {
+    public Command.Parameterized parametrized() {
         if (this.parameterized != null) {
             return this.parameterized;
         }
@@ -91,44 +124,28 @@ public abstract class AbstractModule extends AbstractExecutor {
                     .map(entry -> {
                         final String alias = entry.getKey().get(0);
                         final String[] aliases = entry.getKey().stream().skip(1).toArray(String[]::new);
-                        return Parameter.subcommand(entry.getValue().getParametrized(), alias, aliases);
+
+                        return Parameter.subcommand(entry.getValue().parametrized(), alias, aliases);
                     })
                     .collect(Collectors.toSet());
 
-            commandBuilder.parameter(this.prefixedParameter).parameter(Parameter.firstOf(childSubcommandSet));
+            commandBuilder.addParameter(this.prefixedParameter).addParameter(Parameter.firstOf(childSubcommandSet));
         } else {
             final Map<List<String>, Command.Parameterized> childCommandMap = this.childExecutorMap
                     .entrySet()
                     .stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getParametrized()));
+                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().parametrized()));
 
-            commandBuilder.children(childCommandMap);
+            commandBuilder.addChildren(childCommandMap);
         }
 
         this.parameterized = commandBuilder
-                .setExecutor(this)
-                .setExecutionRequirements(this::hasSubPermission)
-                .setTerminal(true)
+                .executionRequirements(this::hasSubPermission)
+                .executor(this)
+                .terminal(this.terminal)
                 .build();
 
         return this.parameterized;
-    }
-
-    public boolean hasPrefixedParameter() {
-        return this.prefixedParameter != null;
-    }
-
-    private boolean hasSubPermission(final CommandCause commandCause) {
-        return this.childExecutorMap.values()
-                .stream()
-                .anyMatch(executor -> {
-                    if (executor instanceof AbstractModule) {
-                        return ((AbstractModule) executor).hasSubPermission(commandCause);
-                    }
-
-                    return executor instanceof AbstractCommand
-                            && commandCause.hasPermission(((AbstractCommand) executor).getPermission());
-                });
     }
 
 }

@@ -21,85 +21,86 @@ import java.util.stream.Collectors;
 public class TabListsListener extends AbstractPerWorldListener {
 
     private void addEntrySafely(final ServerPlayer addedPlayer, final ServerPlayer affectedPlayer) {
-        final TabList tabList = affectedPlayer.getTabList();
+        final TabList tabList = affectedPlayer.tabList();
 
         final TabListEntry addedTabListEntry = TabListEntry.builder()
                 .list(tabList)
-                .profile(addedPlayer.getProfile())
+                .profile(addedPlayer.profile())
                 .gameMode(addedPlayer.gameMode().get())
                 .build();
 
-        if (tabList.getEntry(addedPlayer.getUniqueId()).isPresent()) {
+        if (tabList.entry(addedPlayer.uniqueId()).isPresent()) {
             return;
         }
 
         try {
             tabList.addEntry(addedTabListEntry);
         } catch (final Exception e) {
-            Cosmos.getLogger().warn("An unexpected error occurred while add entry to player tab list", e);
+            Cosmos.logger().error("An unexpected error occurred while add entry to player tab list", e);
         }
     }
 
     private void clearTabList(final ServerPlayer player) {
-        final Collection<UUID> onJoinerTabList = player.getTabList().getEntries().stream()
-                .map(TabListEntry::getProfile)
-                .map(GameProfile::getUniqueId)
-                .filter(uuid -> !player.getUniqueId().equals(uuid))
+        final Collection<UUID> onJoinerTabList = player.tabList().entries()
+                .stream()
+                .map(TabListEntry::profile)
+                .map(GameProfile::uniqueId)
+                .filter(uuid -> !player.uniqueId().equals(uuid))
                 .collect(Collectors.toList());
 
-        onJoinerTabList.forEach(uuid -> player.getTabList().removeEntry(uuid));
+        onJoinerTabList.forEach(uuid -> player.tabList().removeEntry(uuid));
     }
 
     private void joinWorldTabList(final ServerWorld world, final ServerPlayer joiningPlayer) {
-        world.getPlayers().forEach(player -> {
+        world.players().forEach(player -> {
             addEntrySafely(joiningPlayer, player);
             addEntrySafely(player, joiningPlayer);
         });
     }
 
-    private void leaveWorldTabList(final ServerWorld world, final ServerPlayer leavingPlayer) {
-        world.getPlayers()
+    private void leaveAllTabList(final ServerPlayer targetPlayer) {
+        Sponge.server().worldManager().worlds()
                 .stream()
-                .filter(player -> !player.getUniqueId().equals(leavingPlayer.getUniqueId()))
-                .forEach(player -> player.getTabList().removeEntry(leavingPlayer.getUniqueId()));
+                .map(ServerWorld::players)
+                .flatMap(Collection::stream)
+                .filter(player -> !player.uniqueId().equals(targetPlayer.uniqueId()))
+                .forEach(player -> player.tabList().removeEntry(targetPlayer.uniqueId()));
     }
 
-    private void leaveAllTabList(final ServerPlayer targetPlayer) {
-        Sponge.getServer().getWorldManager().worlds()
+    private void leaveWorldTabList(final ServerWorld world, final ServerPlayer leavingPlayer) {
+        world.players()
                 .stream()
-                .map(ServerWorld::getPlayers)
-                .flatMap(Collection::stream)
-                .filter(player -> !player.getUniqueId().equals(targetPlayer.getUniqueId()))
-                .forEach(player -> player.getTabList().removeEntry(targetPlayer.getUniqueId()));
+                .filter(player -> !player.uniqueId().equals(leavingPlayer.uniqueId()))
+                .forEach(player -> player.tabList().removeEntry(leavingPlayer.uniqueId()));
     }
 
     @Listener
     public void onJoinServerSideConnectionEvent(final ServerSideConnectionEvent.Join event, @First final ServerPlayer player) {
         this.leaveAllTabList(player);
         this.clearTabList(player);
-        this.joinWorldTabList(player.getWorld(), player);
+        this.joinWorldTabList(player.world(), player);
     }
 
     @Listener
     public void onPostChangeEntityWorldEvent(final ChangeEntityWorldEvent.Post event, @First final ServerPlayer player) {
-        this.leaveWorldTabList(event.getOriginalWorld(), player);
+        this.leaveWorldTabList(event.originalWorld(), player);
         this.clearTabList(player);
-        this.joinWorldTabList(event.getDestinationWorld(), player);
+        this.joinWorldTabList(event.destinationWorld(), player);
     }
 
     @Override
     public void start() {
-        Sponge.getServer().getOnlinePlayers().forEach(player -> {
+        Sponge.server().onlinePlayers().forEach(player -> {
             this.clearTabList(player);
-            this.joinWorldTabList(player.getWorld(), player);
+            this.joinWorldTabList(player.world(), player);
         });
     }
 
     @Override
     public void stop() {
-        Sponge.getServer().getOnlinePlayers().forEach(affectedPlayer -> {
+        Sponge.server().onlinePlayers().forEach(affectedPlayer -> {
             this.clearTabList(affectedPlayer);
-            Sponge.getServer().getOnlinePlayers().forEach(addedPlayer -> this.addEntrySafely(addedPlayer, affectedPlayer));
+            Sponge.server().onlinePlayers().forEach(addedPlayer -> this.addEntrySafely(addedPlayer, affectedPlayer));
         });
     }
 

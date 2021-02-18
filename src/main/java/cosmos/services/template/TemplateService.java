@@ -10,6 +10,6 @@ import java.util.Locale;
 @ImplementedBy(TemplateServiceImpl.class)
 public interface TemplateService extends CosmosService {
 
-    TemplateRegistry getTemplateRegistry(final Locale locale);
+    TemplateRegistry templateRegistry(final Locale locale);
 
 }

@@ -7,11 +7,11 @@ import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.util.MinecraftDayTime;
 
 @Singleton
-public class Dusk extends AbstractTimeChangeCommand {
+public class Dusk extends AbstractTimeModifyCommand {
 
     @Override
-    protected long getNewTime(final Audience src, final CommandContext context, final MinecraftDayTime time) {
-        return super.serviceProvider.time().getNearestTickOccurrence(time.asTicks().getTicks(), Units.DUSK);
+    protected long newTime(final Audience src, final CommandContext context, final MinecraftDayTime time) {
+        return super.serviceProvider.time().getNearestTickOccurrence(time.asTicks().ticks(), Units.DUSK);
     }
 
 }

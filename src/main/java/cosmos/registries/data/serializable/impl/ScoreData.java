@@ -5,13 +5,9 @@ import cosmos.registries.data.serializable.ShareableSerializable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.spongepowered.api.data.persistence.DataContainer;
-import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.scoreboard.Score;
 import org.spongepowered.api.scoreboard.Scoreboard;
-import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.scoreboard.objective.Objective;
-
-import java.util.Optional;
 
 public class ScoreData implements ShareableSerializable<Scoreboard> {
 
@@ -22,9 +18,9 @@ public class ScoreData implements ShareableSerializable<Scoreboard> {
 
     public ScoreData(final Score score, final Objective objective) {
         this.locked = score.isLocked();
-        this.objective = objective.getName();
-        this.score = score.getScore();
-        this.targetName = GsonComponentSerializer.gson().serialize(score.getName());
+        this.objective = objective.name();
+        this.score = score.score();
+        this.targetName = GsonComponentSerializer.gson().serialize(score.name());
     }
 
     public ScoreData(final boolean locked, final String objective, final int score, final String targetName) {
@@ -35,7 +31,7 @@ public class ScoreData implements ShareableSerializable<Scoreboard> {
     }
 
     @Override
-    public int getContentVersion() {
+    public int contentVersion() {
         return 1;
     }
 
@@ -43,8 +39,8 @@ public class ScoreData implements ShareableSerializable<Scoreboard> {
     public void share(final Scoreboard data) {
         final Component target = GsonComponentSerializer.gson().deserialize(this.targetName);
 
-        data.getObjective(this.objective).ifPresent(objective -> {
-            final Score score = objective.getOrCreateScore(target);
+        data.objective(this.objective).ifPresent(objective -> {
+            final Score score = objective.scoreOrCreate(target);
 
             score.setScore(this.score);
             score.setLocked(this.locked);

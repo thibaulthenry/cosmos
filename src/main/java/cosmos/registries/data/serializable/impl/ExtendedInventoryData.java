@@ -3,7 +3,6 @@ package cosmos.registries.data.serializable.impl;
 import cosmos.constants.Queries;
 import cosmos.registries.data.serializable.ShareableSerializable;
 import org.spongepowered.api.data.persistence.DataContainer;
-import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.item.inventory.Container;
 import org.spongepowered.api.item.inventory.Inventory;
@@ -14,31 +13,32 @@ import java.util.Optional;
 
 public class ExtendedInventoryData implements ShareableSerializable<ServerPlayer> {
 
+    private final InventoryData craftingInventoryData;
     private final InventoryData enderChestInventoryData;
     private final InventoryData playerInventoryData;
-    private final InventoryData craftingInventoryData;
     private final ItemStack pickedItem;
 
     public ExtendedInventoryData(final ServerPlayer player) {
-        this.enderChestInventoryData = new InventoryData(player.getEnderChestInventory());
-        this.playerInventoryData = new InventoryData(player.getInventory());
+        this.enderChestInventoryData = new InventoryData(player.enderChestInventory());
+        this.playerInventoryData = new InventoryData(player.inventory());
 
-        if (!player.isViewingInventory() || !player.getOpenInventory().isPresent()) {
+        if (!player.isViewingInventory() || !player.openInventory().isPresent()) {
             this.craftingInventoryData = null;
             this.pickedItem = null;
+
             return;
         }
 
-        final Container playerContainer = player.getOpenInventory().get();
+        final Container playerContainer = player.openInventory().get();
 
-        this.craftingInventoryData = playerContainer.getViewed()
+        this.craftingInventoryData = playerContainer.viewed()
                 .stream()
                 .filter(inventory -> inventory instanceof CraftingGridInventory)
                 .findFirst()
                 .map(InventoryData::new)
                 .orElse(null);
 
-        this.pickedItem = playerContainer.getCursor().orElse(null);
+        this.pickedItem = playerContainer.cursor().orElse(null);
     }
 
     public ExtendedInventoryData(final InventoryData playerInventoryData, final InventoryData enderChestInventoryData, final InventoryData craftingInventoryData, final ItemStack pickedItem) {
@@ -56,7 +56,7 @@ public class ExtendedInventoryData implements ShareableSerializable<ServerPlayer
     }
 
     @Override
-    public int getContentVersion() {
+    public int contentVersion() {
         return 1;
     }
 
@@ -64,23 +64,24 @@ public class ExtendedInventoryData implements ShareableSerializable<ServerPlayer
     public void share(final ServerPlayer data) {
         Optional.ofNullable(this.playerInventoryData)
                 .orElse(new InventoryData())
-                .share(data.getInventory());
+                .share(data.inventory());
 
         Optional.ofNullable(this.enderChestInventoryData)
                 .orElse(new InventoryData())
-                .share(data.getEnderChestInventory());
+                .share(data.enderChestInventory());
 
-        if (!data.isViewingInventory() || !data.getOpenInventory().isPresent()) {
+        if (!data.isViewingInventory() || !data.openInventory().isPresent()) {
             return;
         }
 
-        final Container playerContainer = data.getOpenInventory().get();
+        final Container playerContainer = data.openInventory().get();
 
         if (this.pickedItem != null) {
-            // playerContainer.setCursor(this.pickedItem); TODO [SpongePowered/Sponge] Issue opened: #3258
+            // playerContainer.setCursor(this.pickedItem);
+            // TODO https://github.com/SpongePowered/Sponge/issues/3258
         }
 
-        final Optional<Inventory> optionalCraftingInventory = playerContainer.getViewed()
+        final Optional<Inventory> optionalCraftingInventory = playerContainer.viewed()
                 .stream()
                 .filter(inventory -> inventory instanceof CraftingGridInventory)
                 .findFirst();

@@ -31,10 +31,13 @@ public class ExperienceDataBuilder extends AbstractDataBuilder<ExperienceData> {
 
         final int experience = container.getInt(Queries.Experiences.EXPERIENCE)
                 .orElseThrow(() -> new InvalidDataException("Missing experience while building ExperienceData"));
+
         final int experienceFromStartOfLevel = container.getInt(Queries.Experiences.EXPERIENCE_FROM_START_OF_LEVEL)
                 .orElseThrow(() -> new InvalidDataException("Missing experience from start of level while building ExperienceData"));
+
         final int experienceLevel = container.getInt(Queries.Experiences.EXPERIENCE_LEVEL)
                 .orElseThrow(() -> new InvalidDataException("Missing experience level while building ExperienceData"));
+
         final int experienceSinceLevel = container.getInt(Queries.Experiences.EXPERIENCE_SINCE_LEVEL)
                 .orElseThrow(() -> new InvalidDataException("Missing experience since level while building ExperienceData"));
 

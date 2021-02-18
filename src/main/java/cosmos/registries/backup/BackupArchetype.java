@@ -5,7 +5,6 @@ import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.server.ServerWorld;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,32 +32,32 @@ public class BackupArchetype {
         this.tag = tag;
     }
 
-    public ZonedDateTime getCreationDateTime() {
+    public ZonedDateTime creationDateTime() {
         return this.creationDateTime;
     }
 
-    public Optional<ServerWorld> getLinkedWorld() {
-        return Sponge.getServer().getWorldManager().world(this.worldKey);
+    public Optional<ServerWorld> linkedWorld() {
+        return Sponge.server().worldManager().world(this.worldKey);
     }
 
-    public String getName() {
-        return this.worldKey.getFormatted().replaceAll(":", "_") + "_" + (this.tag == null ? this.creationDateTimeFormatted : this.tag);
+    public String name() {
+        return this.worldKey.formatted().replaceAll(":", "_") + "_" + (this.tag == null ? this.creationDateTimeFormatted : this.tag);
     }
 
-    public Optional<String> getTag() {
+    public Optional<String> tag() {
         return Optional.ofNullable(this.tag);
     }
 
-    public ResourceKey getWorldKey() {
-        return this.worldKey;
-    }
-
-    public void setTag(final String tag) {
+    public void tag(final String tag) {
         if (tag == null || tag.isEmpty()) {
             return;
         }
 
         this.tag = tag;
+    }
+
+    public ResourceKey worldKey() {
+        return this.worldKey;
     }
 
 }

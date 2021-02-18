@@ -1,9 +1,9 @@
 package cosmos.executors.commands.root;
 
 import com.google.inject.Singleton;
+import cosmos.constants.CosmosKeys;
+import cosmos.constants.CosmosParameters;
 import cosmos.executors.commands.AbstractCommand;
-import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -16,11 +16,8 @@ import org.spongepowered.api.entity.Tamer;
 import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.math.vector.Vector3d;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -28,49 +25,49 @@ public class MoveTo extends AbstractCommand {
 
     public MoveTo() {
         super(
-                Parameter.entity().setKey(CosmosKeys.ENTITY_DESTINATION).build(),
-                CosmosParameters.ENTITY_TARGETS_OPTIONAL
+                Parameter.entity().key(CosmosKeys.ENTITY_DESTINATION).build(),
+                CosmosParameters.ENTITIES.get().key(CosmosKeys.ENTITIES).optional().build()
         );
     }
 
     @Override
-    protected List<String> aliases() {
+    protected List<String> additionalAliases() {
         return Arrays.asList("mvto", "tpto");
     }
 
     @Override
     protected Flag[] flags() {
-        return new Flag[]{Flag.of(CosmosKeys.FLAG_SAFE_ONLY)};
+        return new Flag[]{Flag.of(CosmosKeys.Flag.SAFE_ONLY)};
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
-        final Entity destination = context.getOne(CosmosKeys.ENTITY_DESTINATION)
+        final Entity destination = context.one(CosmosKeys.ENTITY_DESTINATION)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.ENTITY_DESTINATION));
 
-        final Optional<List<Entity>> optionalEntities = context.getOne(CosmosParameters.ENTITY_TARGETS_OPTIONAL);
+        final Optional<List<Entity>> optionalEntities = context.one(CosmosKeys.ENTITIES);
 
         if (!(optionalEntities.isPresent() || src instanceof Entity)) {
-            throw super.serviceProvider.message().getError(src, "error.missing.entities");
+            throw super.serviceProvider.message().getError(src, "error.missing.entities.any");
         }
 
         if (optionalEntities.isPresent() && optionalEntities.get().isEmpty()) {
             throw super.serviceProvider.message().getError(src, "error.empty-output");
         }
 
-        final ServerLocation location = destination.getServerLocation();
-        final Vector3d rotation = destination.getRotation();
-        final boolean safeOnly = context.hasFlag(CosmosKeys.FLAG_SAFE_ONLY);
+        final ServerLocation location = destination.serverLocation();
+        final Vector3d rotation = destination.rotation();
+        final boolean safeOnly = context.hasFlag(CosmosKeys.Flag.SAFE_ONLY);
 
-        final Collection<Component> contents = context.getOne(CosmosParameters.ENTITY_TARGETS_OPTIONAL)
+        final Collection<Component> contents = context.one(CosmosKeys.ENTITIES)
                 .orElse(Collections.singletonList((Entity) src))
                 .stream()
                 .map(target -> {
                     final boolean sourceIsTarget = super.serviceProvider.validation().isSelf(src, target);
                     final boolean sourceIsDestination = super.serviceProvider.validation().isSelf(src, destination);
                     final boolean targetIsDestination = super.serviceProvider.validation().isSelf(target, destination);
-                    final String targetName = target instanceof Tamer ? ((Tamer) target).getName() : target.getUniqueId().toString();
-                    final String destinationName = destination instanceof Tamer ? ((Tamer) destination).getName() : destination.getUniqueId().toString();
+                    final String targetName = target instanceof Tamer ? ((Tamer) target).name() : target.uniqueId().toString();
+                    final String destinationName = destination instanceof Tamer ? ((Tamer) destination).name() : destination.uniqueId().toString();
 
                     if (!super.serviceProvider.transportation().teleport(target, location, rotation, safeOnly)) {
                         return super.serviceProvider.message()

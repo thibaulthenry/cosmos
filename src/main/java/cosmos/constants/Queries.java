@@ -4,14 +4,6 @@ import org.spongepowered.api.data.persistence.DataQuery;
 
 public class Queries {
 
-    public static final class Backup {
-
-        public static final DataQuery DATE = DataQuery.of("Date");
-        public static final DataQuery TAG = DataQuery.of("Tag");
-        public static final DataQuery WORLD = DataQuery.of("World");
-
-    }
-
     public static final class Advancements {
 
         public static final class Criterion {
@@ -21,6 +13,14 @@ public class Queries {
             public static final DataQuery SCORE = DataQuery.of("Score");
 
         }
+
+    }
+
+    public static final class Backup {
+
+        public static final DataQuery DATE = DataQuery.of("Date");
+        public static final DataQuery TAG = DataQuery.of("Tag");
+        public static final DataQuery WORLD = DataQuery.of("World");
 
     }
 
@@ -63,6 +63,45 @@ public class Queries {
             public static final DataQuery ENDER_CHEST_INVENTORY = DataQuery.of("EnderChestInventory");
             public static final DataQuery PICKED_ITEM = DataQuery.of("PickedItem");
             public static final DataQuery PLAYER_INVENTORY = DataQuery.of("PlayerInventory");
+
+        }
+
+    }
+
+    public static final class Portal {
+
+        public static final DataQuery DELAY = DataQuery.of("Delay");
+        public static final DataQuery DELAY_FORMAT = DataQuery.of("DelayFormat");
+        public static final DataQuery DELAY_GRADIENT_COLORS = DataQuery.of("DelayGradients");
+        public static final DataQuery DELAY_SHOWN = DataQuery.of("DelayShown");
+        public static final DataQuery DESTINATION = DataQuery.of("Destination");
+        public static final DataQuery KEY = DataQuery.of("Key");
+        public static final DataQuery NAUSEA = DataQuery.of("Nausea");
+        public static final DataQuery ORIGINS = DataQuery.of("Origins");
+        public static final DataQuery PARTICLES = DataQuery.of("Particles");
+        public static final DataQuery PARTICLES_FLUCTUATION = DataQuery.of("ParticlesFluctuation");
+        public static final DataQuery PARTICLES_SPAWN_INTERVAL = DataQuery.of("ParticlesSpawnInterval");
+        public static final DataQuery PARTICLES_VIEW_DISTANCE = DataQuery.of("ParticlesViewDistance");
+        public static final DataQuery SOUND_AMBIENT = DataQuery.of("SoundAmbient");
+        public static final DataQuery SOUND_DELAY = DataQuery.of("SoundDelay");
+        public static final DataQuery SOUND_DELAY_INTERVAL = DataQuery.of("SoundDelayInterval");
+        public static final DataQuery SOUND_TRAVEL = DataQuery.of("SoundTravel");
+        public static final DataQuery SOUND_TRIGGER = DataQuery.of("SoundTrigger");
+        public static final DataQuery TRIGGER = DataQuery.of("Trigger");
+        public static final DataQuery TYPE = DataQuery.of("Type");
+
+        public static final class Location {
+
+            public static final DataQuery POSITION = DataQuery.of("Position");
+            public static final DataQuery WORLD = DataQuery.of("World");
+
+        }
+
+        public static final class Sound {
+
+            public static final DataQuery PITCH = DataQuery.of("Pitch");
+            public static final DataQuery TYPE = DataQuery.of("Type");
+            public static final DataQuery VOLUME = DataQuery.of("Volume");
 
         }
 

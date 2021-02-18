@@ -36,7 +36,7 @@ public class InventoryDataBuilder extends AbstractDataBuilder<InventoryData> {
 
         final List<InventorySlotData> slots = optionalViewList.get()
                 .stream()
-                .map(view -> Sponge.getDataManager().deserialize(InventorySlotData.class, view))
+                .map(view -> Sponge.dataManager().deserialize(InventorySlotData.class, view))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
