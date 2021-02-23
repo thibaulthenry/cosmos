@@ -1,6 +1,8 @@
 package cosmos.services.portal;
 
 import com.google.inject.ImplementedBy;
+import cosmos.registries.data.portal.CosmosPortalType;
+import cosmos.registries.portal.CosmosFramePortal;
 import cosmos.registries.portal.CosmosPortal;
 import cosmos.registries.portal.impl.PortalDispatcher;
 import cosmos.services.CosmosService;
@@ -21,16 +23,20 @@ import java.util.UUID;
 @ImplementedBy(PortalServiceImpl.class)
 public interface PortalService extends CosmosService {
 
-    void create(Audience src, ResourceKey key, BlockType triggerBlockType) throws CommandException;
+    void create(Audience src, ResourceKey key, CosmosPortalType type) throws CommandException;
 
-    void highlight(Ticks duration, String tag, ServerLocation... serverLocation);
+    void delete(Audience src, ResourceKey key) throws CommandException;
 
-    void highlight(Audience src, Ticks duration) throws CommandException;
+    void fill(Audience src, CosmosFramePortal portal);
+
+    void fill(Audience src, ResourceKey key) throws CommandException;
+
+    void highlight(BlockType blockType, Ticks duration, String tag, ServerLocation... locations);
+
+    void highlight(BlockType blockType, Audience src, Ticks duration) throws CommandException;
 
     boolean link(ResourceKey worldOriginKey, PortalType portalType, ResourceKey worldDestinationKey) throws CommandException;
 
     boolean unlink(ResourceKey worldOriginKey, PortalType portalType);
-
-    boolean unselect(Audience src) throws CommandException;
 
 }

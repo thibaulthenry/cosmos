@@ -3,11 +3,10 @@ package cosmos.executors.commands.portal.modify;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import cosmos.executors.commands.AbstractCommand;
 import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.portal.PortalAll;
+import cosmos.executors.parameters.impl.portal.PortalFrame;
 import cosmos.executors.parameters.impl.world.WorldOnline;
-import cosmos.registries.portal.CosmosPortal;
+import cosmos.registries.portal.CosmosFramePortal;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
@@ -23,14 +22,14 @@ public class Destination extends AbstractPortalModifyCommand {
     @Inject
     public Destination(final Injector injector) {
         super(
-                injector.getInstance(PortalAll.class).key(CosmosKeys.PORTAL_COSMOS).build(),
+                new PortalFrame().key(CosmosKeys.PORTAL_FRAME_COSMOS).build(),
                 injector.getInstance(WorldOnline.class).key(CosmosKeys.WORLD_DESTINATION).build(),
                 Parameter.vector3d().setKey(CosmosKeys.X_Y_Z).optional().build()
         );
     }
 
     @Override
-    protected CosmosPortal getNewPortal(final Audience src, final CommandContext context, final CosmosPortal portal) throws CommandException {
+    protected CosmosFramePortal getNewPortal(final Audience src, final CommandContext context, final CosmosFramePortal portal) throws CommandException {
         final ResourceKey worldKey = context.getOne(CosmosKeys.WORLD_DESTINATION)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.world.online", "param", CosmosKeys.WORLD_DESTINATION));
 

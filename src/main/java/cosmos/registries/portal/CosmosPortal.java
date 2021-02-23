@@ -1,57 +1,58 @@
 package cosmos.registries.portal;
 
+import net.kyori.adventure.sound.Sound;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.effect.particle.ParticleEffect;
+import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.util.CopyableBuilder;
 import org.spongepowered.api.util.Ticks;
 import org.spongepowered.api.world.portal.Portal;
 import org.spongepowered.api.world.portal.PortalType;
 import org.spongepowered.api.world.server.ServerLocation;
 
+import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
+import java.util.function.Function;
 
 public interface CosmosPortal extends DataSerializable, Portal {
-
-    static Builder builder() {
-        return Sponge.getGame().getBuilderProvider().provide(Builder.class).reset();
-    }
 
     Ticks getCooldown();
 
     ResourceKey getKey();
 
-    Set<ServerLocation> getOrigins();
-
-    ParticleEffect getParticles();
-
-    BlockType getTrigger();
-
     PortalType getType();
 
     boolean hasCooldown();
 
-    boolean isTriggeredBy(BlockType blockType);
+    boolean hasNausea();
 
-    default Builder asBuilder() {
-        return Sponge.getGame().getBuilderProvider().provide(Builder.class).from(this);
-    }
+    Sound soundAmbiance();
 
-    interface Builder extends org.spongepowered.api.util.Builder<CosmosPortal, Builder>, CopyableBuilder<CosmosPortal, Builder> {
+    Sound soundTravel();
 
-        Builder addParticles(ParticleEffect particleEffect);
+    Sound soundTrigger();
 
-        Builder cooldown(Ticks ticks);
+    interface Builder<T extends CosmosPortal> extends org.spongepowered.api.util.Builder<T, Builder<T>>, CopyableBuilder<T, Builder<T>> {
 
-        Builder destination(ServerLocation destination);
+        Builder<T> cooldown(Ticks ticks);
 
-        Builder key(ResourceKey key);
+        Builder<T> destination(ServerLocation destination);
 
-        Builder origins(Set<ServerLocation> origin);
+        Builder<T> key(ResourceKey key);
 
-        Builder trigger(BlockType blockType);
+        Builder<T> nausea(boolean state);
+
+        Builder<T> origin(ServerLocation origin);
+
+        Builder<T> soundAmbiance(Sound sound);
+
+        Builder<T> soundTravel(Sound sound);
+
+        Builder<T> soundTrigger(Sound sound);
 
     }
 

@@ -5,26 +5,27 @@ import com.google.inject.Singleton;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleOptions;
 
 @Singleton
-public class Color extends AbstractParticlesModifyCommand {
+public class Block extends AbstractParticlesModifyCommand {
 
     @Inject
-    public Color() {
-        super(CosmosParameters.COLOR);
+    public Block() {
+        super(CosmosParameters.BLOCK_TYPE);
     }
 
     @Override
     protected ParticleEffect getNewParticles(final Audience src, final CommandContext context, final ParticleEffect particleEffect) throws CommandException {
-        final org.spongepowered.api.util.Color color = context.getOne(CosmosKeys.COLOR)
-                .map(namedTextColor -> org.spongepowered.api.util.Color.ofRgb(namedTextColor.value()))
-                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.COLOR));
+        final BlockState blockState = context.getOne(CosmosKeys.BLOCK_TYPE)
+                .map(blockType -> BlockState.builder().blockType(blockType).build())
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.BLOCK_TYPE));
 
-        return ParticleEffect.builder().from(particleEffect).option(ParticleOptions.COLOR, color).build();
+        return ParticleEffect.builder().from(particleEffect).option(ParticleOptions.BLOCK_STATE, blockState).build();
     }
 
 }

@@ -3,17 +3,14 @@ package cosmos.services.transportation.impl;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import cosmos.services.io.FinderService;
+import cosmos.Cosmos;
 import cosmos.services.transportation.TransportationService;
 import cosmos.services.validation.ValidationService;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.Tamer;
 import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.math.vector.Vector3d;
@@ -54,6 +51,8 @@ public class TransportationServiceImpl implements TransportationService {
 
     @Override
     public boolean teleport(final Entity target, final ServerLocation location, @Nullable final Vector3d rotation, final boolean safeOnly) {
+        Sponge.getServer().getCauseStackManager().pushCause(Cosmos.getPluginContainer());
+
         if (rotation != null) {
             target.setRotation(rotation);
         }

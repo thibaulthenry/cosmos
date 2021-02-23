@@ -11,10 +11,10 @@ import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 
 @Singleton
-public class Delete extends AbstractCommand {
+public class Fill extends AbstractCommand {
 
     @Inject
-    public Delete() {
+    public Fill() {
         super(new PortalFrame().key(CosmosKeys.PORTAL_FRAME_COSMOS).build());
     }
 
@@ -23,7 +23,7 @@ public class Delete extends AbstractCommand {
         final CosmosFramePortal portal = context.getOne(CosmosKeys.PORTAL_FRAME_COSMOS)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.PORTAL_FRAME_COSMOS));
 
-        super.serviceProvider.portal().delete(src, portal.getKey());
+        super.serviceProvider.portal().fill(src, portal);
 
         // todo
     }

@@ -7,6 +7,7 @@ import cosmos.executors.commands.portal.modify.Destination;
 import cosmos.executors.commands.portal.modify.Trigger;
 import cosmos.executors.modules.AbstractModule;
 import cosmos.executors.modules.portal.modify.Particles;
+import cosmos.executors.modules.portal.modify.Sound;
 
 public class Modify extends AbstractModule {
 
@@ -17,6 +18,7 @@ public class Modify extends AbstractModule {
                 injector.getInstance(Cooldown.class),
                 injector.getInstance(Destination.class),
                 injector.getInstance(Particles.class),
+                injector.getInstance(Sound.class),
                 injector.getInstance(Trigger.class)
         );
     }

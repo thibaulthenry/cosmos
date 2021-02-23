@@ -9,22 +9,24 @@ import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleOptions;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
 @Singleton
-public class Color extends AbstractParticlesModifyCommand {
+public class Item extends AbstractParticlesModifyCommand {
 
     @Inject
-    public Color() {
-        super(CosmosParameters.COLOR);
+    public Item() {
+        super(CosmosParameters.ITEM_TYPE);
     }
 
     @Override
     protected ParticleEffect getNewParticles(final Audience src, final CommandContext context, final ParticleEffect particleEffect) throws CommandException {
-        final org.spongepowered.api.util.Color color = context.getOne(CosmosKeys.COLOR)
-                .map(namedTextColor -> org.spongepowered.api.util.Color.ofRgb(namedTextColor.value()))
-                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.COLOR));
+        final ItemStackSnapshot itemStackSnapshot = context.getOne(CosmosKeys.ITEM_TYPE)
+                .map(itemType -> ItemStack.builder().itemType(itemType).build().createSnapshot())
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.ITEM_TYPE));
 
-        return ParticleEffect.builder().from(particleEffect).option(ParticleOptions.COLOR, color).build();
+        return ParticleEffect.builder().from(particleEffect).option(ParticleOptions.ITEM_STACK_SNAPSHOT, itemStackSnapshot).build();
     }
 
 }

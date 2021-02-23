@@ -8,13 +8,16 @@ import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.command.parameter.managed.standard.ResourceKeyedValueParameters;
 import org.spongepowered.api.effect.particle.ParticleType;
+import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
+import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.scoreboard.Visibility;
 import org.spongepowered.api.scoreboard.criteria.Criterion;
 import org.spongepowered.api.scoreboard.displayslot.DisplaySlot;
 import org.spongepowered.api.scoreboard.objective.displaymode.ObjectiveDisplayMode;
+import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.world.difficulty.Difficulty;
 import org.spongepowered.api.world.gamerule.GameRule;
 import org.spongepowered.api.world.portal.PortalType;
@@ -24,6 +27,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class CosmosParameters {
+
+    public static final Parameter.Value<BlockType> BLOCK_TYPE = Parameter.registryElement(TypeToken.get(BlockType.class), RegistryTypes.BLOCK_TYPE)
+            .setKey(CosmosKeys.BLOCK_TYPE)
+            .build();
 
     public static final Parameter.Value<NamedTextColor> COLOR = Parameter.builder(NamedTextColor.class)
             .setKey(CosmosKeys.COLOR)
@@ -37,6 +44,10 @@ public class CosmosParameters {
     public static final Parameter.Value<Difficulty> DIFFICULTY_OPTIONAL = Parameter.registryElement(TypeToken.get(Difficulty.class), RegistryTypes.DIFFICULTY)
             .setKey(CosmosKeys.DIFFICULTY)
             .optional()
+            .build();
+
+    public static final Parameter.Value<Direction> DIRECTION = Parameter.enumValue(Direction.class)
+            .setKey(CosmosKeys.DIRECTION)
             .build();
 
     public static final Parameter.Value<ObjectiveDisplayMode> DISPLAY_MODE = Parameter.registryElement(TypeToken.get(ObjectiveDisplayMode.class), RegistryTypes.OBJECTIVE_DISPLAY_MODE)
@@ -69,6 +80,10 @@ public class CosmosParameters {
             .setKey(CosmosKeys.GAME_RULE)
             .build(); // todo check pr
 
+    public static final Parameter.Value<ItemType> ITEM_TYPE = Parameter.registryElement(TypeToken.get(ItemType.class), RegistryTypes.ITEM_TYPE)
+            .setKey(CosmosKeys.ITEM_TYPE)
+            .build();
+
     public static final Parameter.Value<ParticleType> PARTICLE_TYPE = Parameter.registryElement(TypeToken.get(ParticleType.class), RegistryTypes.PARTICLE_TYPE)
             .setKey(CosmosKeys.PARTICLE_TYPE)
             .build();
@@ -86,6 +101,10 @@ public class CosmosParameters {
             .setKey(CosmosKeys.X_Z)
             .parser(ResourceKeyedValueParameters.VECTOR2D)
             .optional()
+            .build();
+
+    public static final Parameter.Value<PotionEffectType> POTION_EFFECT_TYPE = Parameter.registryElement(TypeToken.get(PotionEffectType.class), RegistryTypes.POTION_EFFECT_TYPE)
+            .setKey(CosmosKeys.POTION_EFFECT_TYPE)
             .build();
 
     public static final Parameter.Value<Operands> SCOREBOARD_OPERANDS = Parameter.builder(Operands.class)

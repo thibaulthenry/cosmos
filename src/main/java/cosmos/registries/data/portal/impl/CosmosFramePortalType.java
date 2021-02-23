@@ -3,36 +3,43 @@ package cosmos.registries.data.portal.impl;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import cosmos.registries.portal.PortalRegistry;
+import cosmos.registries.data.portal.CosmosPortalType;
+import cosmos.registries.portal.PortalFrameRegistry;
 import cosmos.services.transportation.TransportationService;
+import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.util.Axis;
 import org.spongepowered.api.world.portal.Portal;
-import org.spongepowered.api.world.portal.PortalType;
 import org.spongepowered.api.world.server.ServerLocation;
 
 import java.util.Optional;
 
 @Singleton
-public class CosmosFramePortalType implements PortalType {
+public class CosmosFramePortalType implements CosmosPortalType {
 
-    private final PortalRegistry portalRegistry;
+    private final PortalFrameRegistry portalFrameRegistry;
     private final TransportationService transportationService;
 
     @Inject
     public CosmosFramePortalType(final Injector injector) {
-        this.portalRegistry = injector.getInstance(PortalRegistry.class);
+        this.portalFrameRegistry = injector.getInstance(PortalFrameRegistry.class);
         this.transportationService = injector.getInstance(TransportationService.class);
+    }
+
+    @Override
+    public BlockType defaultTrigger() {
+        return BlockTypes.VOID_AIR.get();
+    }
+
+    @Override
+    public Optional<Portal> findPortal(final ServerLocation location) {
+        return Optional.ofNullable(this.portalFrameRegistry.value(location.asLocatableBlock()));
     }
 
     @Override
     public void generatePortal(final ServerLocation location, final Axis axis) {
 
-    }
-
-    @Override
-    public Optional<Portal> findPortal(final ServerLocation location) {
-        return Optional.ofNullable(this.portalRegistry.value(location.asLocatableBlock()));
     }
 
     @Override

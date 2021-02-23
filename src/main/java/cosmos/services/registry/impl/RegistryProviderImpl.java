@@ -12,9 +12,8 @@ import cosmos.registries.perworld.IgnorePlayersSleepingRegistry;
 import cosmos.registries.perworld.RealTimeRegistry;
 import cosmos.registries.perworld.ScoreboardsRegistry;
 import cosmos.registries.portal.PortalDispatcherRegistry;
-import cosmos.registries.portal.PortalRegistry;
+import cosmos.registries.portal.PortalFrameRegistry;
 import cosmos.registries.portal.PortalSelectionRegistry;
-import cosmos.registries.template.TemplateRegistry;
 import cosmos.services.registry.RegistryProvider;
 
 @Singleton
@@ -24,8 +23,8 @@ public class RegistryProviderImpl implements RegistryProvider {
     private final FormatterRegistry formatterRegistry;
     private final IgnorePlayersSleepingRegistry ignorePlayersSleepingRegistry;
     private final ListenerRegistry listenerRegistry;
-    private final PortalRegistry portalRegistry;
     private final PortalDispatcherRegistry portalDispatcherRegistry;
+    private final PortalFrameRegistry portalFrameRegistry;
     private final PortalSelectionRegistry portalSelectionRegistry;
     private final PortalTypeRegistry portalTypeRegistry;
     private final RealTimeRegistry realTimeRegistry;
@@ -38,8 +37,8 @@ public class RegistryProviderImpl implements RegistryProvider {
         this.formatterRegistry = injector.getInstance(FormatterRegistry.class);
         this.ignorePlayersSleepingRegistry = injector.getInstance(IgnorePlayersSleepingRegistry.class);
         this.listenerRegistry = injector.getInstance(ListenerRegistry.class);
-        this.portalRegistry = injector.getInstance(PortalRegistry.class);
         this.portalDispatcherRegistry = injector.getInstance(PortalDispatcherRegistry.class);
+        this.portalFrameRegistry = injector.getInstance(PortalFrameRegistry.class);
         this.portalSelectionRegistry = injector.getInstance(PortalSelectionRegistry.class);
         this.portalTypeRegistry = injector.getInstance(PortalTypeRegistry.class);
         this.realTimeRegistry = injector.getInstance(RealTimeRegistry.class);
@@ -68,13 +67,13 @@ public class RegistryProviderImpl implements RegistryProvider {
     }
 
     @Override
-    public PortalRegistry portal() {
-        return this.portalRegistry;
+    public PortalDispatcherRegistry portalDispatcher() {
+        return this.portalDispatcherRegistry;
     }
 
     @Override
-    public PortalDispatcherRegistry portalDispatcher() {
-        return this.portalDispatcherRegistry;
+    public PortalFrameRegistry portalFrame() {
+        return this.portalFrameRegistry;
     }
 
     @Override

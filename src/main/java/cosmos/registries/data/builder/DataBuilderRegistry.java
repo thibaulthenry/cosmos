@@ -37,8 +37,8 @@ import cosmos.registries.data.serializable.impl.ScoreCriterionProgressData;
 import cosmos.registries.data.serializable.impl.ScoreData;
 import cosmos.registries.data.serializable.impl.ScoreboardData;
 import cosmos.registries.data.serializable.impl.TeamData;
-import cosmos.registries.portal.impl.CosmosFramePortal;
-import cosmos.registries.portal.impl.CosmosFramePortalBuilder;
+import cosmos.registries.portal.impl.CosmosFramePortalImpl;
+import cosmos.registries.portal.impl.CosmosFramePortalBuilderImpl;
 import org.spongepowered.api.data.persistence.DataBuilder;
 import org.spongepowered.api.data.persistence.DataSerializable;
 
@@ -56,7 +56,7 @@ public class DataBuilderRegistry implements CosmosRegistry<Class<? extends DataS
         this.dataBuilderMap.put(AdvancementProgressData.class, injector.getInstance(AdvancementProgressDataBuilder.class));
         this.dataBuilderMap.put(AdvancementTreeData.class, injector.getInstance(AdvancementTreeDataBuilder.class));
         this.dataBuilderMap.put(BackupArchetypeData.class, injector.getInstance(BackupArchetypeDataBuilder.class));
-        this.dataBuilderMap.put(CosmosFramePortal.class, injector.getInstance(CosmosFramePortalBuilder.class));
+        this.dataBuilderMap.put(CosmosFramePortalImpl.class, injector.getInstance(CosmosFramePortalBuilderImpl.class));
         this.dataBuilderMap.put(CriterionProgressData.class, injector.getInstance(CriterionProgressDataBuilder.class));
         this.dataBuilderMap.put(DisplaySlotData.class, injector.getInstance(DisplaySlotDataBuilder.class));
         this.dataBuilderMap.put(ExperienceData.class, injector.getInstance(ExperienceDataBuilder.class));

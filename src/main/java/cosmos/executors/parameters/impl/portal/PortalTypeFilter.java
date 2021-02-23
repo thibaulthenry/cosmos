@@ -1,8 +1,5 @@
 package cosmos.executors.parameters.impl.portal;
 
-import cosmos.Cosmos;
-import cosmos.registries.portal.CosmosFramePortal;
-import cosmos.registries.portal.CosmosPortal;
 import net.kyori.adventure.text.Component;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.ArgumentParseException;
@@ -14,24 +11,20 @@ import org.spongepowered.api.command.parameter.managed.clientcompletion.ClientCo
 import org.spongepowered.api.command.parameter.managed.clientcompletion.ClientCompletionTypes;
 import org.spongepowered.api.registry.RegistryEntry;
 import org.spongepowered.api.registry.RegistryTypes;
-import org.spongepowered.api.world.portal.Portal;
 import org.spongepowered.api.world.portal.PortalType;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-class PortalFilter<T extends CosmosPortal> implements ValueParameter<T> {
+class PortalTypeFilter<T extends PortalType> implements ValueParameter<T> {
 
     private final Class<T> clazz;
     private final Predicate<T> filter;
 
-    PortalFilter(final Class<T> clazz, final Predicate<T> filter) {
+    PortalTypeFilter(final Class<T> clazz, final Predicate<T> filter) {
         this.clazz = clazz;
         this.filter = filter;
     }
@@ -39,10 +32,10 @@ class PortalFilter<T extends CosmosPortal> implements ValueParameter<T> {
     @Override
     @SuppressWarnings("unchecked")
     public List<String> complete(final CommandContext context, final String currentInput) {
-        return Cosmos.getServices().registry().portalFrame()
-                .stream()
-                .filter(portal -> this.clazz.isAssignableFrom(portal.getClass()) && this.filter.test((T) portal))
-                .map(CosmosPortal::getKey)
+        return RegistryTypes.PORTAL_TYPE.get()
+                .streamEntries()
+                .filter(entry -> this.clazz.isAssignableFrom(entry.value().getClass()) && this.filter.test((T) entry.value()))
+                .map(RegistryEntry::key)
                 .map(ResourceKey::getFormatted)
                 .collect(Collectors.toList());
     }
@@ -55,16 +48,16 @@ class PortalFilter<T extends CosmosPortal> implements ValueParameter<T> {
     @Override
     @SuppressWarnings("unchecked")
     public Optional<? extends T> getValue(Parameter.Key<? super T> parameterKey, ArgumentReader.Mutable reader, CommandContext.Builder context) throws ArgumentParseException {
-        final ResourceKey portalKey;
+        final ResourceKey portalTypeKey;
 
         try {
-            portalKey = reader.parseResourceKey();
+            portalTypeKey = reader.parseResourceKey();
         } catch (final Exception ignored) {
             throw reader.createException(Component.empty()); // todo
         }
 
-        final Optional<T> optionalValue = Optional.ofNullable(portalKey)
-                .flatMap(Cosmos.getServices().registry().portalFrame()::find)
+        final Optional<T> optionalValue = Optional.ofNullable(portalTypeKey)
+                .flatMap(key -> RegistryTypes.PORTAL_TYPE.get().findValue(key))
                 .filter(portalType -> this.clazz.isAssignableFrom(portalType.getClass()))
                 .map(portalType -> (T) portalType)
                 .filter(this.filter);

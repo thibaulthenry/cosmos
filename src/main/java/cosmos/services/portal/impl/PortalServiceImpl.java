@@ -3,19 +3,21 @@ package cosmos.services.portal.impl;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import cosmos.Cosmos;
 import cosmos.registries.CosmosRegistryEntry;
-import cosmos.registries.data.portal.PortalTypeRegistry;
-import cosmos.registries.portal.CosmosPortal;
-import cosmos.registries.portal.PortalRegistry;
-import cosmos.registries.portal.impl.CosmosFramePortal;
-import cosmos.registries.portal.impl.PortalDispatcher;
+import cosmos.registries.data.portal.CosmosPortalType;
+import cosmos.registries.portal.CosmosFramePortal;
 import cosmos.registries.portal.PortalDispatcherRegistry;
+import cosmos.registries.portal.PortalFrameRegistry;
 import cosmos.registries.portal.PortalSelectionRegistry;
+import cosmos.registries.portal.impl.PortalDispatcher;
 import cosmos.services.message.MessageService;
 import cosmos.services.portal.PortalService;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
@@ -23,7 +25,7 @@ import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.FallingBlock;
-import org.spongepowered.api.util.Axis;
+import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.util.Ticks;
 import org.spongepowered.api.world.BlockChangeFlags;
@@ -31,35 +33,38 @@ import org.spongepowered.api.world.portal.PortalType;
 import org.spongepowered.api.world.server.ServerLocation;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Singleton
 public class PortalServiceImpl implements PortalService {
 
     private final MessageService messageService;
     private final PortalDispatcherRegistry portalDispatcherRegistry;
-    private final PortalRegistry portalRegistry;
+    private final PortalFrameRegistry portalFrameRegistry;
     private final PortalSelectionRegistry portalSelectionRegistry;
 
     @Inject
     public PortalServiceImpl(final Injector injector) {
         this.messageService = injector.getInstance(MessageService.class);
         this.portalDispatcherRegistry = injector.getInstance(PortalDispatcherRegistry.class);
-        this.portalRegistry = injector.getInstance(PortalRegistry.class);
+        this.portalFrameRegistry = injector.getInstance(PortalFrameRegistry.class);
         this.portalSelectionRegistry = injector.getInstance(PortalSelectionRegistry.class);
     }
 
     @Override
-    public void create(final Audience src, final ResourceKey key, final BlockType triggerBlockType) throws CommandException {
+    public void create(final Audience src, final ResourceKey key, final CosmosPortalType type) throws CommandException {
+        if (this.portalFrameRegistry.has(key)) {
+            throw new CommandException(Component.text("already")); // todo
+        }
+
         if (!(src instanceof Identifiable)) {
             throw this.messageService.getError(src, "error.invalid.value"); // todo
         }
 
-        final Optional<Set<ServerLocation>> optionalSelection = this.portalSelectionRegistry.find(((Identifiable) src).getUniqueId());
+        final UUID uuid = ((Identifiable) src).getUniqueId();
+        final Optional<Set<ServerLocation>> optionalSelection = this.portalSelectionRegistry.find(uuid);
 
         if (!optionalSelection.isPresent() || optionalSelection.get().isEmpty()) {
             // todo please select using tools
@@ -68,26 +73,51 @@ public class PortalServiceImpl implements PortalService {
 
         final Set<ServerLocation> selection = optionalSelection.get();
 
-        final CosmosPortal portal = CosmosPortal.builder()
-                .key(key)
+        final CosmosFramePortal portal = CosmosFramePortal.builder()
                 .origins(selection)
-                .trigger(triggerBlockType)
+                .trigger(type.defaultTrigger())
+                .key(key)
                 .build();
 
-        selection.forEach(location -> {
-            location.setBlockType(triggerBlockType, BlockChangeFlags.ALL);
-            this.portalRegistry.register(location.asLocatableBlock(), portal);
-        });
+        this.fill(src, portal);
+        this.portalFrameRegistry.register(key, portal);
+        this.portalSelectionRegistry.unregister(uuid); // todo check
     }
 
     @Override
-    public void highlight(final Ticks duration, final String tag, final ServerLocation... locations) {
+    public void delete(final Audience src, final ResourceKey key) throws CommandException {
+        if (!this.portalFrameRegistry.has(key)) {
+            throw new CommandException(Component.text("not exist")); // todo
+        }
+
+        if (!this.portalFrameRegistry.unregister(key).isPresent()) {
+            throw new CommandException(Component.text("an error occured")); // todo
+        }
+    }
+
+    @Override
+    public void fill(final Audience src, final CosmosFramePortal portal) {
+        Sponge.getServer().getCauseStackManager().pushCause(Cosmos.getPluginContainer());
+        portal.getOrigins().forEach(location -> location.setBlockType(portal.getTrigger(), BlockChangeFlags.ALL));
+    }
+
+    @Override
+    public void fill(final Audience src, final ResourceKey key) throws CommandException {
+        if (!this.portalFrameRegistry.has(key)) {
+            throw new CommandException(Component.text("not exist")); // todo
+        }
+
+        this.fill(src, this.portalFrameRegistry.value(key));
+    }
+
+    @Override
+    public void highlight(final BlockType blockType, final Ticks duration, final String tag, final ServerLocation... locations) {
         Arrays.stream(locations).forEach(location -> {
             final FallingBlock fallingBlock = location.createEntity(EntityTypes.FALLING_BLOCK.get());
 
             // todo issue for tags
 
-            fallingBlock.offer(Keys.BLOCK_STATE, BlockState.builder().blockType(BlockTypes.GLASS).build());
+            fallingBlock.offer(Keys.BLOCK_STATE, BlockState.builder().blockType(blockType).build());
             fallingBlock.offer(Keys.CAN_DROP_AS_ITEM, false);
             fallingBlock.offer(Keys.CAN_PLACE_AS_BLOCK, false);
             fallingBlock.offer(Keys.FALL_TIME, Ticks.of(Math.max(0L, 600 - duration.getTicks())));
@@ -101,13 +131,13 @@ public class PortalServiceImpl implements PortalService {
     }
 
     @Override
-    public void highlight(final Audience src, final Ticks duration) throws CommandException {
+    public void highlight(final BlockType blockType, final Audience src, final Ticks duration) throws CommandException {
         if (!(src instanceof Identifiable)) {
             throw this.messageService.getError(src, "error.invalid.value"); // todo
         }
 
         this.portalSelectionRegistry.find(((Identifiable) src).getUniqueId()).ifPresent(locations ->
-                this.highlight(duration,"cosmos-portal-x", locations.toArray(new ServerLocation[0])) // todo tag
+                this.highlight(blockType, duration, "cosmos-portal-x", locations.toArray(new ServerLocation[0])) // todo tag
         );
     }
 
@@ -129,21 +159,6 @@ public class PortalServiceImpl implements PortalService {
         return this.portalDispatcherRegistry.find(worldOriginKey)
                 .map(portalDispatcher -> portalDispatcher.removeLink(portalType))
                 .orElse(false);
-    }
-
-    @Override
-    public boolean unselect(final Audience src) throws CommandException {
-        if (!(src instanceof Identifiable)) {
-            throw this.messageService.getError(src, "error.invalid.value"); // todo
-        }
-
-        final UUID key = ((Identifiable) src).getUniqueId();
-
-        if (this.portalSelectionRegistry.has(key)) {
-            return this.portalSelectionRegistry.unregister(key).isPresent();
-        }
-
-        throw this.messageService.getError(src, "error.invalid.value"); // todo
     }
 
 }

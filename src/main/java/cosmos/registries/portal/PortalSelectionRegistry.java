@@ -18,12 +18,12 @@ public class PortalSelectionRegistry implements CosmosRegistry<UUID, Set<ServerL
 
     private final Map<UUID, Set<ServerLocation>> portalSelectionMap = new HashMap<>();
 
-    public boolean add(final UUID key, final ServerLocation locations) {
-        return this.portalSelectionMap.computeIfAbsent(key, k -> new HashSet<>()).add(locations);
+    public boolean add(final UUID key, final ServerLocation location) {
+        return this.portalSelectionMap.computeIfAbsent(key, k -> new HashSet<>()).add(location);
     }
 
-    public boolean remove(final UUID key, final ServerLocation locations) {
-        return this.portalSelectionMap.computeIfAbsent(key, k -> new HashSet<>()).remove(locations);
+    public boolean remove(final UUID key, final ServerLocation location) {
+        return this.portalSelectionMap.computeIfAbsent(key, k -> new HashSet<>()).remove(location);
     }
 
     @Override

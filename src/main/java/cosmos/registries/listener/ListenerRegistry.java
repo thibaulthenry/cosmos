@@ -15,7 +15,9 @@ import cosmos.registries.listener.impl.perworld.HungersListener;
 import cosmos.registries.listener.impl.perworld.InventoriesListener;
 import cosmos.registries.listener.impl.perworld.ScoreboardsListener;
 import cosmos.registries.listener.impl.perworld.TabListsListener;
-import cosmos.registries.listener.impl.portal.PortalListener;
+import cosmos.registries.listener.impl.portal.PortalDispatcherListener;
+import cosmos.registries.listener.impl.portal.PortalFrameListener;
+import cosmos.registries.listener.impl.portal.PortalGenerationListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +38,9 @@ public class ListenerRegistry implements CosmosRegistry<Class<? extends Listener
         this.listenerMap.put(HealthsListener.class, injector.getInstance(HealthsListener.class));
         this.listenerMap.put(HungersListener.class, injector.getInstance(HungersListener.class));
         this.listenerMap.put(InventoriesListener.class, injector.getInstance(InventoriesListener.class));
-        this.listenerMap.put(PortalListener.class, injector.getInstance(PortalListener.class));
+        this.listenerMap.put(PortalDispatcherListener.class, injector.getInstance(PortalDispatcherListener.class));
+        this.listenerMap.put(PortalFrameListener.class, injector.getInstance(PortalFrameListener.class));
+        this.listenerMap.put(PortalGenerationListener.class, injector.getInstance(PortalGenerationListener.class));
         this.listenerMap.put(ScoreboardsListener.class, injector.getInstance(ScoreboardsListener.class));
         this.listenerMap.put(TabListsListener.class, injector.getInstance(TabListsListener.class));
     }
