@@ -2,7 +2,7 @@ package cosmos.executors.commands.portal.modify.sound;
 
 import cosmos.executors.commands.portal.modify.AbstractPortalModifyCommand;
 import cosmos.executors.parameters.CosmosKeys;
-import cosmos.registries.portal.CosmosFramePortal;
+import cosmos.registries.portal.CosmosPortal;
 import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.sound.Sound;
@@ -28,7 +28,7 @@ abstract class AbstractSoundModifyCommand extends AbstractPortalModifyCommand {
     }
 
     @Override
-    protected final CosmosFramePortal getNewPortal(final Audience src, final CommandContext context, final CosmosFramePortal portal) throws CommandException {
+    protected final CosmosPortal getNewPortal(final Audience src, final CommandContext context, final CosmosPortal portal) throws CommandException {
         final Sound sound = context.getOne(CosmosKeys.SOUND_TYPE)
                 .map(soundType -> {
                     final float volume = context.getOne(CosmosKeys.VOLUME).orElse(1d).floatValue();
@@ -40,6 +40,6 @@ abstract class AbstractSoundModifyCommand extends AbstractPortalModifyCommand {
         return this.getNewPortal(portal, sound);
     }
 
-    protected abstract CosmosFramePortal getNewPortal(CosmosFramePortal portal, Sound sound) throws CommandException;
+    protected abstract CosmosPortal getNewPortal(CosmosPortal portal, Sound sound) throws CommandException;
 
 }

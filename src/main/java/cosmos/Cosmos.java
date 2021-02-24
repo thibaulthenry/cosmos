@@ -4,18 +4,15 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import cosmos.executors.modules.Root;
 import cosmos.registries.portal.CosmosFramePortal;
-import cosmos.registries.portal.CosmosPortal;
 import cosmos.registries.portal.impl.CosmosFramePortalBuilderImpl;
 import cosmos.services.ServiceProvider;
 import cosmos.services.registry.RegistryProvider;
-import net.kyori.adventure.sound.Sound;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleTypes;
-import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.RegisterBuilderEvent;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
@@ -96,10 +93,10 @@ public class Cosmos {
                 .plugin(Cosmos.pluginContainer)
                 .interval(Ticks.of(20))
                 .execute(() -> {
-                    serviceProvider.registry().portalFrame()
+                    serviceProvider.registry().portal()
                             .stream()
                             .forEach(portal -> {
-                                portal.getOrigins().forEach(location -> {
+                                portal.origins().forEach(location -> {
 
                                     for(int var5 = 0; var5 < 3; ++var5) {
                                         int var6 = var4.nextInt(2) * 2 - 1;
@@ -112,7 +109,7 @@ public class Cosmos {
                                         double var18 = (double)(var4.nextFloat() * (float)var7);
 
                                         ParticleEffect particleEffect = ParticleEffect.builder()
-                                                .type(portal.getParticles().map(ParticleEffect::getType).orElse(ParticleTypes.PORTAL.get()))
+                                                .type(portal.particles().map(ParticleEffect::getType).orElse(ParticleTypes.PORTAL.get()))
                                                 .quantity(3)
                                                 .offset(Vector3d.from(var8, var10, var12))
                                                 .velocity(Vector3d.from(var14, var16, var18))
@@ -120,9 +117,12 @@ public class Cosmos {
 
                                         location.getWorld().spawnParticles(particleEffect, location.getPosition().add(0.5, 0.5, 0.5));
 
-                                        if (var4.nextInt(135) == 0) {
-                                            location.getWorld().playSound(portal.soundAmbiance());
-                                        }
+                                        portal.soundAmbiance().ifPresent(sound -> {
+                                            if (var4.nextInt(25*portal.originsSize()) == 0) {
+                                                location.getWorld().playSound(sound);
+                                            }
+                                        });
+
                                     }
                                 });
                             });

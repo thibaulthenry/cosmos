@@ -13,70 +13,68 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Singleton
-public class PortalRegistry implements CosmosRegistry<LocatableBlock, CosmosFramePortal> {
+public class PortalRegistry implements CosmosRegistry<ResourceKey, CosmosPortal> {
 
-    private final Map<LocatableBlock, CosmosFramePortal> portalMap = new HashMap<>();
-    private final Map<ResourceKey, CosmosFramePortal> portalMapByKey = new HashMap<>();
+    private final Map<ResourceKey, CosmosPortal> portalMap = new HashMap<>();
+    private final Map<LocatableBlock, CosmosPortal> portalTriggerMap = new HashMap<>();
 
-    public Optional<CosmosFramePortal> find(final ResourceKey key) {
+    public Optional<CosmosPortal> find(final LocatableBlock key) {
         return Optional.ofNullable(this.value(key));
     }
 
-    public boolean has(final ResourceKey key) {
+    public boolean has(final LocatableBlock key) {
         return this.find(key).isPresent();
     }
 
     @Override
-    public Optional<CosmosRegistryEntry<LocatableBlock, CosmosFramePortal>> register(final LocatableBlock key, final CosmosFramePortal value) {
+    public Optional<CosmosRegistryEntry<ResourceKey, CosmosPortal>> register(final ResourceKey key, final CosmosPortal value) {
         return Optional.ofNullable(this.portalMap.computeIfAbsent(key, k -> value))
                 .map(v -> {
-                    this.portalMapByKey.putIfAbsent(v.getKey(), v);
-
+                    v.origins().forEach(location -> this.portalTriggerMap.putIfAbsent(location.asLocatableBlock(), value));
                     return CosmosRegistryEntry.of(key, v);
                 });
     }
 
-    public boolean replace(final CosmosFramePortal value) {
-        return this.portalMapByKey.replace(value.getKey(), value) != null
-                && value.getOrigins()
+    public boolean replace(final CosmosPortal value) {
+        return this.portalMap.replace(value.key(), value) != null
+                && value.origins()
                 .stream()
                 .map(ServerLocation::asLocatableBlock)
-                .allMatch(key -> this.portalMap.replace(key, value) != null);
+                .allMatch(key -> this.portalTriggerMap.replace(key, value) != null);
     }
 
     @Override
-    public Stream<CosmosFramePortal> stream() {
-        return this.portalMapByKey.values().stream();
+    public Stream<CosmosPortal> stream() {
+        return this.portalMap.values().stream();
     }
 
-    @Override
-    public Optional<CosmosRegistryEntry<LocatableBlock, CosmosFramePortal>> unregister(final LocatableBlock key) {
-        return Optional.ofNullable(this.portalMap.remove(key))
+    public Optional<CosmosRegistryEntry<LocatableBlock, CosmosPortal>> unregister(final LocatableBlock key) {
+        return Optional.ofNullable(this.portalTriggerMap.remove(key))
                 .map(v -> {
-                    if (!this.portalMap.containsValue(v)) {
-                        this.portalMapByKey.remove(v.getKey(), v);
+                    if (!this.portalTriggerMap.containsValue(v)) {
+                        this.portalMap.remove(v.key(), v);
                     }
 
                     return CosmosRegistryEntry.of(key, v);
                 });
     }
 
-    public Optional<CosmosRegistryEntry<ResourceKey, CosmosFramePortal>> unregister(final ResourceKey key) {
-        return Optional.ofNullable(this.portalMapByKey.remove(key))
+    @Override
+    public Optional<CosmosRegistryEntry<ResourceKey, CosmosPortal>> unregister(final ResourceKey key) {
+        return Optional.ofNullable(this.portalMap.remove(key))
                 .map(v -> {
-                    v.getOrigins().forEach(location -> this.portalMap.remove(location.asLocatableBlock()));
-
+                    v.origins().forEach(location -> this.portalTriggerMap.remove(location.asLocatableBlock()));
                     return CosmosRegistryEntry.of(key, v);
                 });
     }
 
-    @Override
-    public CosmosFramePortal value(final LocatableBlock key) {
-        return this.portalMap.get(key);
+    public CosmosPortal value(final LocatableBlock key) {
+        return this.portalTriggerMap.get(key);
     }
 
-    public CosmosFramePortal value(final ResourceKey key) {
-        return this.portalMapByKey.get(key);
+    @Override
+    public CosmosPortal value(final ResourceKey key) {
+        return this.portalMap.get(key);
     }
 
 }

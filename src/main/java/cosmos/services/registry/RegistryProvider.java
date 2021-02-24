@@ -10,7 +10,7 @@ import cosmos.registries.perworld.IgnorePlayersSleepingRegistry;
 import cosmos.registries.perworld.RealTimeRegistry;
 import cosmos.registries.perworld.ScoreboardsRegistry;
 import cosmos.registries.portal.PortalDispatcherRegistry;
-import cosmos.registries.portal.PortalFrameRegistry;
+import cosmos.registries.portal.PortalRegistry;
 import cosmos.registries.portal.PortalSelectionRegistry;
 import cosmos.services.CosmosService;
 import cosmos.services.registry.impl.RegistryProviderImpl;
@@ -26,9 +26,9 @@ public interface RegistryProvider extends CosmosService {
 
     ListenerRegistry listener();
 
-    PortalDispatcherRegistry portalDispatcher();
+    PortalRegistry portal();
 
-    PortalFrameRegistry portalFrame();
+    PortalDispatcherRegistry portalDispatcher();
 
     PortalSelectionRegistry portalSelection();
 

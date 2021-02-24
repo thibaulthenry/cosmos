@@ -2,7 +2,7 @@ package cosmos.executors.modules.portal;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import cosmos.executors.commands.portal.modify.Cooldown;
+import cosmos.executors.commands.portal.modify.Delay;
 import cosmos.executors.commands.portal.modify.Destination;
 import cosmos.executors.commands.portal.modify.Trigger;
 import cosmos.executors.modules.AbstractModule;
@@ -15,7 +15,7 @@ public class Modify extends AbstractModule {
     Modify(final Injector injector) {
         super(
                 false,
-                injector.getInstance(Cooldown.class),
+                injector.getInstance(Delay.class),
                 injector.getInstance(Destination.class),
                 injector.getInstance(Particles.class),
                 injector.getInstance(Sound.class),

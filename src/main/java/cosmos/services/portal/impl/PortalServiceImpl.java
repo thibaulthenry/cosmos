@@ -7,25 +7,23 @@ import cosmos.Cosmos;
 import cosmos.registries.CosmosRegistryEntry;
 import cosmos.registries.data.portal.CosmosPortalType;
 import cosmos.registries.portal.CosmosFramePortal;
+import cosmos.registries.portal.CosmosPortal;
 import cosmos.registries.portal.PortalDispatcherRegistry;
-import cosmos.registries.portal.PortalFrameRegistry;
+import cosmos.registries.portal.PortalRegistry;
 import cosmos.registries.portal.PortalSelectionRegistry;
 import cosmos.registries.portal.impl.PortalDispatcher;
 import cosmos.services.message.MessageService;
 import cosmos.services.portal.PortalService;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.FallingBlock;
-import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.util.Ticks;
 import org.spongepowered.api.world.BlockChangeFlags;
@@ -42,20 +40,20 @@ public class PortalServiceImpl implements PortalService {
 
     private final MessageService messageService;
     private final PortalDispatcherRegistry portalDispatcherRegistry;
-    private final PortalFrameRegistry portalFrameRegistry;
+    private final PortalRegistry portalRegistry;
     private final PortalSelectionRegistry portalSelectionRegistry;
 
     @Inject
     public PortalServiceImpl(final Injector injector) {
         this.messageService = injector.getInstance(MessageService.class);
         this.portalDispatcherRegistry = injector.getInstance(PortalDispatcherRegistry.class);
-        this.portalFrameRegistry = injector.getInstance(PortalFrameRegistry.class);
+        this.portalRegistry = injector.getInstance(PortalRegistry.class);
         this.portalSelectionRegistry = injector.getInstance(PortalSelectionRegistry.class);
     }
 
     @Override
     public void create(final Audience src, final ResourceKey key, final CosmosPortalType type) throws CommandException {
-        if (this.portalFrameRegistry.has(key)) {
+        if (this.portalRegistry.has(key)) {
             throw new CommandException(Component.text("already")); // todo
         }
 
@@ -73,41 +71,41 @@ public class PortalServiceImpl implements PortalService {
 
         final Set<ServerLocation> selection = optionalSelection.get();
 
-        final CosmosFramePortal portal = CosmosFramePortal.builder()
+        final CosmosPortal portal = type.builder()
                 .origins(selection)
                 .trigger(type.defaultTrigger())
                 .key(key)
                 .build();
 
         this.fill(src, portal);
-        this.portalFrameRegistry.register(key, portal);
+        this.portalRegistry.register(key, portal);
         this.portalSelectionRegistry.unregister(uuid); // todo check
     }
 
     @Override
     public void delete(final Audience src, final ResourceKey key) throws CommandException {
-        if (!this.portalFrameRegistry.has(key)) {
+        if (!this.portalRegistry.has(key)) {
             throw new CommandException(Component.text("not exist")); // todo
         }
 
-        if (!this.portalFrameRegistry.unregister(key).isPresent()) {
+        if (!this.portalRegistry.unregister(key).isPresent()) {
             throw new CommandException(Component.text("an error occured")); // todo
         }
     }
 
     @Override
-    public void fill(final Audience src, final CosmosFramePortal portal) {
+    public void fill(final Audience src, final CosmosPortal portal) {
         Sponge.getServer().getCauseStackManager().pushCause(Cosmos.getPluginContainer());
-        portal.getOrigins().forEach(location -> location.setBlockType(portal.getTrigger(), BlockChangeFlags.ALL));
+        portal.origins().forEach(location -> location.setBlockType(portal.trigger(), BlockChangeFlags.ALL));
     }
 
     @Override
     public void fill(final Audience src, final ResourceKey key) throws CommandException {
-        if (!this.portalFrameRegistry.has(key)) {
+        if (!this.portalRegistry.has(key)) {
             throw new CommandException(Component.text("not exist")); // todo
         }
 
-        this.fill(src, this.portalFrameRegistry.value(key));
+        this.fill(src, this.portalRegistry.value(key));
     }
 
     @Override

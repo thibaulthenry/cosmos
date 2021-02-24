@@ -23,7 +23,7 @@ public class Delete extends AbstractCommand {
         final CosmosFramePortal portal = context.getOne(CosmosKeys.PORTAL_FRAME_COSMOS)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.PORTAL_FRAME_COSMOS));
 
-        super.serviceProvider.portal().delete(src, portal.getKey());
+        super.serviceProvider.portal().delete(src, portal.key());
 
         // todo
     }

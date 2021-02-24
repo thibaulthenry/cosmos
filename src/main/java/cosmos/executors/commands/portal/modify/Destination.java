@@ -6,7 +6,7 @@ import com.google.inject.Singleton;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.executors.parameters.impl.portal.PortalFrame;
 import cosmos.executors.parameters.impl.world.WorldOnline;
-import cosmos.registries.portal.CosmosFramePortal;
+import cosmos.registries.portal.CosmosPortal;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
@@ -29,7 +29,7 @@ public class Destination extends AbstractPortalModifyCommand {
     }
 
     @Override
-    protected CosmosFramePortal getNewPortal(final Audience src, final CommandContext context, final CosmosFramePortal portal) throws CommandException {
+    protected CosmosPortal getNewPortal(final Audience src, final CommandContext context, final CosmosPortal portal) throws CommandException {
         final ResourceKey worldKey = context.getOne(CosmosKeys.WORLD_DESTINATION)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.world.online", "param", CosmosKeys.WORLD_DESTINATION));
 

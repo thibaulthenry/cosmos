@@ -12,7 +12,7 @@ import cosmos.registries.perworld.IgnorePlayersSleepingRegistry;
 import cosmos.registries.perworld.RealTimeRegistry;
 import cosmos.registries.perworld.ScoreboardsRegistry;
 import cosmos.registries.portal.PortalDispatcherRegistry;
-import cosmos.registries.portal.PortalFrameRegistry;
+import cosmos.registries.portal.PortalRegistry;
 import cosmos.registries.portal.PortalSelectionRegistry;
 import cosmos.services.registry.RegistryProvider;
 
@@ -24,7 +24,7 @@ public class RegistryProviderImpl implements RegistryProvider {
     private final IgnorePlayersSleepingRegistry ignorePlayersSleepingRegistry;
     private final ListenerRegistry listenerRegistry;
     private final PortalDispatcherRegistry portalDispatcherRegistry;
-    private final PortalFrameRegistry portalFrameRegistry;
+    private final PortalRegistry portalRegistry;
     private final PortalSelectionRegistry portalSelectionRegistry;
     private final PortalTypeRegistry portalTypeRegistry;
     private final RealTimeRegistry realTimeRegistry;
@@ -38,7 +38,7 @@ public class RegistryProviderImpl implements RegistryProvider {
         this.ignorePlayersSleepingRegistry = injector.getInstance(IgnorePlayersSleepingRegistry.class);
         this.listenerRegistry = injector.getInstance(ListenerRegistry.class);
         this.portalDispatcherRegistry = injector.getInstance(PortalDispatcherRegistry.class);
-        this.portalFrameRegistry = injector.getInstance(PortalFrameRegistry.class);
+        this.portalRegistry = injector.getInstance(PortalRegistry.class);
         this.portalSelectionRegistry = injector.getInstance(PortalSelectionRegistry.class);
         this.portalTypeRegistry = injector.getInstance(PortalTypeRegistry.class);
         this.realTimeRegistry = injector.getInstance(RealTimeRegistry.class);
@@ -67,13 +67,13 @@ public class RegistryProviderImpl implements RegistryProvider {
     }
 
     @Override
-    public PortalDispatcherRegistry portalDispatcher() {
-        return this.portalDispatcherRegistry;
+    public PortalRegistry portal() {
+        return this.portalRegistry;
     }
 
     @Override
-    public PortalFrameRegistry portalFrame() {
-        return this.portalFrameRegistry;
+    public PortalDispatcherRegistry portalDispatcher() {
+        return this.portalDispatcherRegistry;
     }
 
     @Override

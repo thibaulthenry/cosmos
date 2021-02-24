@@ -1,7 +1,6 @@
 package cosmos.executors.parameters.impl.portal;
 
 import cosmos.Cosmos;
-import cosmos.registries.portal.CosmosFramePortal;
 import cosmos.registries.portal.CosmosPortal;
 import net.kyori.adventure.text.Component;
 import org.spongepowered.api.ResourceKey;
@@ -12,19 +11,12 @@ import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.command.parameter.managed.ValueParameter;
 import org.spongepowered.api.command.parameter.managed.clientcompletion.ClientCompletionType;
 import org.spongepowered.api.command.parameter.managed.clientcompletion.ClientCompletionTypes;
-import org.spongepowered.api.registry.RegistryEntry;
-import org.spongepowered.api.registry.RegistryTypes;
-import org.spongepowered.api.world.portal.Portal;
-import org.spongepowered.api.world.portal.PortalType;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 class PortalFilter<T extends CosmosPortal> implements ValueParameter<T> {
 
@@ -39,10 +31,10 @@ class PortalFilter<T extends CosmosPortal> implements ValueParameter<T> {
     @Override
     @SuppressWarnings("unchecked")
     public List<String> complete(final CommandContext context, final String currentInput) {
-        return Cosmos.getServices().registry().portalFrame()
+        return Cosmos.getServices().registry().portal()
                 .stream()
                 .filter(portal -> this.clazz.isAssignableFrom(portal.getClass()) && this.filter.test((T) portal))
-                .map(CosmosPortal::getKey)
+                .map(CosmosPortal::key)
                 .map(ResourceKey::getFormatted)
                 .collect(Collectors.toList());
     }
@@ -64,7 +56,7 @@ class PortalFilter<T extends CosmosPortal> implements ValueParameter<T> {
         }
 
         final Optional<T> optionalValue = Optional.ofNullable(portalKey)
-                .flatMap(Cosmos.getServices().registry().portalFrame()::find)
+                .flatMap(Cosmos.getServices().registry().portal()::find)
                 .filter(portalType -> this.clazz.isAssignableFrom(portalType.getClass()))
                 .map(portalType -> (T) portalType)
                 .filter(this.filter);

@@ -6,40 +6,19 @@ import com.google.inject.Singleton;
 import cosmos.Cosmos;
 import cosmos.registries.listener.impl.AbstractListener;
 import cosmos.registries.portal.CosmosFramePortal;
-import cosmos.registries.portal.CosmosPortal;
-import cosmos.registries.portal.PortalDispatcherRegistry;
-import cosmos.registries.portal.PortalFrameRegistry;
-import cosmos.registries.portal.PortalSelectionRegistry;
-import cosmos.services.portal.PortalService;
+import cosmos.registries.portal.PortalRegistry;
 import cosmos.services.transportation.TransportationService;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.block.BlockSnapshot;
-import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.data.Transaction;
-import org.spongepowered.api.data.type.HandTypes;
-import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
-import org.spongepowered.api.event.EventContextKeys;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
-import org.spongepowered.api.event.block.InteractBlockEvent;
-import org.spongepowered.api.event.block.NotifyNeighborBlockEvent;
-import org.spongepowered.api.event.block.TickBlockEvent;
-import org.spongepowered.api.event.cause.entity.MovementType;
-import org.spongepowered.api.event.cause.entity.MovementTypes;
-import org.spongepowered.api.event.entity.ChangeEntityWorldEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.IsCancelled;
 import org.spongepowered.api.event.filter.cause.First;
-import org.spongepowered.api.item.ItemTypes;
-import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.util.Ticks;
 import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.world.LocatableBlock;
-import org.spongepowered.api.world.LocatableSnapshot;
-import org.spongepowered.api.world.portal.PortalType;
 import org.spongepowered.api.world.server.ServerLocation;
 
 import java.util.Optional;
@@ -47,12 +26,12 @@ import java.util.Optional;
 @Singleton
 public class PortalFrameListener extends AbstractListener {
 
-    private final PortalFrameRegistry portalFrameRegistry;
+    private final PortalRegistry portalRegistry;
     private final TransportationService transportationService;
 
     @Inject
     public PortalFrameListener(final Injector injector) {
-        this.portalFrameRegistry = injector.getInstance(PortalFrameRegistry.class);
+        this.portalRegistry = injector.getInstance(PortalRegistry.class);
         this.transportationService = injector.getInstance(TransportationService.class);
     }
 
@@ -72,7 +51,7 @@ public class PortalFrameListener extends AbstractListener {
                         .state(blockSnapshot.getState())
                         .build()
                 )
-                .anyMatch(locatableBlock -> this.portalFrameRegistry.find(locatableBlock).isPresent());
+                .anyMatch(locatableBlock -> this.portalRegistry.find(locatableBlock).isPresent());
 
         event.setCancelled(affectPortal);
     }
@@ -115,9 +94,9 @@ public class PortalFrameListener extends AbstractListener {
             return;
         }
 
-        this.portalFrameRegistry.find(feetLocation.asLocatableBlock())
+        this.portalRegistry.find(feetLocation.asLocatableBlock())
                 .map(Optional::of)
-                .orElse(this.portalFrameRegistry.find(eyesLocation.asLocatableBlock()))
+                .orElse(this.portalRegistry.find(eyesLocation.asLocatableBlock()))
                 .ifPresent(portal -> {
                     final Optional<ServerLocation> optionalDestination = portal.getDestination();
 
@@ -128,7 +107,7 @@ public class PortalFrameListener extends AbstractListener {
                     event.setCancelled(true);
                     Task task = Task.builder()
                             .execute(() -> {
-                                player.playSound(portal.soundTravel());
+                                portal.soundTravel().ifPresent(player::playSound);
                                 this.transportationService.teleport(player, optionalDestination.get(), false);
                             })
                             .plugin(Cosmos.getPluginContainer())

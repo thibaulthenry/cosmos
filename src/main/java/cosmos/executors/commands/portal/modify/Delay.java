@@ -5,19 +5,17 @@ import com.google.inject.Singleton;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.executors.parameters.CosmosParameters;
 import cosmos.executors.parameters.impl.portal.PortalFrame;
-import cosmos.registries.portal.CosmosFramePortal;
+import cosmos.registries.portal.CosmosPortal;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.util.Ticks;
 
-import java.time.temporal.ChronoUnit;
-
 @Singleton
-public class Cooldown extends AbstractPortalModifyCommand { // todo rename to delay
+public class Delay extends AbstractPortalModifyCommand {
 
     @Inject
-    public Cooldown() {
+    public Delay() {
         super(
                 new PortalFrame().key(CosmosKeys.PORTAL_FRAME_COSMOS).build(),
                 CosmosParameters.DURATION_WITH_TIME_UNIT
@@ -25,13 +23,11 @@ public class Cooldown extends AbstractPortalModifyCommand { // todo rename to de
     }
 
     @Override
-    protected CosmosFramePortal getNewPortal(final Audience src, final CommandContext context, final CosmosFramePortal portal) throws CommandException {
+    protected CosmosPortal getNewPortal(final Audience src, final CommandContext context, final CosmosPortal portal) throws CommandException {
         final long duration = context.getOne(CosmosKeys.DURATION)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "parameter", CosmosKeys.DURATION));
 
-        final ChronoUnit unit = context.getOne(CosmosKeys.TIME_UNIT).orElse(ChronoUnit.SECONDS);
-
-        return portal.asBuilder().cooldown(Ticks.zero()).build(); // todo
+        return portal.asBuilder().delay(Ticks.zero()).build(); // todo
     }
 
 }
