@@ -1,6 +1,7 @@
 package cosmos.services.transportation;
 
 import com.google.inject.ImplementedBy;
+import cosmos.registries.portal.CosmosPortal;
 import cosmos.services.CosmosService;
 import cosmos.services.transportation.impl.TransportationServiceImpl;
 import net.kyori.adventure.audience.Audience;
@@ -18,6 +19,8 @@ public interface TransportationService extends CosmosService {
     String buildCommand(@Nullable String target, @Nullable ResourceKey worldKey, @Nullable Vector3d position, @Nullable Vector3d rotation, boolean safeOnly);
 
     boolean mustNotify(Audience src, Identifiable target);
+
+    boolean teleport(Entity target, CosmosPortal portal);
 
     boolean teleport(Entity target, ServerLocation location, @Nullable Vector3d rotation, boolean safeOnly);
 

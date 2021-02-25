@@ -23,8 +23,8 @@ public interface CosmosButtonPortal extends CosmosPortal {
         return (Builder) Sponge.getGame().getBuilderProvider().provide(Builder.class).reset();
     }
 
-    static boolean isAnyOfTriggers(final BlockType blockType) {
-        return blockType.isAnyOf(CosmosButtonPortal.triggers);
+    static boolean isAnyOfTriggers(final BlockType trigger) {
+        return trigger.isAnyOf(CosmosButtonPortal.triggers);
     }
 
     @SuppressWarnings("unchecked")

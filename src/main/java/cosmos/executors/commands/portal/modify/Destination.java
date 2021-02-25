@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.parameters.CosmosKeys;
+import cosmos.executors.parameters.impl.portal.PortalAll;
 import cosmos.executors.parameters.impl.portal.PortalFrame;
 import cosmos.executors.parameters.impl.world.WorldOnline;
 import cosmos.registries.portal.CosmosPortal;
@@ -22,7 +23,7 @@ public class Destination extends AbstractPortalModifyCommand {
     @Inject
     public Destination(final Injector injector) {
         super(
-                new PortalFrame().key(CosmosKeys.PORTAL_FRAME_COSMOS).build(),
+                new PortalAll().key(CosmosKeys.PORTAL_COSMOS).build(),
                 injector.getInstance(WorldOnline.class).key(CosmosKeys.WORLD_DESTINATION).build(),
                 Parameter.vector3d().setKey(CosmosKeys.X_Y_Z).optional().build()
         );

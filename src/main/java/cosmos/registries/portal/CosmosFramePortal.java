@@ -18,8 +18,8 @@ public interface CosmosFramePortal extends CosmosPortal {
         return (Builder) Sponge.getGame().getBuilderProvider().provide(Builder.class).reset();
     }
 
-    static boolean isAnyOfTriggerBlocks(final BlockType blockType) {
-        return blockType.isAnyOf(CosmosFramePortal.triggers);
+    static boolean isAnyOfTriggers(final BlockType trigger) {
+        return trigger.isAnyOf(CosmosFramePortal.triggers);
     }
 
     @SuppressWarnings("unchecked")

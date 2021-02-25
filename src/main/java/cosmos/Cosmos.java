@@ -3,8 +3,14 @@ package cosmos;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import cosmos.executors.modules.Root;
+import cosmos.registries.portal.CosmosButtonPortal;
 import cosmos.registries.portal.CosmosFramePortal;
+import cosmos.registries.portal.CosmosPressurePlatePortal;
+import cosmos.registries.portal.CosmosSignPortal;
+import cosmos.registries.portal.impl.CosmosButtonPortalBuilderImpl;
 import cosmos.registries.portal.impl.CosmosFramePortalBuilderImpl;
+import cosmos.registries.portal.impl.CosmosPressurePlatePortalBuilderImpl;
+import cosmos.registries.portal.impl.CosmosSignPortalBuilderImpl;
 import cosmos.services.ServiceProvider;
 import cosmos.services.registry.RegistryProvider;
 import org.apache.logging.log4j.Logger;
@@ -64,7 +70,10 @@ public class Cosmos {
 
     @Listener
     public void onRegisterBuilderEvent(final RegisterBuilderEvent event) {
+        event.register(CosmosButtonPortal.Builder.class, () -> this.injector.getInstance(CosmosButtonPortalBuilderImpl.class));
         event.register(CosmosFramePortal.Builder.class, () -> this.injector.getInstance(CosmosFramePortalBuilderImpl.class));
+        event.register(CosmosPressurePlatePortal.Builder.class, () -> this.injector.getInstance(CosmosPressurePlatePortalBuilderImpl.class));
+        event.register(CosmosSignPortal.Builder.class, () -> this.injector.getInstance(CosmosSignPortalBuilderImpl.class));
     }
 
     @Listener

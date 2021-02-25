@@ -3,7 +3,9 @@ package cosmos.registries.portal.impl;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import cosmos.registries.portal.CosmosFramePortal;
+import cosmos.registries.portal.CosmosSignPortal;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.persistence.DataView;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 
@@ -42,25 +44,8 @@ public class CosmosFramePortalBuilderImpl extends AbstractCosmosPortalBuilder<Co
     }
 
     @Override
-    public CosmosFramePortal.Builder from(final CosmosFramePortal value) {
-        Preconditions.checkNotNull(value, "CosmosPortal cannot be null!");
-        Preconditions.checkNotNull(value.key(), "CosmosPortal key cannot be null");
-        Preconditions.checkNotNull(value.trigger(), "CosmosPortal trigger cannot be null");
-        Preconditions.checkNotNull(value.getOrigin(), "CosmosPortal origins cannot be null");
-
-        super.delay = value.delay().orElse(null);
-        super.destination = value.getDestination().orElse(null);
-        super.key = value.key();
-        super.nausea = value.nausea();
-        super.origins = value.origins();
-        super.particles = value.particles().orElse(null);
-        super.particlesInterval = value.particlesInterval();
-        super.soundAmbiance = value.soundAmbiance().orElse(null);
-        super.soundTravel = value.soundTravel().orElse(null);
-        super.soundTrigger = value.soundTrigger().orElse(null);
-        super.trigger = value.trigger();
-
-        return this;
+    protected boolean isAnyOfTriggers(final BlockType trigger) {
+        return CosmosFramePortal.isAnyOfTriggers(trigger);
     }
 
 }

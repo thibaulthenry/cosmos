@@ -3,6 +3,7 @@ package cosmos.registries.portal.impl;
 import com.google.common.base.Preconditions;
 import cosmos.registries.portal.CosmosFramePortal;
 import cosmos.registries.portal.CosmosPortal;
+import cosmos.registries.portal.CosmosPressurePlatePortal;
 import net.kyori.adventure.sound.Sound;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.block.BlockType;
@@ -34,6 +35,12 @@ abstract class AbstractCosmosPortalBuilder<T extends CosmosPortal> extends Abstr
     }
 
     @Override
+    public CosmosPortal.Builder<T> addOrigin(final ServerLocation origin) {
+        this.origins = Collections.singleton(origin);
+        return this;
+    }
+
+    @Override
     public CosmosPortal.Builder<T> delay(final Ticks delay) {
         this.delay = delay;
         return this;
@@ -42,6 +49,28 @@ abstract class AbstractCosmosPortalBuilder<T extends CosmosPortal> extends Abstr
     @Override
     public CosmosPortal.Builder<T> destination(final ServerLocation destination) {
         this.destination = destination;
+        return this;
+    }
+
+    @Override
+    public CosmosPortal.Builder<T> from(final T value) {
+        Preconditions.checkNotNull(value, "CosmosPressurePlatePortal cannot be null!");
+        Preconditions.checkNotNull(value.key(), "CosmosPressurePlatePortal key cannot be null");
+        Preconditions.checkNotNull(value.trigger(), "CosmosPressurePlatePortal trigger cannot be null");
+        Preconditions.checkNotNull(value.getOrigin(), "CosmosPressurePlatePortal origins cannot be null");
+
+        this.delay = value.delay().orElse(null);
+        this.destination = value.getDestination().orElse(null);
+        this.key = value.key();
+        this.nausea = value.nausea();
+        this.origins = value.origins();
+        this.particles = value.particles().orElse(null);
+        this.particlesInterval = value.particlesInterval();
+        this.soundAmbiance = value.soundAmbiance().orElse(null);
+        this.soundTravel = value.soundTravel().orElse(null);
+        this.soundTrigger = value.soundTrigger().orElse(null);
+        this.trigger = value.trigger();
+
         return this;
     }
 
@@ -55,12 +84,6 @@ abstract class AbstractCosmosPortalBuilder<T extends CosmosPortal> extends Abstr
     @Override
     public CosmosPortal.Builder<T> nausea(final boolean nausea) {
         this.nausea = nausea;
-        return this;
-    }
-
-    @Override
-    public CosmosPortal.Builder<T> addOrigin(final ServerLocation origin) {
-        this.origins = Collections.singleton(origin);
         return this;
     }
 
@@ -103,9 +126,11 @@ abstract class AbstractCosmosPortalBuilder<T extends CosmosPortal> extends Abstr
     @Override
     public CosmosPortal.Builder<T> trigger(final BlockType trigger) {
         Preconditions.checkNotNull(trigger);
-        Preconditions.checkArgument(CosmosFramePortal.isAnyOfTriggerBlocks(trigger), trigger + " is not available in the trigger list");
+        Preconditions.checkArgument(this.isAnyOfTriggers(trigger), trigger + " is not available in the trigger list");
         this.trigger = trigger;
         return this;
     }
+
+    protected abstract boolean isAnyOfTriggers(BlockType trigger);
 
 }

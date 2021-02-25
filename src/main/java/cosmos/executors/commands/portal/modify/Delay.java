@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.executors.parameters.CosmosParameters;
+import cosmos.executors.parameters.impl.portal.PortalAll;
 import cosmos.executors.parameters.impl.portal.PortalFrame;
 import cosmos.registries.portal.CosmosPortal;
 import net.kyori.adventure.audience.Audience;
@@ -17,7 +18,7 @@ public class Delay extends AbstractPortalModifyCommand {
     @Inject
     public Delay() {
         super(
-                new PortalFrame().key(CosmosKeys.PORTAL_FRAME_COSMOS).build(),
+                new PortalAll().key(CosmosKeys.PORTAL_COSMOS).build(),
                 CosmosParameters.DURATION_WITH_TIME_UNIT
         );
     }

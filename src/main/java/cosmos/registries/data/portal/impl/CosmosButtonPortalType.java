@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.registries.data.portal.CosmosPortalType;
+import cosmos.registries.portal.CosmosButtonPortal;
 import cosmos.registries.portal.CosmosFramePortal;
 import cosmos.registries.portal.CosmosPortal;
 import cosmos.registries.portal.PortalRegistry;
@@ -18,13 +19,13 @@ import org.spongepowered.api.world.server.ServerLocation;
 import java.util.Optional;
 
 @Singleton
-public class CosmosFramePortalType implements CosmosPortalType {
+public class CosmosButtonPortalType implements CosmosPortalType {
 
     private final PortalRegistry portalRegistry;
     private final TransportationService transportationService;
 
     @Inject
-    public CosmosFramePortalType(final Injector injector) {
+    public CosmosButtonPortalType(final Injector injector) {
         this.portalRegistry = injector.getInstance(PortalRegistry.class);
         this.transportationService = injector.getInstance(TransportationService.class);
     }
@@ -32,12 +33,12 @@ public class CosmosFramePortalType implements CosmosPortalType {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends CosmosPortal> CosmosPortal.Builder<T> asPortalBuilder() {
-        return (CosmosPortal.Builder<T>) CosmosFramePortal.builder();
+        return (CosmosPortal.Builder<T>) CosmosButtonPortal.builder();
     }
 
     @Override
     public BlockType defaultTrigger() {
-        return BlockTypes.STONE_PRESSURE_PLATE.get();
+        return BlockTypes.STONE_BUTTON.get();
     }
 
     @Override

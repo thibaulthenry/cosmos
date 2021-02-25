@@ -71,7 +71,7 @@ public class PortalServiceImpl implements PortalService {
 
         final Set<ServerLocation> selection = optionalSelection.get();
 
-        final CosmosPortal portal = type.builder()
+        final CosmosPortal portal = type.asPortalBuilder()
                 .origins(selection)
                 .trigger(type.defaultTrigger())
                 .key(key)

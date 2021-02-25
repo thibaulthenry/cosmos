@@ -2,6 +2,7 @@ package cosmos.registries.portal;
 
 import net.kyori.adventure.sound.Sound;
 import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.effect.particle.ParticleEffect;
@@ -15,6 +16,10 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface CosmosPortal extends DataSerializable, Portal {
+
+    static <T extends CosmosPortal> Builder<T> builder(final Class<Builder<T>> builderClass) {
+        return Sponge.getGame().getBuilderProvider().provide(builderClass).reset();
+    }
 
     <T extends CosmosPortal> Builder<T> asBuilder();
 

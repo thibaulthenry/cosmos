@@ -25,8 +25,8 @@ public interface CosmosPressurePlatePortal extends CosmosPortal {
         return (Builder) Sponge.getGame().getBuilderProvider().provide(Builder.class).reset();
     }
 
-    static boolean isAnyOfTriggers(final BlockType blockType) {
-        return blockType.isAnyOf(CosmosPressurePlatePortal.triggers);
+    static boolean isAnyOfTriggers(final BlockType trigger) {
+        return trigger.isAnyOf(CosmosPressurePlatePortal.triggers);
     }
 
     @SuppressWarnings("unchecked")

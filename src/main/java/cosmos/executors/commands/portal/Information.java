@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.AbstractCommand;
 import cosmos.executors.parameters.CosmosKeys;
+import cosmos.executors.parameters.impl.portal.PortalAll;
 import cosmos.executors.parameters.impl.portal.PortalFrame;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
@@ -17,7 +18,7 @@ public class Information extends AbstractCommand {
 
     @Inject
     public Information() {
-        super(new PortalFrame().key(CosmosKeys.PORTAL_FRAME_COSMOS).build());
+        super(new PortalAll().key(CosmosKeys.PORTAL_COSMOS).build());
     }
 
     @Override

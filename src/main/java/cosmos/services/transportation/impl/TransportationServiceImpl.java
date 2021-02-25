@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
+import cosmos.registries.portal.CosmosPortal;
 import cosmos.services.transportation.TransportationService;
 import cosmos.services.validation.ValidationService;
 import net.kyori.adventure.audience.Audience;
@@ -11,6 +12,9 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.math.vector.Vector3d;
@@ -47,6 +51,30 @@ public class TransportationServiceImpl implements TransportationService {
         }
 
         return !this.validationService.isSelf(src, target);
+    }
+
+    @Override
+    public boolean teleport(final Entity target, final CosmosPortal portal) {
+        final Optional<ServerLocation> optionalDestination = portal.getDestination();
+
+        if (!optionalDestination.isPresent()) {
+            return false;
+        }
+
+        final Task task = Task.builder()
+                .execute(() -> {
+                    if (target instanceof ServerPlayer) {
+                        portal.soundTravel().ifPresent(((ServerPlayer) target)::playSound);
+                    }
+
+                    this.teleport(target, optionalDestination.get(), false);
+                })
+                .plugin(Cosmos.getPluginContainer())
+                .build();
+
+        Sponge.getServer().getScheduler().submit(task);
+
+        return true;
     }
 
     @Override

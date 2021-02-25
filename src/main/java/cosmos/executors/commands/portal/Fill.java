@@ -4,8 +4,10 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.AbstractCommand;
 import cosmos.executors.parameters.CosmosKeys;
+import cosmos.executors.parameters.impl.portal.PortalAll;
 import cosmos.executors.parameters.impl.portal.PortalFrame;
 import cosmos.registries.portal.CosmosFramePortal;
+import cosmos.registries.portal.CosmosPortal;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -15,13 +17,13 @@ public class Fill extends AbstractCommand {
 
     @Inject
     public Fill() {
-        super(new PortalFrame().key(CosmosKeys.PORTAL_FRAME_COSMOS).build());
+        super(new PortalAll().key(CosmosKeys.PORTAL_COSMOS).build());
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context) throws CommandException {
-        final CosmosFramePortal portal = context.getOne(CosmosKeys.PORTAL_FRAME_COSMOS)
-                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.PORTAL_FRAME_COSMOS));
+        final CosmosPortal portal = context.getOne(CosmosKeys.PORTAL_COSMOS)
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.PORTAL_COSMOS));
 
         super.serviceProvider.portal().fill(src, portal);
 

@@ -6,7 +6,7 @@ import org.spongepowered.api.world.portal.PortalType;
 
 public interface CosmosPortalType extends PortalType {
 
-    <T extends CosmosPortal> CosmosPortal.Builder<T> builder();
+    <T extends CosmosPortal> CosmosPortal.Builder<T> asPortalBuilder();
 
     BlockType defaultTrigger();
 

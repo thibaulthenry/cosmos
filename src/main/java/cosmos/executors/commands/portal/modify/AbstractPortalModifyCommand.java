@@ -16,8 +16,8 @@ public abstract class AbstractPortalModifyCommand extends AbstractCommand {
 
     @Override
     protected final void run(final Audience src, final CommandContext context) throws CommandException {
-        final CosmosPortal portal = context.getOne(CosmosKeys.PORTAL_FRAME_COSMOS)
-                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.PORTAL_FRAME_COSMOS));
+        final CosmosPortal portal = context.getOne(CosmosKeys.PORTAL_COSMOS)
+                .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.PORTAL_COSMOS));
 
         super.serviceProvider.registry().portal().replace(this.getNewPortal(src, context, portal));
 

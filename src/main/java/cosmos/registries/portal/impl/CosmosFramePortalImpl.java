@@ -25,7 +25,8 @@ public class CosmosFramePortalImpl extends AbstractCosmosPortal implements Cosmo
 
         super(
                 key, origins, trigger, CosmosPortalTypes.FRAME.get(), delay, destination,
-                Optional.ofNullable(nausea).orElse(true), particles,
+                Optional.ofNullable(nausea).orElse(true),
+                particles,
                 Optional.ofNullable(particlesInterval).orElse(20L),
                 Optional.ofNullable(soundAmbiance).orElse(Sound.sound(SoundTypes.BLOCK_PORTAL_AMBIENT.get(), Sound.Source.BLOCK, 0.1f, 1f)),
                 Optional.ofNullable(soundTravel).orElse(Sound.sound(SoundTypes.BLOCK_PORTAL_TRAVEL.get(), Sound.Source.BLOCK, 0.1f, 1f)),

@@ -6,7 +6,10 @@ import com.google.inject.Singleton;
 import cosmos.constants.DataKeys;
 import cosmos.registries.CosmosRegistry;
 import cosmos.registries.CosmosRegistryEntry;
+import cosmos.registries.data.portal.impl.CosmosButtonPortalType;
 import cosmos.registries.data.portal.impl.CosmosFramePortalType;
+import cosmos.registries.data.portal.impl.CosmosPressurePlatePortalType;
+import cosmos.registries.data.portal.impl.CosmosSignPortalType;
 import org.spongepowered.api.ResourceKey;
 
 import java.util.HashMap;
@@ -20,7 +23,10 @@ public class PortalTypeRegistry implements CosmosRegistry<ResourceKey, CosmosPor
 
     @Inject
     public PortalTypeRegistry(final Injector injector) {
+        this.portalTypeMap.put(DataKeys.PORTAL_TYPE_BUTTON, injector.getInstance(CosmosButtonPortalType.class));
         this.portalTypeMap.put(DataKeys.PORTAL_TYPE_FRAME, injector.getInstance(CosmosFramePortalType.class));
+        this.portalTypeMap.put(DataKeys.PORTAL_TYPE_PRESSURE_PLATE, injector.getInstance(CosmosPressurePlatePortalType.class));
+        this.portalTypeMap.put(DataKeys.PORTAL_TYPE_SIGN, injector.getInstance(CosmosSignPortalType.class));
     }
 
     public Stream<CosmosRegistryEntry<ResourceKey, CosmosPortalType>> streamEntries() {

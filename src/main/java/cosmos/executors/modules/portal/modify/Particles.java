@@ -13,6 +13,7 @@ import cosmos.executors.commands.portal.modify.particles.Type;
 import cosmos.executors.commands.portal.modify.particles.Velocity;
 import cosmos.executors.modules.AbstractModule;
 import cosmos.executors.parameters.CosmosKeys;
+import cosmos.executors.parameters.impl.portal.PortalAll;
 import cosmos.executors.parameters.impl.portal.PortalFrame;
 
 public class Particles extends AbstractModule {
@@ -20,7 +21,7 @@ public class Particles extends AbstractModule {
     @Inject
     Particles(final Injector injector) {
         super(
-                new PortalFrame().key(CosmosKeys.PORTAL_FRAME_COSMOS).build(),
+                new PortalAll().key(CosmosKeys.PORTAL_COSMOS).build(),
                 false,
                 injector.getInstance(Block.class),
                 injector.getInstance(Color.class),
