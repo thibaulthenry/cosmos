@@ -7,7 +7,6 @@ import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
@@ -27,7 +26,7 @@ public class Position extends AbstractCommand {
 
     public Position() {
         super(
-                CosmosParameters.ENTITY_TARGETS_OPTIONAL,
+                CosmosParameters.Builder.ENTITIES.get().setKey(CosmosKeys.ENTITIES).build(),
                 Parameter.player().setKey(CosmosKeys.MESSAGE_RECEIVER).optional().build()
         );
     }
@@ -63,7 +62,7 @@ public class Position extends AbstractCommand {
 
         final ServerPlayer player = optionalPlayer.orElse((ServerPlayer) src);
 
-        final Collection<Component> contents = context.getOne(CosmosParameters.ENTITY_TARGETS)
+        final Collection<Component> contents = context.getOne(CosmosKeys.ENTITIES)
                 .orElse(Collections.singletonList((ServerPlayer) src))
                 .stream()
                 .map(target -> this.getPositionText(target, player))

@@ -5,12 +5,14 @@ import cosmos.constants.Units;
 import cosmos.executors.commands.scoreboard.AbstractScoreboardCommand;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.executors.parameters.CosmosParameters;
+import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.criteria.Criterion;
 import org.spongepowered.api.scoreboard.objective.Objective;
@@ -23,8 +25,12 @@ public class Add extends AbstractScoreboardCommand {
     public Add() {
         super(
                 Parameter.string().setKey(CosmosKeys.NAME).build(),
-                CosmosParameters.CRITERION, // todo Missing criterion + dummy without namespace
-                CosmosParameters.TEXTS_ALL_OPTIONAL
+                Parameter.registryElement(TypeToken.get(Criterion.class), RegistryTypes.CRITERION)
+                        .setKey(CosmosKeys.CRITERION)
+                        .build(), // todo Missing criterion + dummy without namespace
+                CosmosParameters.Builder.TEXTS_ALL.get()
+                        .optional()
+                        .build()
         );
     }
 

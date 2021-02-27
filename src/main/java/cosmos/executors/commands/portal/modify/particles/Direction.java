@@ -1,21 +1,19 @@
 package cosmos.executors.commands.portal.modify.particles;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleOptions;
 
 @Singleton
 public class Direction extends AbstractParticlesModifyCommand {
 
-    @Inject
     public Direction() {
-        super(CosmosParameters.DIRECTION);
+        super(Parameter.enumValue(org.spongepowered.api.util.Direction.class).setKey(CosmosKeys.DIRECTION).build());
     }
 
     @Override

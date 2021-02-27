@@ -1,11 +1,9 @@
 package cosmos.executors.commands.backup;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.AbstractCommand;
 import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.backup.BackupWorld;
+import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -20,9 +18,8 @@ import java.util.stream.Collectors;
 @Singleton
 public class List extends AbstractCommand {
 
-    @Inject
-    public List(final Injector injector) {
-        super(injector.getInstance(BackupWorld.class).optional().build());
+    public List() {
+        super(CosmosParameters.Builder.BACKUP_WORLD.get().optional().build());
     }
 
     @Override

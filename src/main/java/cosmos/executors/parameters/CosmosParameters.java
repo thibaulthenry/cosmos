@@ -1,153 +1,173 @@
 package cosmos.executors.parameters;
 
 import cosmos.constants.Operands;
+import cosmos.executors.parameters.builders.CosmosBuilder;
+import cosmos.executors.parameters.builders.CosmosFirstOfBuilder;
+import cosmos.executors.parameters.builders.backup.Backup;
+import cosmos.executors.parameters.builders.backup.BackupWorld;
+import cosmos.executors.parameters.builders.gamerule.GameRuleValueAll;
+import cosmos.executors.parameters.builders.portal.PortalAll;
+import cosmos.executors.parameters.builders.portal.PortalFrame;
+import cosmos.executors.parameters.builders.portal.PortalTypeCosmos;
+import cosmos.executors.parameters.builders.scoreboard.Extremum;
+import cosmos.executors.parameters.builders.scoreboard.ObjectiveAll;
+import cosmos.executors.parameters.builders.scoreboard.ObjectiveTrigger;
+import cosmos.executors.parameters.builders.scoreboard.Targets;
+import cosmos.executors.parameters.builders.scoreboard.TeamAll;
+import cosmos.executors.parameters.builders.world.WorldAll;
+import cosmos.executors.parameters.builders.world.WorldExported;
+import cosmos.executors.parameters.builders.world.WorldOffline;
+import cosmos.executors.parameters.builders.world.WorldOnline;
+import cosmos.registries.backup.BackupArchetype;
+import cosmos.registries.data.portal.CosmosPortalType;
+import cosmos.registries.portal.CosmosFramePortal;
+import cosmos.registries.portal.CosmosPortal;
 import io.leangen.geantyref.TypeToken;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.command.parameter.managed.ValueParameter;
 import org.spongepowered.api.command.parameter.managed.standard.ResourceKeyedValueParameters;
-import org.spongepowered.api.effect.particle.ParticleType;
-import org.spongepowered.api.effect.potion.PotionEffectType;
+import org.spongepowered.api.command.parameter.managed.standard.VariableValueParameters;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.living.player.gamemode.GameMode;
-import org.spongepowered.api.item.ItemType;
-import org.spongepowered.api.registry.RegistryTypes;
-import org.spongepowered.api.scoreboard.Visibility;
-import org.spongepowered.api.scoreboard.criteria.Criterion;
-import org.spongepowered.api.scoreboard.displayslot.DisplaySlot;
-import org.spongepowered.api.scoreboard.objective.displaymode.ObjectiveDisplayMode;
-import org.spongepowered.api.util.Direction;
-import org.spongepowered.api.world.difficulty.Difficulty;
-import org.spongepowered.api.world.gamerule.GameRule;
-import org.spongepowered.api.world.portal.PortalType;
-import org.spongepowered.math.vector.Vector2d;
+import org.spongepowered.api.scoreboard.Team;
+import org.spongepowered.api.scoreboard.objective.Objective;
 
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class CosmosParameters {
 
-    public static final Parameter.Value<BlockType> BLOCK_TYPE = Parameter.registryElement(TypeToken.get(BlockType.class), RegistryTypes.BLOCK_TYPE)
-            .setKey(CosmosKeys.BLOCK_TYPE)
-            .build();
+    public static class Builder {
 
-    public static final Parameter.Value<NamedTextColor> COLOR = Parameter.builder(NamedTextColor.class)
-            .setKey(CosmosKeys.COLOR)
-            .parser(CosmosValueParameters.COLORS)
-            .build();
+        public static final Supplier<CosmosBuilder<BackupArchetype>> BACKUP = Backup::new;
 
-    public static final Parameter.Value<Criterion> CRITERION = Parameter.registryElement(TypeToken.get(Criterion.class), RegistryTypes.CRITERION)
-            .setKey(CosmosKeys.CRITERION)
-            .build();
+        public static final Supplier<CosmosBuilder<ResourceKey>> BACKUP_WORLD = BackupWorld::new;
 
-    public static final Parameter.Value<Difficulty> DIFFICULTY_OPTIONAL = Parameter.registryElement(TypeToken.get(Difficulty.class), RegistryTypes.DIFFICULTY)
-            .setKey(CosmosKeys.DIFFICULTY)
-            .optional()
-            .build();
+        public static final Supplier<Parameter.Value.Builder<NamedTextColor>> COLOR = () -> Parameter
+                .builder(NamedTextColor.class)
+                .parser(Parser.COLORS)
+                .setKey(CosmosKeys.COLOR);
 
-    public static final Parameter.Value<Direction> DIRECTION = Parameter.enumValue(Direction.class)
-            .setKey(CosmosKeys.DIRECTION)
-            .build();
+        public static final Supplier<Parameter.SequenceBuilder> DURATION_WITH_TIME_UNIT = () -> Parameter
+                .seqBuilder(Parameter.longNumber().setKey(CosmosKeys.DURATION).build())
+                .then(
+                        Parameter.builder(ChronoUnit.class)
+                                .setKey(CosmosKeys.TIME_UNIT)
+                                .parser(Parser.TIME_UNIT)
+                                .optional()
+                                .build()
+                );
 
-    public static final Parameter.Value<ObjectiveDisplayMode> DISPLAY_MODE = Parameter.registryElement(TypeToken.get(ObjectiveDisplayMode.class), RegistryTypes.OBJECTIVE_DISPLAY_MODE)
-            .setKey(CosmosKeys.DISPLAY_MODE)
-            .build();
+        public static final Supplier<Parameter.Value.Builder<List<Entity>>> ENTITIES = () -> Parameter
+                .builder(new TypeToken<List<Entity>>() {})
+                .parser(ResourceKeyedValueParameters.MANY_ENTITIES);
 
-    public static final Parameter.Value<DisplaySlot> DISPLAY_SLOT = Parameter.registryElement(TypeToken.get(DisplaySlot.class), RegistryTypes.DISPLAY_SLOT)
-            .setKey(CosmosKeys.DISPLAY_SLOT)
-            .build();
+        public static final Supplier<Extremum> EXTREMUM = Extremum::new;
 
-    private static final Parameter.Value<Long> DURATION = Parameter.longNumber().setKey(CosmosKeys.DURATION).build();
+        public static final Supplier<CosmosBuilder<Object>> GAME_RULE_VALUE_ALL = GameRuleValueAll::new;
 
-    public static final Parameter.Value<List<Entity>> ENTITY_TARGETS = Parameter.builder(new TypeToken<List<Entity>>() {})
-            .setKey(CosmosKeys.ENTITY_TARGETS)
-            .parser(ResourceKeyedValueParameters.MANY_ENTITIES)
-            .build();
+        public static final Supplier<CosmosBuilder<Objective>> OBJECTIVE_ALL = ObjectiveAll::new;
 
-    public static final Parameter.Value<List<Entity>> ENTITY_TARGETS_OPTIONAL = Parameter.builder(new TypeToken<List<Entity>>() {})
-            .setKey(CosmosKeys.ENTITY_TARGETS)
-            .parser(ResourceKeyedValueParameters.MANY_ENTITIES)
-            .optional()
-            .build();
+        public static final Supplier<CosmosBuilder<Objective>> OBJECTIVE_TRIGGER = ObjectiveTrigger::new;
 
-    public static final Parameter.Value<GameMode> GAME_MODE_OPTIONAL = Parameter.registryElement(TypeToken.get(GameMode.class), RegistryTypes.GAME_MODE)
-            .setKey(CosmosKeys.GAME_MODE)
-            .optional()
-            .build();
+        public static final Supplier<CosmosBuilder<CosmosPortal>> PORTAL_ALL = PortalAll::new;
 
-    public static final Parameter.Value<GameRule<?>> GAME_RULE = Parameter.registryElement(new TypeToken<GameRule<?>>() {}, RegistryTypes.GAME_RULE)
-            .setKey(CosmosKeys.GAME_RULE)
-            .build(); // todo check pr
+        public static final Supplier<Parameter.Value.Builder<BlockType>> PORTAL_BLOCK_TYPE = () -> Parameter
+                .builder(BlockType.class)
+                .parser(Parser.PORTAL_BLOCK_TYPES);
 
-    public static final Parameter.Value<ItemType> ITEM_TYPE = Parameter.registryElement(TypeToken.get(ItemType.class), RegistryTypes.ITEM_TYPE)
-            .setKey(CosmosKeys.ITEM_TYPE)
-            .build();
+        public static final Supplier<CosmosBuilder<CosmosFramePortal>> PORTAL_FRAME = PortalFrame::new;
 
-    public static final Parameter.Value<ParticleType> PARTICLE_TYPE = Parameter.registryElement(TypeToken.get(ParticleType.class), RegistryTypes.PARTICLE_TYPE)
-            .setKey(CosmosKeys.PARTICLE_TYPE)
-            .build();
+        public static final Supplier<CosmosBuilder<CosmosPortalType>> PORTAL_TYPE_COSMOS = PortalTypeCosmos::new;
 
-    public static final Parameter.Value<BlockType> PORTAL_BLOCK_TYPE = Parameter.builder(BlockType.class)
-            .setKey(CosmosKeys.BLOCK_TYPE)
-            .parser(CosmosValueParameters.PORTAL_BLOCK_TYPES)
-            .build();
+        public static final Supplier<Parameter.Value.Builder<Operands>> SCOREBOARD_OPERANDS = () -> Parameter
+                .builder(Operands.class)
+                .parser(Parser.SCOREBOARD_OPERANDS);
 
-    public static final Parameter.Value<PortalType> PORTAL_TYPE = Parameter.registryElement(TypeToken.get(PortalType.class), RegistryTypes.PORTAL_TYPE)
-            .setKey(CosmosKeys.PORTAL_TYPE)
-            .build();
+        public static final Supplier<Parameter.Value.Builder<Operands>> STANDARD_OPERAND = () -> Parameter
+                .builder(Operands.class)
+                .parser(Parser.STANDARD_OPERANDS);
 
-    public static final Parameter.Value<Vector2d> POSITION_2D_OPTIONAL = Parameter.builder(Vector2d.class)
-            .setKey(CosmosKeys.X_Z)
-            .parser(ResourceKeyedValueParameters.VECTOR2D)
-            .optional()
-            .build();
+        public static final Supplier<CosmosFirstOfBuilder> TARGETS = Targets::new;
 
-    public static final Parameter.Value<PotionEffectType> POTION_EFFECT_TYPE = Parameter.registryElement(TypeToken.get(PotionEffectType.class), RegistryTypes.POTION_EFFECT_TYPE)
-            .setKey(CosmosKeys.POTION_EFFECT_TYPE)
-            .build();
+        public static final Supplier<CosmosBuilder<Team>> TEAM_ALL = TeamAll::new;
 
-    public static final Parameter.Value<Operands> SCOREBOARD_OPERANDS = Parameter.builder(Operands.class)
-            .setKey(CosmosKeys.OPERAND)
-            .parser(CosmosValueParameters.SCOREBOARD_OPERANDS)
-            .build();
+        public static final Supplier<Parameter.FirstOfBuilder> TEXTS_ALL = () -> Parameter
+                .firstOfBuilder(Parameter.formattingCodeText().setKey(CosmosKeys.TEXT_AMPERSAND).build())
+                .orFirstOf(Parameter.jsonText().setKey(CosmosKeys.TEXT_JSON).build());
 
-    public static final Parameter.Value<Operands> STANDARD_OPERAND = Parameter.builder(Operands.class)
-            .setKey(CosmosKeys.OPERAND)
-            .parser(CosmosValueParameters.STANDARD_OPERANDS)
-            .build();
+        public static final Supplier<CosmosBuilder<ResourceKey>> WORLD_ALL = WorldAll::new;
 
-    public static final Parameter.Value<Component> TEXT_AMPERSAND = Parameter.formattingCodeText().setKey(CosmosKeys.TEXT_AMPERSAND).build();
+        public static final Supplier<CosmosBuilder<ResourceKey>> WORLD_EXPORTED = WorldExported::new;
 
-    public static final Parameter.Value<Component> TEXT_JSON = Parameter.jsonText().setKey(CosmosKeys.TEXT_JSON).build();
+        public static final Supplier<CosmosBuilder<ResourceKey>> WORLD_OFFLINE = WorldOffline::new;
 
-    public static final Parameter TEXTS_ALL = Parameter.firstOfBuilder(TEXT_AMPERSAND)
-            .orFirstOf(TEXT_JSON)
-            .optional()
-            .build();
+        public static final Supplier<CosmosBuilder<ResourceKey>> WORLD_ONLINE = WorldOnline::new;
 
-    public static final Parameter TEXTS_ALL_OPTIONAL = Parameter.firstOfBuilder(TEXT_AMPERSAND)
-            .orFirstOf(TEXT_JSON)
-            .optional()
-            .build();
+    }
 
-    private static final Parameter.Value<ChronoUnit> TIME_UNIT_OPTIONAL = Parameter.builder(ChronoUnit.class)
-            .setKey(CosmosKeys.TIME_UNIT)
-            .parser(CosmosValueParameters.TIME_UNIT)
-            .optional()
-            .build();
+    private static class Parser {
 
-    public static final Parameter DURATION_WITH_TIME_UNIT = Parameter.seqBuilder(DURATION)
-            .then(TIME_UNIT_OPTIONAL)
-            .build();
+        private static final ValueParameter<NamedTextColor> COLORS = VariableValueParameters.staticChoicesBuilder(NamedTextColor.class)
+                .choice(NamedTextColor.AQUA.toString(), NamedTextColor.AQUA)
+                .choice(NamedTextColor.BLACK.toString(), NamedTextColor.BLACK)
+                .choice(NamedTextColor.BLUE.toString(), NamedTextColor.BLUE)
+                .choice(NamedTextColor.DARK_AQUA.toString(), NamedTextColor.DARK_AQUA)
+                .choice(NamedTextColor.DARK_BLUE.toString(), NamedTextColor.DARK_BLUE)
+                .choice(NamedTextColor.DARK_GRAY.toString(), NamedTextColor.DARK_GRAY)
+                .choice(NamedTextColor.DARK_GREEN.toString(), NamedTextColor.DARK_GREEN)
+                .choice(NamedTextColor.DARK_PURPLE.toString(), NamedTextColor.DARK_PURPLE)
+                .choice(NamedTextColor.DARK_RED.toString(), NamedTextColor.DARK_RED)
+                .choice(NamedTextColor.GOLD.toString(), NamedTextColor.GOLD)
+                .choice(NamedTextColor.GRAY.toString(), NamedTextColor.GRAY)
+                .choice(NamedTextColor.GREEN.toString(), NamedTextColor.GREEN)
+                .choice(NamedTextColor.LIGHT_PURPLE.toString(), NamedTextColor.LIGHT_PURPLE)
+                .choice(NamedTextColor.RED.toString(), NamedTextColor.RED)
+                .choice("reset", NamedTextColor.WHITE)
+                .choice(NamedTextColor.WHITE.toString(), NamedTextColor.WHITE)
+                .choice(NamedTextColor.YELLOW.toString(), NamedTextColor.YELLOW)
+                .build();
 
-    public static final Parameter DURATION_WITH_TIME_UNIT_OPTIONAL = Parameter.seqBuilder(DURATION)
-            .then(TIME_UNIT_OPTIONAL)
-            .optional()
-            .build();
+        private static final ValueParameter<BlockType> PORTAL_BLOCK_TYPES = VariableValueParameters.staticChoicesBuilder(BlockType.class)
+                .choice(BlockTypes.LAVA.location().getFormatted(), BlockTypes.LAVA.get())
+                .choice(BlockTypes.VOID_AIR.location().getFormatted(), BlockTypes.VOID_AIR.get())
+                .choice(BlockTypes.WATER.location().getFormatted(), BlockTypes.WATER.get())
+                .build();
 
-    public static final Parameter.Value<Visibility> VISIBILITY = Parameter.registryElement(TypeToken.get(Visibility.class), RegistryTypes.VISIBILITY)
-            .setKey(CosmosKeys.VISIBILITY)
-            .build();
+        private static final ValueParameter<Operands> SCOREBOARD_OPERANDS = VariableValueParameters.staticChoicesBuilder(Operands.class)
+                .choice(Operands.PLUS.getOperand(), Operands.PLUS)
+                .choice(Operands.MINUS.getOperand(), Operands.MINUS)
+                .choice(Operands.TIMES.getOperand(), Operands.TIMES)
+                .choice(Operands.DIVIDE.getOperand(), Operands.DIVIDE)
+                .choice(Operands.MODULUS.getOperand(), Operands.MODULUS)
+                .choice(Operands.ASSIGN.getOperand(), Operands.ASSIGN)
+                .choice(Operands.MIN.getOperand(), Operands.MIN)
+                .choice(Operands.MAX.getOperand(), Operands.MAX)
+                .choice(Operands.SWAPS.getOperand(), Operands.SWAPS)
+                .build();
+
+        private static final ValueParameter<Operands> STANDARD_OPERANDS = VariableValueParameters.staticChoicesBuilder(Operands.class)
+                .choice(Operands.PLUS.getOperand(), Operands.PLUS)
+                .choice(Operands.MINUS.getOperand(), Operands.MINUS)
+                .choice(Operands.TIMES.getOperand(), Operands.TIMES)
+                .choice(Operands.DIVIDE.getOperand(), Operands.DIVIDE)
+                .build();
+
+        private static final ValueParameter<ChronoUnit> TIME_UNIT = VariableValueParameters.staticChoicesBuilder(ChronoUnit.class)
+                .choice("milliseconds", ChronoUnit.MILLIS)
+                .choice("seconds", ChronoUnit.SECONDS)
+                .choice("minutes", ChronoUnit.MINUTES)
+                .choice("hours", ChronoUnit.HOURS)
+                .choice("days", ChronoUnit.DAYS)
+                .choice("weeks", ChronoUnit.WEEKS)
+                .choice("months", ChronoUnit.MONTHS)
+                .choice("years", ChronoUnit.YEARS)
+                .build();
+
+    }
 
 }

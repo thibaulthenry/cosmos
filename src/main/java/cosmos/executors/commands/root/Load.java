@@ -1,11 +1,9 @@
 package cosmos.executors.commands.root;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.AbstractCommand;
 import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.world.WorldOffline;
+import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
@@ -14,9 +12,8 @@ import org.spongepowered.api.command.parameter.CommandContext;
 @Singleton
 public class Load extends AbstractCommand {
 
-    @Inject
-    public Load(final Injector injector) {
-        super(injector.getInstance(WorldOffline.class).build());
+    public Load() {
+        super(CosmosParameters.Builder.WORLD_OFFLINE.get().build());
     }
 
     @Override

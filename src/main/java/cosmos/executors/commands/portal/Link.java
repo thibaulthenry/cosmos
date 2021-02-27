@@ -1,13 +1,9 @@
 package cosmos.executors.commands.portal;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.AbstractCommand;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.executors.parameters.CosmosParameters;
-import cosmos.executors.parameters.impl.world.WorldAll;
-import cosmos.executors.parameters.impl.world.WorldOnline;
 import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
@@ -20,12 +16,13 @@ import org.spongepowered.api.world.portal.PortalType;
 @Singleton
 public class Link extends AbstractCommand {
 
-    @Inject
-    public Link(final Injector injector) {
+    public Link() {
         super(
-                CosmosParameters.PORTAL_TYPE,
-                injector.getInstance(WorldAll.class).key(CosmosKeys.WORLD_ORIGIN).optional().build(),
-                injector.getInstance(WorldAll.class).key(CosmosKeys.WORLD_DESTINATION).build()
+                Parameter.registryElement(TypeToken.get(PortalType.class), RegistryTypes.PORTAL_TYPE)
+                        .setKey(CosmosKeys.PORTAL_TYPE)
+                        .build(),
+                CosmosParameters.Builder.WORLD_ALL.get().key(CosmosKeys.WORLD_ORIGIN).optional().build(),
+                CosmosParameters.Builder.WORLD_ALL.get().key(CosmosKeys.WORLD_DESTINATION).build()
         );
     }
 

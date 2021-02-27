@@ -4,11 +4,12 @@ import com.google.common.base.CaseFormat;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.CosmosParameters;
+import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.Team;
@@ -17,9 +18,12 @@ import org.spongepowered.api.scoreboard.Visibility;
 @Singleton
 public class NameTagVisibility extends AbstractTeamModifyCommand {
 
-    @Inject
     public NameTagVisibility() {
-        super(CosmosParameters.VISIBILITY);
+        super(
+                Parameter.registryElement(TypeToken.get(Visibility.class), RegistryTypes.VISIBILITY)
+                        .setKey(CosmosKeys.VISIBILITY)
+                        .build()
+        );
     }
 
     @Override

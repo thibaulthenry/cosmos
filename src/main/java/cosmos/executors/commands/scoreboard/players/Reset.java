@@ -1,12 +1,9 @@
 package cosmos.executors.commands.scoreboard.players;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.scoreboard.AbstractMultiTargetCommand;
 import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.scoreboard.ObjectiveAll;
-import cosmos.executors.parameters.impl.scoreboard.Targets;
+import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -23,11 +20,10 @@ import java.util.stream.Collectors;
 @Singleton
 public class Reset extends AbstractMultiTargetCommand {
 
-    @Inject
-    public Reset(final Injector injector) {
+    public Reset() {
         super(
-                injector.getInstance(Targets.class).build(),
-                injector.getInstance(ObjectiveAll.class).optional().build()
+                CosmosParameters.Builder.TARGETS.get().build(),
+                CosmosParameters.Builder.OBJECTIVE_ALL.get().build()
         );
     }
 

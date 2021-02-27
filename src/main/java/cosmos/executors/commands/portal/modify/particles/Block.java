@@ -1,22 +1,23 @@
 package cosmos.executors.commands.portal.modify.particles;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.CosmosParameters;
+import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleOptions;
+import org.spongepowered.api.registry.RegistryTypes;
 
 @Singleton
 public class Block extends AbstractParticlesModifyCommand {
 
-    @Inject
     public Block() {
-        super(CosmosParameters.BLOCK_TYPE);
+        super(Parameter.registryElement(TypeToken.get(BlockType.class), RegistryTypes.BLOCK_TYPE).setKey(CosmosKeys.BLOCK_TYPE).build());
     }
 
     @Override

@@ -1,16 +1,15 @@
 package cosmos.executors.commands.scoreboard.objectives;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.scoreboard.AbstractScoreboardCommand;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.executors.parameters.CosmosParameters;
-import cosmos.executors.parameters.impl.scoreboard.ObjectiveAll;
+import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.displayslot.DisplaySlot;
@@ -21,11 +20,12 @@ import java.util.Optional;
 @Singleton
 public class SetDisplay extends AbstractScoreboardCommand {
 
-    @Inject
-    public SetDisplay(final Injector injector) {
+    public SetDisplay() {
         super(
-                CosmosParameters.DISPLAY_SLOT,
-                injector.getInstance(ObjectiveAll.class).optional().build()
+                Parameter.registryElement(TypeToken.get(DisplaySlot.class), RegistryTypes.DISPLAY_SLOT)
+                        .setKey(CosmosKeys.DISPLAY_SLOT)
+                        .build(),
+                CosmosParameters.Builder.OBJECTIVE_ALL.get().optional().build()
         );
     }
 

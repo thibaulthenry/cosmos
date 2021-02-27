@@ -1,6 +1,5 @@
 package cosmos.executors.commands.portal.modify.particles;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.executors.parameters.CosmosParameters;
@@ -13,9 +12,8 @@ import org.spongepowered.api.effect.particle.ParticleOptions;
 @Singleton
 public class Color extends AbstractParticlesModifyCommand {
 
-    @Inject
     public Color() {
-        super(CosmosParameters.COLOR);
+        super(CosmosParameters.Builder.COLOR.get().build());
     }
 
     @Override

@@ -1,7 +1,6 @@
 package cosmos.executors.commands.scoreboard.teams.modify;
 
 import com.google.common.base.CaseFormat;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import cosmos.constants.Units;
 import cosmos.executors.parameters.CosmosParameters;
@@ -16,9 +15,8 @@ import org.spongepowered.api.scoreboard.Team;
 @Singleton
 public class DisplayName extends AbstractTeamModifyCommand {
 
-    @Inject
     public DisplayName() {
-        super(CosmosParameters.TEXTS_ALL);
+        super(CosmosParameters.Builder.TEXTS_ALL.get().build());
     }
 
     @Override

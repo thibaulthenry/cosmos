@@ -131,7 +131,7 @@ public class ScoreboardsServiceImpl implements ScoreboardsService {
                 .orElse(context.getOne(CosmosKeys.TEXT_JSON))
                 .map(Collections::singletonList);
 
-        final Optional<List<Component>> optionalTargets = context.getOne(CosmosKeys.ENTITY_TARGETS) // todo entity is catching text
+        final Optional<List<Component>> optionalTargets = context.getOne(CosmosKeys.ENTITIES) // todo entity is catching text
                 .map(entities -> entities
                         .stream()
                         .map(entity -> entity instanceof Tamer ? ((Tamer) entity).getName() : entity.getUniqueId().toString())
@@ -176,7 +176,7 @@ public class ScoreboardsServiceImpl implements ScoreboardsService {
 
     @Override
     public boolean isTargetsParameterFilled(final CommandContext context) {
-        return context.hasAny(CosmosKeys.ENTITY_TARGETS) || context.hasAny(CosmosKeys.MANY_SCORE_HOLDER)
+        return context.hasAny(CosmosKeys.ENTITIES) || context.hasAny(CosmosKeys.MANY_SCORE_HOLDER)
                 || context.hasAny(CosmosKeys.TEXT_AMPERSAND) || context.hasAny(CosmosKeys.TEXT_JSON);
     }
 

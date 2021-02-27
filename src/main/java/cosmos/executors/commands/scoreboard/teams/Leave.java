@@ -1,10 +1,8 @@
 package cosmos.executors.commands.scoreboard.teams;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.scoreboard.AbstractMultiTargetCommand;
-import cosmos.executors.parameters.impl.scoreboard.Targets;
+import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -20,11 +18,10 @@ import java.util.stream.Collectors;
 @Singleton
 public class Leave extends AbstractMultiTargetCommand {
 
-    @Inject
-    public Leave(final Injector injector) {
+    public Leave() {
         super(
                 true,
-                injector.getInstance(Targets.class).optional().build()
+                CosmosParameters.Builder.TARGETS.get().optional().build()
         );
     }
 

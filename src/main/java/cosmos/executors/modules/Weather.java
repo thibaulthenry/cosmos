@@ -7,7 +7,8 @@ import cosmos.executors.commands.weather.Forecast;
 import cosmos.executors.commands.weather.Rain;
 import cosmos.executors.commands.weather.Sun;
 import cosmos.executors.commands.weather.Thunder;
-import cosmos.executors.parameters.impl.world.WorldAll;
+import cosmos.executors.parameters.CosmosParameters;
+import cosmos.executors.parameters.builders.world.WorldAll;
 
 @Singleton
 class Weather extends AbstractModule {
@@ -15,7 +16,7 @@ class Weather extends AbstractModule {
     @Inject
     Weather(final Injector injector) {
         super(
-                injector.getInstance(WorldAll.class).optional().build(),
+                CosmosParameters.Builder.WORLD_ALL.get().optional().build(),
                 injector.getInstance(Forecast.class),
                 injector.getInstance(Rain.class),
                 injector.getInstance(Sun.class),

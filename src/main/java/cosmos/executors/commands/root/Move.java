@@ -1,12 +1,9 @@
 package cosmos.executors.commands.root;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.AbstractCommand;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.executors.parameters.CosmosParameters;
-import cosmos.executors.parameters.impl.world.WorldOnline;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -32,11 +29,10 @@ import java.util.stream.Collectors;
 @Singleton
 public class Move extends AbstractCommand {
 
-    @Inject
-    public Move(final Injector injector) {
+    public Move() {
         super(
-                CosmosParameters.ENTITY_TARGETS_OPTIONAL,
-                injector.getInstance(WorldOnline.class).optional().build(),
+                CosmosParameters.Builder.ENTITIES.get().setKey(CosmosKeys.ENTITIES).optional().build(),
+                CosmosParameters.Builder.WORLD_ONLINE.get().build(),
                 Parameter.vector3d().setKey(CosmosKeys.X_Y_Z).optional().build(),
                 Parameter.vector3d().setKey(CosmosKeys.PITCH_YAW_ROLL).optional().build()
         );
@@ -59,10 +55,10 @@ public class Move extends AbstractCommand {
         final ServerWorld world = Sponge.getServer().getWorldManager().world(worldKey)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.missing.world", "world", worldKey));
 
-        final Optional<List<Entity>> optionalEntities = context.getOne(CosmosParameters.ENTITY_TARGETS_OPTIONAL);
+        final Optional<List<Entity>> optionalEntities = context.getOne(CosmosKeys.ENTITIES);
 
         if (optionalEntities.isPresent() && optionalEntities.get().isEmpty()) {
-            throw super.serviceProvider.message().getError(src, "error.invalid.value", "param", CosmosKeys.ENTITY_TARGETS);
+            throw super.serviceProvider.message().getError(src, "error.invalid.value", "param", CosmosKeys.ENTITIES);
         }
 
         if (!(optionalEntities.isPresent() || src instanceof Entity)) {
@@ -75,7 +71,7 @@ public class Move extends AbstractCommand {
         final Vector3d rotation = context.getOne(CosmosKeys.PITCH_YAW_ROLL).orElse(null);
         final boolean safeOnly = context.hasFlag(CosmosKeys.FLAG_SAFE_ONLY);
 
-        final Collection<Component> contents = context.getOne(CosmosParameters.ENTITY_TARGETS_OPTIONAL)
+        final Collection<Component> contents = context.getOne(CosmosKeys.ENTITIES)
                 .orElse(Collections.singletonList((Entity) src))
                 .stream()
                 .map(target -> {

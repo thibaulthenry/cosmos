@@ -1,11 +1,9 @@
 package cosmos.executors.commands.backup;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.AbstractCommand;
 import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.backup.Backup;
+import cosmos.executors.parameters.CosmosParameters;
 import cosmos.registries.backup.BackupArchetype;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
@@ -14,9 +12,8 @@ import org.spongepowered.api.command.parameter.CommandContext;
 @Singleton
 public class Restore extends AbstractCommand {
 
-    @Inject
-    public Restore(final Injector injector) {
-        super(injector.getInstance(Backup.class).build());
+    public Restore() {
+        super(CosmosParameters.Builder.BACKUP.get().build());
     }
 
     @Override

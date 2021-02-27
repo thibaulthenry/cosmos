@@ -1,12 +1,8 @@
 package cosmos.executors.commands.portal.modify;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.portal.PortalAll;
-import cosmos.executors.parameters.impl.portal.PortalFrame;
-import cosmos.executors.parameters.impl.world.WorldOnline;
+import cosmos.executors.parameters.CosmosParameters;
 import cosmos.registries.portal.CosmosPortal;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
@@ -20,11 +16,10 @@ import org.spongepowered.api.world.server.ServerWorld;
 @Singleton
 public class Destination extends AbstractPortalModifyCommand {
 
-    @Inject
-    public Destination(final Injector injector) {
+    public Destination() {
         super(
-                new PortalAll().key(CosmosKeys.PORTAL_COSMOS).build(),
-                injector.getInstance(WorldOnline.class).key(CosmosKeys.WORLD_DESTINATION).build(),
+                CosmosParameters.Builder.PORTAL_ALL.get().build(),
+                CosmosParameters.Builder.WORLD_ALL.get().key(CosmosKeys.WORLD_DESTINATION).build(),
                 Parameter.vector3d().setKey(CosmosKeys.X_Y_Z).optional().build()
         );
     }

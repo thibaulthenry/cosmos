@@ -1,12 +1,10 @@
 package cosmos.executors.commands.root;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
 import cosmos.executors.commands.AbstractCommand;
 import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.world.WorldAll;
+import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
@@ -19,10 +17,9 @@ import java.util.List;
 @Singleton
 public class Copy extends AbstractCommand {
 
-    @Inject
-    public Copy(final Injector injector) {
+    public Copy() {
         super(
-                injector.getInstance(WorldAll.class).build(),
+                CosmosParameters.Builder.WORLD_ALL.get().build(),
                 Parameter.string().setKey(CosmosKeys.NAME).build()
         );
     }

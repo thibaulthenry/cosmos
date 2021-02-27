@@ -1,14 +1,10 @@
 package cosmos.executors.commands.scoreboard.players;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.constants.Units;
 import cosmos.executors.commands.scoreboard.AbstractMultiTargetCommand;
 import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.scoreboard.Extremum;
-import cosmos.executors.parameters.impl.scoreboard.ObjectiveAll;
-import cosmos.executors.parameters.impl.scoreboard.Targets;
+import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -24,13 +20,12 @@ import java.util.stream.Collectors;
 @Singleton
 public class Random extends AbstractMultiTargetCommand {
 
-    @Inject
-    public Random(final Injector injector) {
+    public Random() {
         super(
-                injector.getInstance(Targets.class).build(),
-                injector.getInstance(ObjectiveAll.class).build(),
-                injector.getInstance(Extremum.class).integerKey(CosmosKeys.MIN).build(),
-                injector.getInstance(Extremum.class).build()
+                CosmosParameters.Builder.TARGETS.get().build(),
+                CosmosParameters.Builder.OBJECTIVE_ALL.get().build(),
+                CosmosParameters.Builder.EXTREMUM.get().integerKey(CosmosKeys.MIN).build(),
+                CosmosParameters.Builder.EXTREMUM.get().build()
         );
     }
 

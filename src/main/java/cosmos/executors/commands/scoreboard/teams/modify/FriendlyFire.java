@@ -15,7 +15,6 @@ import org.spongepowered.api.scoreboard.Team;
 @Singleton
 public class FriendlyFire extends AbstractTeamModifyCommand {
 
-    @Inject
     public FriendlyFire() {
         super(Parameter.bool().setKey(CosmosKeys.STATE).build());
     }

@@ -6,7 +6,8 @@ import com.google.inject.Singleton;
 import cosmos.executors.commands.scoreboard.objectives.modify.DisplayName;
 import cosmos.executors.commands.scoreboard.objectives.modify.RenderType;
 import cosmos.executors.modules.AbstractModule;
-import cosmos.executors.parameters.impl.scoreboard.ObjectiveAll;
+import cosmos.executors.parameters.CosmosParameters;
+import cosmos.executors.parameters.builders.scoreboard.ObjectiveAll;
 
 @Singleton
 public class Modify extends AbstractModule {
@@ -14,7 +15,7 @@ public class Modify extends AbstractModule {
     @Inject
     Modify(final Injector injector) {
         super(
-                injector.getInstance(ObjectiveAll.class).build(),
+                CosmosParameters.Builder.OBJECTIVE_ALL.get().build(),
                 false,
                 injector.getInstance(DisplayName.class),
                 injector.getInstance(RenderType.class)

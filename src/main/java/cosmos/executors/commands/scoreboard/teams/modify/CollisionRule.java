@@ -17,7 +17,6 @@ import org.spongepowered.api.scoreboard.Team;
 @Singleton
 public class CollisionRule extends AbstractTeamModifyCommand {
 
-    @Inject
     public CollisionRule() {
         super(
                 Parameter.registryElement(TypeToken.get(org.spongepowered.api.scoreboard.CollisionRule.class), RegistryTypes.COLLISION_RULE)

@@ -18,15 +18,15 @@ public class Operate extends AbstractBorderCommand {
 
     public Operate() {
         super(
-                CosmosParameters.STANDARD_OPERAND,
+                CosmosParameters.Builder.STANDARD_OPERAND.get().setKey(CosmosKeys.OPERAND).build(),
                 Parameter.doubleNumber().setKey(CosmosKeys.AMOUNT_DOUBLE).build(),
-                CosmosParameters.DURATION_WITH_TIME_UNIT_OPTIONAL
+                CosmosParameters.Builder.DURATION_WITH_TIME_UNIT.get().optional().build()
         );
     }
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
-        final Operands operand = context.getOne(CosmosParameters.STANDARD_OPERAND)
+        final Operands operand = context.getOne(CosmosKeys.OPERAND)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.OPERAND));
         final double value = context.getOne(CosmosKeys.AMOUNT_DOUBLE)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.AMOUNT_DOUBLE));

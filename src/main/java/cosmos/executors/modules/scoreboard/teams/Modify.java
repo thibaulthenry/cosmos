@@ -13,7 +13,8 @@ import cosmos.executors.commands.scoreboard.teams.modify.Prefix;
 import cosmos.executors.commands.scoreboard.teams.modify.SeeFriendlyInvisibles;
 import cosmos.executors.commands.scoreboard.teams.modify.Suffix;
 import cosmos.executors.modules.AbstractModule;
-import cosmos.executors.parameters.impl.scoreboard.TeamAll;
+import cosmos.executors.parameters.CosmosParameters;
+import cosmos.executors.parameters.builders.scoreboard.TeamAll;
 
 @Singleton
 public class Modify extends AbstractModule {
@@ -21,7 +22,7 @@ public class Modify extends AbstractModule {
     @Inject
     Modify(final Injector injector) {
         super(
-                injector.getInstance(TeamAll.class).build(),
+                CosmosParameters.Builder.TEAM_ALL.get().build(),
                 false,
                 injector.getInstance(CollisionRule.class),
                 injector.getInstance(Color.class),

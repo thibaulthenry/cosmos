@@ -1,15 +1,11 @@
 package cosmos.executors.commands.scoreboard.players;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.constants.Operands;
 import cosmos.constants.Units;
 import cosmos.executors.commands.scoreboard.AbstractMultiTargetCommand;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.executors.parameters.CosmosParameters;
-import cosmos.executors.parameters.impl.scoreboard.ObjectiveAll;
-import cosmos.executors.parameters.impl.scoreboard.Targets;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -27,14 +23,13 @@ import java.util.stream.Collectors;
 @Singleton
 public class Operation extends AbstractMultiTargetCommand {
 
-    @Inject
-    public Operation(final Injector injector) {
+    public Operation() {
         super(
-                injector.getInstance(Targets.class).build(),
-                injector.getInstance(ObjectiveAll.class).build(),
-                CosmosParameters.SCOREBOARD_OPERANDS,
-                injector.getInstance(Targets.class).build(), // todo source
-                injector.getInstance(ObjectiveAll.class).key("source-objective").build()
+                CosmosParameters.Builder.TARGETS.get().build(),
+                CosmosParameters.Builder.OBJECTIVE_ALL.get().build(),
+                CosmosParameters.Builder.SCOREBOARD_OPERANDS.get().setKey(CosmosKeys.OPERAND).build(),
+                CosmosParameters.Builder.TARGETS.get().build(), // todo source
+                CosmosParameters.Builder.OBJECTIVE_ALL.get().key("source-objective").build()
         );
     }
 
@@ -161,7 +156,7 @@ public class Operation extends AbstractMultiTargetCommand {
             throw super.serviceProvider.message().getError(src, "error.invalid.operation.cross");
         }
 
-        final Operands operand = context.getOne(CosmosParameters.SCOREBOARD_OPERANDS)
+        final Operands operand = context.getOne(CosmosKeys.OPERAND)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.OPERAND));
 
         final Collection<Component> contents = targets

@@ -18,7 +18,7 @@ import java.util.Optional;
 abstract class AbstractWeatherChangeCommand extends AbstractWeatherCommand { // todo weather time modify
 
     AbstractWeatherChangeCommand() {
-        super(CosmosParameters.DURATION_WITH_TIME_UNIT_OPTIONAL);
+        super(CosmosParameters.Builder.DURATION_WITH_TIME_UNIT.get().optional().build());
     }
 
     @Override

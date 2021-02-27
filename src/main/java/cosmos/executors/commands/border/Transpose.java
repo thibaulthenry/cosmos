@@ -19,7 +19,7 @@ public class Transpose extends AbstractBorderCommand {
 
     public Transpose() {
         super(
-                CosmosParameters.DURATION_WITH_TIME_UNIT_OPTIONAL,
+                CosmosParameters.Builder.DURATION_WITH_TIME_UNIT.get().optional().build(),
                 Parameter.doubleNumber().setKey(CosmosKeys.END_DIAMETER).build(),
                 Parameter.doubleNumber().setKey(CosmosKeys.START_DIAMETER).optional().build()
         );

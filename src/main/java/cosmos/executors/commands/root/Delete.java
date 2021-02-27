@@ -1,11 +1,9 @@
 package cosmos.executors.commands.root;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.AbstractCommand;
 import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.world.WorldOffline;
+import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
@@ -17,9 +15,8 @@ import java.util.List;
 @Singleton
 public class Delete extends AbstractCommand {
 
-    @Inject
-    public Delete(final Injector injector) {
-        super(injector.getInstance(WorldOffline.class).build());
+    public Delete() {
+        super(CosmosParameters.Builder.WORLD_OFFLINE.get().build());
     }
 
     @Override

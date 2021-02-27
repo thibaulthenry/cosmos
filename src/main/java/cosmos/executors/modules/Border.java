@@ -14,7 +14,8 @@ import cosmos.executors.commands.border.Size;
 import cosmos.executors.commands.border.Transpose;
 import cosmos.executors.commands.border.WarningDistance;
 import cosmos.executors.commands.border.WarningTime;
-import cosmos.executors.parameters.impl.world.WorldAll;
+import cosmos.executors.parameters.CosmosParameters;
+import cosmos.executors.parameters.builders.world.WorldAll;
 
 @Singleton
 class Border extends AbstractModule {
@@ -22,7 +23,7 @@ class Border extends AbstractModule {
     @Inject
     Border(final Injector injector) {
         super(
-                injector.getInstance(WorldAll.class).optional().build(),
+                CosmosParameters.Builder.WORLD_ALL.get().optional().build(),
                 injector.getInstance(Center.class),
                 injector.getInstance(DamageAmount.class),
                 injector.getInstance(DamageThreshold.class),

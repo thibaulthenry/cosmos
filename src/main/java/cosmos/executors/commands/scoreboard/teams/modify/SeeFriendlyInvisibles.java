@@ -15,7 +15,6 @@ import org.spongepowered.api.scoreboard.Team;
 @Singleton
 public class SeeFriendlyInvisibles extends AbstractTeamModifyCommand {
 
-    @Inject
     public SeeFriendlyInvisibles() {
         super(Parameter.bool().setKey(CosmosKeys.STATE).build());
     }

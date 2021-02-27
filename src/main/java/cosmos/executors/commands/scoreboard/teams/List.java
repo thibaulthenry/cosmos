@@ -1,15 +1,12 @@
 package cosmos.executors.commands.scoreboard.teams;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.scoreboard.AbstractScoreboardCommand;
 import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.scoreboard.TeamAll;
+import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -25,9 +22,8 @@ import java.util.stream.Collectors;
 @Singleton
 public class List extends AbstractScoreboardCommand {
 
-    @Inject
-    public List(final Injector injector) {
-        super(injector.getInstance(TeamAll.class).optional().build());
+    public List() {
+        super(CosmosParameters.Builder.TEAM_ALL.get().optional().build());
     }
 
     private PaginationList getRegisteredTeamsText(final Audience src, final ResourceKey worldKey) {

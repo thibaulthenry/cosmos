@@ -2,11 +2,9 @@ package cosmos.executors.commands.scoreboard.players;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.scoreboard.AbstractMultiTargetCommand;
-import cosmos.executors.parameters.impl.scoreboard.Targets;
+import cosmos.executors.parameters.CosmosParameters;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -23,9 +21,8 @@ import java.util.stream.Collectors;
 @Singleton
 public class List extends AbstractMultiTargetCommand {
 
-    @Inject
-    public List(final Injector injector) {
-        super(injector.getInstance(Targets.class).optional().build());
+    public List() {
+        super(CosmosParameters.Builder.TARGETS.get().optional().build());
     }
 
     private PaginationList getScoreHolders(final Audience src, final ResourceKey worldKey) throws CommandException {

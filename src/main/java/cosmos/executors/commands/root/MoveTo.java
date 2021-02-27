@@ -29,7 +29,7 @@ public class MoveTo extends AbstractCommand {
     public MoveTo() {
         super(
                 Parameter.entity().setKey(CosmosKeys.ENTITY_DESTINATION).build(),
-                CosmosParameters.ENTITY_TARGETS_OPTIONAL
+                CosmosParameters.Builder.ENTITIES.get().setKey(CosmosKeys.ENTITIES).optional().build()
         );
     }
 
@@ -48,7 +48,7 @@ public class MoveTo extends AbstractCommand {
         final Entity destination = context.getOne(CosmosKeys.ENTITY_DESTINATION)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.ENTITY_DESTINATION));
 
-        final Optional<List<Entity>> optionalEntities = context.getOne(CosmosParameters.ENTITY_TARGETS_OPTIONAL);
+        final Optional<List<Entity>> optionalEntities = context.getOne(CosmosKeys.ENTITIES);
 
         if (!(optionalEntities.isPresent() || src instanceof Entity)) {
             throw super.serviceProvider.message().getError(src, "error.missing.entities");
@@ -62,7 +62,7 @@ public class MoveTo extends AbstractCommand {
         final Vector3d rotation = destination.getRotation();
         final boolean safeOnly = context.hasFlag(CosmosKeys.FLAG_SAFE_ONLY);
 
-        final Collection<Component> contents = context.getOne(CosmosParameters.ENTITY_TARGETS_OPTIONAL)
+        final Collection<Component> contents = context.getOne(CosmosKeys.ENTITIES)
                 .orElse(Collections.singletonList((Entity) src))
                 .stream()
                 .map(target -> {

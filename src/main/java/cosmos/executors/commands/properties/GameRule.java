@@ -1,10 +1,8 @@
 package cosmos.executors.commands.properties;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.executors.parameters.CosmosParameters;
-import cosmos.executors.parameters.impl.gamerule.GameRuleValue;
+import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -17,14 +15,12 @@ import java.util.Optional;
 
 public class GameRule extends AbstractPropertiesCommand {
 
-    @Inject
-    public GameRule(final Injector injector) {
+    public GameRule() {
         super(
-                CosmosParameters.GAME_RULE,
-                Parameter.builder(Object.class, injector.getInstance(GameRuleValue.class))
-                        .setKey(CosmosKeys.GAME_RULE_VALUE)
-                        .optional()
-                        .build()
+                Parameter.registryElement(new TypeToken<org.spongepowered.api.world.gamerule.GameRule<?>>() {}, RegistryTypes.GAME_RULE)
+                        .setKey(CosmosKeys.GAME_RULE)
+                        .build(), // todo check pr
+                CosmosParameters.Builder.GAME_RULE_VALUE_ALL.get().optional().build()
         );
     }
 

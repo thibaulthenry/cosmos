@@ -1,12 +1,10 @@
 package cosmos.executors.commands.backup;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
 import cosmos.executors.commands.AbstractCommand;
 import cosmos.executors.parameters.CosmosKeys;
-import cosmos.executors.parameters.impl.world.WorldOffline;
+import cosmos.executors.parameters.CosmosParameters;
 import cosmos.registries.backup.BackupArchetype;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
@@ -17,10 +15,9 @@ import org.spongepowered.api.command.parameter.Parameter;
 @Singleton
 public class Save extends AbstractCommand {
 
-    @Inject
-    public Save(final Injector injector) {
+    public Save() {
         super(
-                injector.getInstance(WorldOffline.class).build(),
+                CosmosParameters.Builder.WORLD_ONLINE.get().build(),
                 Parameter.string().setKey(CosmosKeys.TAG).optional().build()
         );
     }

@@ -1,11 +1,8 @@
 package cosmos.executors.commands.portal.modify;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.executors.parameters.CosmosParameters;
-import cosmos.executors.parameters.impl.portal.PortalAll;
-import cosmos.executors.parameters.impl.portal.PortalFrame;
 import cosmos.registries.portal.CosmosPortal;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.block.BlockType;
@@ -15,11 +12,10 @@ import org.spongepowered.api.command.parameter.CommandContext;
 @Singleton
 public class Trigger extends AbstractPortalModifyCommand {
 
-    @Inject
     public Trigger() {
         super(
-                new PortalAll().key(CosmosKeys.PORTAL_COSMOS).build(),
-                CosmosParameters.PORTAL_BLOCK_TYPE // todo
+                CosmosParameters.Builder.PORTAL_ALL.get().build(),
+                CosmosParameters.Builder.PORTAL_BLOCK_TYPE.get().setKey(CosmosKeys.BLOCK_TYPE).build() // todo type dependent
         );
     }
 

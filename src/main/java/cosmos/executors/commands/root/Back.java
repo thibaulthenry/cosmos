@@ -1,7 +1,5 @@
 package cosmos.executors.commands.root;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.executors.commands.AbstractCommand;
 import net.kyori.adventure.audience.Audience;
@@ -18,9 +16,7 @@ import org.spongepowered.math.vector.Vector3i;
 @Singleton
 public class Back extends AbstractCommand {
 
-    @Inject
-    public Back(final Injector injector) {
-        //super(injector.getInstance(WorldOnline.class).build());
+    public Back() {
     }
 
     @Override

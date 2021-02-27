@@ -54,6 +54,8 @@ public class CosmosKeys {
     public static final Parameter.Key<Double> DISTANCE = Parameter.key("distance", Double.class);
     public static final Parameter.Key<Long> DURATION = Parameter.key("duration", Long.class);
     public static final Parameter.Key<Double> END_DIAMETER = Parameter.key("end-diameter", Double.class);
+    public static final Parameter.Key<List<Entity>> ENTITIES = Parameter.key("targets", new TypeToken<List<Entity>>() {});
+    public static final Parameter.Key<Entity> ENTITY_DESTINATION = Parameter.key("destination", Entity.class);
     public static final Parameter.Key<GameMode> GAME_MODE = Parameter.key("game-mode", GameMode.class);
     public static final Parameter.Key<GameRule<?>> GAME_RULE = Parameter.key("game-rule", new TypeToken<GameRule<?>>() {});
     public static final Parameter.Key<Object> GAME_RULE_VALUE = Parameter.key("value", Object.class);
@@ -79,8 +81,6 @@ public class CosmosKeys {
     public static final Parameter.Key<Double> START_DIAMETER = Parameter.key("start-diameter", Double.class);
     public static final Parameter.Key<Boolean> STATE = Parameter.key("state", Boolean.class);
     public static final Parameter.Key<String> TAG = Parameter.key("tag", String.class);
-    public static final Parameter.Key<Entity> ENTITY_DESTINATION = Parameter.key("destination", Entity.class);
-    public static final Parameter.Key<List<Entity>> ENTITY_TARGETS = Parameter.key("targets", new TypeToken<List<Entity>>() {});
     public static final Parameter.Key<Team> TEAM = Parameter.key("team", Team.class);
     public static final Parameter.Key<Component> TEXT_AMPERSAND = Parameter.key("text-ampersand", Component.class);
     public static final Parameter.Key<Component> TEXT_JSON = Parameter.key("text-json", Component.class);

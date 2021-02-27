@@ -22,7 +22,7 @@ public class Add extends AbstractScoreboardCommand {
     public Add() {
         super(
                 Parameter.string().setKey(CosmosKeys.NAME).build(),
-                CosmosParameters.TEXTS_ALL_OPTIONAL
+                CosmosParameters.Builder.TEXTS_ALL.get().optional().build()
         );
     }
 

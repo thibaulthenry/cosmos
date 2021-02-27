@@ -1,11 +1,8 @@
 package cosmos.executors.commands.portal.modify;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.executors.parameters.CosmosParameters;
-import cosmos.executors.parameters.impl.portal.PortalAll;
-import cosmos.executors.parameters.impl.portal.PortalFrame;
 import cosmos.registries.portal.CosmosPortal;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
@@ -15,11 +12,10 @@ import org.spongepowered.api.util.Ticks;
 @Singleton
 public class Delay extends AbstractPortalModifyCommand {
 
-    @Inject
     public Delay() {
         super(
-                new PortalAll().key(CosmosKeys.PORTAL_COSMOS).build(),
-                CosmosParameters.DURATION_WITH_TIME_UNIT
+                CosmosParameters.Builder.PORTAL_ALL.get().build(),
+                CosmosParameters.Builder.DURATION_WITH_TIME_UNIT.get().build()
         );
     }
 
