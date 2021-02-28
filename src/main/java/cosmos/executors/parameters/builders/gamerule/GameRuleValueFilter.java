@@ -1,7 +1,6 @@
 package cosmos.executors.parameters.builders.gamerule;
 
 import cosmos.executors.parameters.CosmosKeys;
-import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.ArgumentParseException;
 import org.spongepowered.api.command.parameter.ArgumentReader;
 import org.spongepowered.api.command.parameter.CommandContext;

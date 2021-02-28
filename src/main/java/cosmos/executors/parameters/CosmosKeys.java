@@ -18,7 +18,6 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.item.ItemType;
-import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.scoreboard.CollisionRule;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.scoreboard.Visibility;
@@ -59,6 +58,7 @@ public class CosmosKeys {
     public static final Parameter.Key<GameMode> GAME_MODE = Parameter.key("game-mode", GameMode.class);
     public static final Parameter.Key<GameRule<?>> GAME_RULE = Parameter.key("game-rule", new TypeToken<GameRule<?>>() {});
     public static final Parameter.Key<Object> GAME_RULE_VALUE = Parameter.key("value", Object.class);
+    public static final Parameter.Key<Long> INTERVAL = Parameter.key("interval", Long.class);
     public static final Parameter.Key<ItemType> ITEM_TYPE = Parameter.key("item-type", ItemType.class);
     public static final Parameter.Key<List<Component>> MANY_SCORE_HOLDER = Parameter.key("score-holders", new TypeToken<List<Component>>() {});
     public static final Parameter.Key<Integer> MAX = Parameter.key("maximum", Integer.class);
@@ -97,5 +97,6 @@ public class CosmosKeys {
 
     public static final String FLAG_SAFE_ONLY = "safe-only";
     public static final String FLAG_SAVE_CONFIG = "save-config";
+    public static final String FLAG_WITH_TARGET_BLOCK = "with-target-block";
 
 }

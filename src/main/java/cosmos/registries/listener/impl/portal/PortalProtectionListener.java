@@ -5,25 +5,16 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
 import cosmos.registries.listener.impl.AbstractListener;
-import cosmos.registries.portal.CosmosFramePortal;
 import cosmos.registries.portal.PortalRegistry;
-import cosmos.services.transportation.TransportationService;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
-import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.IsCancelled;
-import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.item.ItemTypes;
-import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.world.LocatableBlock;
-import org.spongepowered.api.world.server.ServerLocation;
-
-import java.util.Optional;
 
 @Singleton
 public class PortalProtectionListener extends AbstractListener {

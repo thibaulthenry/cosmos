@@ -5,7 +5,6 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.registries.data.portal.CosmosPortalType;
 import cosmos.registries.portal.CosmosButtonPortal;
-import cosmos.registries.portal.CosmosFramePortal;
 import cosmos.registries.portal.CosmosPortal;
 import cosmos.registries.portal.PortalRegistry;
 import cosmos.services.transportation.TransportationService;

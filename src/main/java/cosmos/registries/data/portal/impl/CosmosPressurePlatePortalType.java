@@ -4,8 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.registries.data.portal.CosmosPortalType;
-import cosmos.registries.portal.CosmosButtonPortal;
-import cosmos.registries.portal.CosmosFramePortal;
 import cosmos.registries.portal.CosmosPortal;
 import cosmos.registries.portal.CosmosPressurePlatePortal;
 import cosmos.registries.portal.PortalRegistry;
@@ -39,7 +37,7 @@ public class CosmosPressurePlatePortalType implements CosmosPortalType {
 
     @Override
     public BlockType defaultTrigger() {
-        return BlockTypes.VOID_AIR.get();
+        return BlockTypes.STONE_PRESSURE_PLATE.get();
     }
 
     @Override

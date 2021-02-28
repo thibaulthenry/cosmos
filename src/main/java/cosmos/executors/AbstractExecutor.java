@@ -1,7 +1,6 @@
 package cosmos.executors;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import cosmos.services.ServiceProvider;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.Command;

@@ -14,6 +14,7 @@ import cosmos.registries.perworld.ScoreboardsRegistry;
 import cosmos.registries.portal.PortalDispatcherRegistry;
 import cosmos.registries.portal.PortalRegistry;
 import cosmos.registries.portal.PortalSelectionRegistry;
+import cosmos.registries.portal.PortalTeleportTaskRegistry;
 import cosmos.services.registry.RegistryProvider;
 
 @Singleton
@@ -26,6 +27,7 @@ public class RegistryProviderImpl implements RegistryProvider {
     private final PortalDispatcherRegistry portalDispatcherRegistry;
     private final PortalRegistry portalRegistry;
     private final PortalSelectionRegistry portalSelectionRegistry;
+    private final PortalTeleportTaskRegistry portalTeleportTaskRegistry;
     private final PortalTypeRegistry portalTypeRegistry;
     private final RealTimeRegistry realTimeRegistry;
     private final ScoreboardsRegistry scoreboardsRegistry;
@@ -40,6 +42,7 @@ public class RegistryProviderImpl implements RegistryProvider {
         this.portalDispatcherRegistry = injector.getInstance(PortalDispatcherRegistry.class);
         this.portalRegistry = injector.getInstance(PortalRegistry.class);
         this.portalSelectionRegistry = injector.getInstance(PortalSelectionRegistry.class);
+        this.portalTeleportTaskRegistry = injector.getInstance(PortalTeleportTaskRegistry.class);
         this.portalTypeRegistry = injector.getInstance(PortalTypeRegistry.class);
         this.realTimeRegistry = injector.getInstance(RealTimeRegistry.class);
         this.scoreboardsRegistry = injector.getInstance(ScoreboardsRegistry.class);
@@ -79,6 +82,11 @@ public class RegistryProviderImpl implements RegistryProvider {
     @Override
     public PortalSelectionRegistry portalSelection() {
         return this.portalSelectionRegistry;
+    }
+
+    @Override
+    public PortalTeleportTaskRegistry portalTeleportTask() {
+        return this.portalTeleportTaskRegistry;
     }
 
     @Override

@@ -3,6 +3,7 @@ package cosmos.executors.parameters;
 import cosmos.constants.Operands;
 import cosmos.executors.parameters.builders.CosmosBuilder;
 import cosmos.executors.parameters.builders.CosmosFirstOfBuilder;
+import cosmos.executors.parameters.builders.CosmosSequenceBuilder;
 import cosmos.executors.parameters.builders.backup.Backup;
 import cosmos.executors.parameters.builders.backup.BackupWorld;
 import cosmos.executors.parameters.builders.gamerule.GameRuleValueAll;
@@ -14,6 +15,7 @@ import cosmos.executors.parameters.builders.scoreboard.ObjectiveAll;
 import cosmos.executors.parameters.builders.scoreboard.ObjectiveTrigger;
 import cosmos.executors.parameters.builders.scoreboard.Targets;
 import cosmos.executors.parameters.builders.scoreboard.TeamAll;
+import cosmos.executors.parameters.builders.time.DurationWithUnit;
 import cosmos.executors.parameters.builders.world.WorldAll;
 import cosmos.executors.parameters.builders.world.WorldExported;
 import cosmos.executors.parameters.builders.world.WorldOffline;
@@ -52,15 +54,7 @@ public class CosmosParameters {
                 .parser(Parser.COLORS)
                 .setKey(CosmosKeys.COLOR);
 
-        public static final Supplier<Parameter.SequenceBuilder> DURATION_WITH_TIME_UNIT = () -> Parameter
-                .seqBuilder(Parameter.longNumber().setKey(CosmosKeys.DURATION).build())
-                .then(
-                        Parameter.builder(ChronoUnit.class)
-                                .setKey(CosmosKeys.TIME_UNIT)
-                                .parser(Parser.TIME_UNIT)
-                                .optional()
-                                .build()
-                );
+        public static final Supplier<DurationWithUnit> DURATION_WITH_UNIT = DurationWithUnit::new;
 
         public static final Supplier<Parameter.Value.Builder<List<Entity>>> ENTITIES = () -> Parameter
                 .builder(new TypeToken<List<Entity>>() {})
@@ -155,17 +149,6 @@ public class CosmosParameters {
                 .choice(Operands.MINUS.getOperand(), Operands.MINUS)
                 .choice(Operands.TIMES.getOperand(), Operands.TIMES)
                 .choice(Operands.DIVIDE.getOperand(), Operands.DIVIDE)
-                .build();
-
-        private static final ValueParameter<ChronoUnit> TIME_UNIT = VariableValueParameters.staticChoicesBuilder(ChronoUnit.class)
-                .choice("milliseconds", ChronoUnit.MILLIS)
-                .choice("seconds", ChronoUnit.SECONDS)
-                .choice("minutes", ChronoUnit.MINUTES)
-                .choice("hours", ChronoUnit.HOURS)
-                .choice("days", ChronoUnit.DAYS)
-                .choice("weeks", ChronoUnit.WEEKS)
-                .choice("months", ChronoUnit.MONTHS)
-                .choice("years", ChronoUnit.YEARS)
                 .build();
 
     }

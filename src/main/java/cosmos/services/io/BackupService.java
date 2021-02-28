@@ -7,10 +7,8 @@ import cosmos.services.io.impl.BackupServiceImpl;
 import org.spongepowered.api.ResourceKey;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @ImplementedBy(BackupServiceImpl.class)
 public interface BackupService extends CosmosService {

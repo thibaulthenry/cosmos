@@ -20,7 +20,7 @@ public class Operate extends AbstractBorderCommand {
         super(
                 CosmosParameters.Builder.STANDARD_OPERAND.get().setKey(CosmosKeys.OPERAND).build(),
                 Parameter.doubleNumber().setKey(CosmosKeys.AMOUNT_DOUBLE).build(),
-                CosmosParameters.Builder.DURATION_WITH_TIME_UNIT.get().optional().build()
+                CosmosParameters.Builder.DURATION_WITH_UNIT.get().optional().build()
         );
     }
 

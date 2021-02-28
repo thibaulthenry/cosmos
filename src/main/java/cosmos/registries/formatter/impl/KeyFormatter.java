@@ -3,11 +3,9 @@ package cosmos.registries.formatter.impl;
 import com.google.inject.Singleton;
 import cosmos.registries.formatter.Formatter;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.key.Keyed;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.TextDecoration;
 
 @Singleton
 public class KeyFormatter implements Formatter<Key> {

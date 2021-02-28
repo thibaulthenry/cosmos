@@ -5,7 +5,6 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.constants.Directories;
 import cosmos.services.io.FinderService;
-import cosmos.services.message.MessageService;
 import cosmos.services.perworld.AdvancementsService;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.world.server.ServerWorld;

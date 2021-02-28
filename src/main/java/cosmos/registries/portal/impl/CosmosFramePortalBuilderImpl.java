@@ -3,7 +3,6 @@ package cosmos.registries.portal.impl;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import cosmos.registries.portal.CosmosFramePortal;
-import cosmos.registries.portal.CosmosSignPortal;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.persistence.DataView;
@@ -34,6 +33,7 @@ public class CosmosFramePortalBuilderImpl extends AbstractCosmosPortalBuilder<Co
                 super.delay, super.destination,
                 super.nausea, super.particles,
                 super.particlesInterval, super.soundAmbiance,
+                super.soundDelay, super.soundDelayInterval,
                 super.soundTravel, super.soundTrigger
         );
     }

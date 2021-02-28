@@ -12,6 +12,7 @@ import cosmos.registries.perworld.ScoreboardsRegistry;
 import cosmos.registries.portal.PortalDispatcherRegistry;
 import cosmos.registries.portal.PortalRegistry;
 import cosmos.registries.portal.PortalSelectionRegistry;
+import cosmos.registries.portal.PortalTeleportTaskRegistry;
 import cosmos.services.CosmosService;
 import cosmos.services.registry.impl.RegistryProviderImpl;
 
@@ -31,6 +32,8 @@ public interface RegistryProvider extends CosmosService {
     PortalDispatcherRegistry portalDispatcher();
 
     PortalSelectionRegistry portalSelection();
+
+    PortalTeleportTaskRegistry portalTeleportTask();
 
     PortalTypeRegistry portalType();
 

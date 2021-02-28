@@ -4,9 +4,9 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
+import cosmos.constants.CosmosPortalTypes;
 import cosmos.registries.CosmosRegistryEntry;
 import cosmos.registries.data.portal.CosmosPortalType;
-import cosmos.registries.portal.CosmosFramePortal;
 import cosmos.registries.portal.CosmosPortal;
 import cosmos.registries.portal.PortalDispatcherRegistry;
 import cosmos.registries.portal.PortalRegistry;
@@ -20,6 +20,7 @@ import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.entity.BlockEntity;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.entity.EntityTypes;
@@ -27,6 +28,7 @@ import org.spongepowered.api.entity.FallingBlock;
 import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.util.Ticks;
 import org.spongepowered.api.world.BlockChangeFlags;
+import org.spongepowered.api.world.LocatableBlock;
 import org.spongepowered.api.world.portal.PortalType;
 import org.spongepowered.api.world.server.ServerLocation;
 
@@ -94,18 +96,38 @@ public class PortalServiceImpl implements PortalService {
     }
 
     @Override
-    public void fill(final Audience src, final CosmosPortal portal) {
-        Sponge.getServer().getCauseStackManager().pushCause(Cosmos.getPluginContainer());
-        portal.origins().forEach(location -> location.setBlockType(portal.trigger(), BlockChangeFlags.ALL));
+    public void fill(final Audience src, final CosmosPortal portal) throws CommandException {
+        this.fill(src, portal, BlockState.builder().blockType(portal.trigger()).build());
     }
 
     @Override
-    public void fill(final Audience src, final ResourceKey key) throws CommandException {
-        if (!this.portalRegistry.has(key)) {
-            throw new CommandException(Component.text("not exist")); // todo
+    public void fill(final Audience src, final CosmosPortal portal, final BlockState blockState) throws CommandException {
+        if (!portal.isTriggeredBy(blockState.getType())) {
+            throw new CommandException(Component.text("pas le bon type")); // todo
         }
 
-        this.fill(src, this.portalRegistry.value(key));
+        Sponge.getServer().getCauseStackManager().pushCause(Cosmos.getPluginContainer());
+        portal.origins().forEach(location -> location.setBlock(blockState, BlockChangeFlags.ALL));
+    }
+
+    @Override
+    public void fill(final Audience src, final CosmosPortal portal, final LocatableBlock locatableBlock) throws CommandException {
+        final BlockState blockState = locatableBlock.getBlockState();
+
+        if (!portal.isTriggeredBy(blockState.getType())) {
+            throw new CommandException(Component.text("pas le bon type")); // todo
+        }
+
+        Sponge.getServer().getCauseStackManager().pushCause(Cosmos.getPluginContainer());
+        portal.origins().forEach(location -> {
+            location.setBlock(blockState, BlockChangeFlags.ALL);
+
+            if (CosmosPortalTypes.SIGN.get().equals(portal.type())) {
+                locatableBlock.getServerLocation().getBlockEntity()
+                        .flatMap(blockEntity -> blockEntity.get(Keys.SIGN_LINES))
+                        .ifPresent(value -> location.tryOffer(Keys.SIGN_LINES, value));
+            }
+        });
     }
 
     @Override

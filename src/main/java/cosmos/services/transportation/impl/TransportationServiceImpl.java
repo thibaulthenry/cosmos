@@ -5,30 +5,38 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
 import cosmos.registries.portal.CosmosPortal;
+import cosmos.registries.portal.PortalTeleportTaskRegistry;
+import cosmos.registries.portal.impl.PortalTeleportTask;
 import cosmos.services.transportation.TransportationService;
 import cosmos.services.validation.ValidationService;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.sound.Sound;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.scheduler.ScheduledTask;
 import org.spongepowered.api.scheduler.Task;
+import org.spongepowered.api.scheduler.TaskExecutorService;
 import org.spongepowered.api.util.Identifiable;
+import org.spongepowered.api.util.Ticks;
 import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.math.vector.Vector3d;
 
 import java.text.MessageFormat;
 import java.util.Optional;
+import java.util.UUID;
 
 @Singleton
 public class TransportationServiceImpl implements TransportationService {
 
+    private final PortalTeleportTaskRegistry portalTeleportTaskRegistry;
     private final ValidationService validationService;
 
     @Inject
     public TransportationServiceImpl(final Injector injector) {
+        this.portalTeleportTaskRegistry = injector.getInstance(PortalTeleportTaskRegistry.class);
         this.validationService = injector.getInstance(ValidationService.class);
     }
 
@@ -61,18 +69,16 @@ public class TransportationServiceImpl implements TransportationService {
             return false;
         }
 
-        final Task task = Task.builder()
-                .execute(() -> {
-                    if (target instanceof ServerPlayer) {
-                        portal.soundTravel().ifPresent(((ServerPlayer) target)::playSound);
-                    }
+        final UUID targetUUID = target.getUniqueId();
 
-                    this.teleport(target, optionalDestination.get(), false);
-                })
-                .plugin(Cosmos.getPluginContainer())
-                .build();
+        if (this.portalTeleportTaskRegistry.has(targetUUID)) {
+            return false;
+        }
 
-        Sponge.getServer().getScheduler().submit(task);
+        final PortalTeleportTask portalTeleportTask = new PortalTeleportTask(target, portal);
+        portalTeleportTask.submit();
+
+        this.portalTeleportTaskRegistry.register(targetUUID, portalTeleportTask);
 
         return true;
     }

@@ -5,7 +5,6 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.registries.formatter.LocaleFormatter;
 import cosmos.services.message.MessageService;
-import cosmos.services.template.TemplateService;
 import cosmos.services.transportation.TransportationService;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;

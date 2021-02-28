@@ -20,6 +20,7 @@ import cosmos.registries.listener.impl.portal.PortalDispatcherListener;
 import cosmos.registries.listener.impl.portal.PortalFrameListener;
 import cosmos.registries.listener.impl.portal.PortalGenerationListener;
 import cosmos.registries.listener.impl.portal.PortalProtectionListener;
+import cosmos.registries.listener.impl.portal.PortalSignListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +46,7 @@ public class ListenerRegistry implements CosmosRegistry<Class<? extends Listener
         this.listenerMap.put(PortalFrameListener.class, injector.getInstance(PortalFrameListener.class));
         this.listenerMap.put(PortalGenerationListener.class, injector.getInstance(PortalGenerationListener.class));
         this.listenerMap.put(PortalProtectionListener.class, injector.getInstance(PortalProtectionListener.class));
+        this.listenerMap.put(PortalSignListener.class, injector.getInstance(PortalSignListener.class));
         this.listenerMap.put(ScoreboardsListener.class, injector.getInstance(ScoreboardsListener.class));
         this.listenerMap.put(TabListsListener.class, injector.getInstance(TabListsListener.class));
     }

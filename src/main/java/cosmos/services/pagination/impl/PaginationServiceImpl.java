@@ -6,7 +6,6 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.services.message.MessageService;
 import cosmos.services.pagination.PaginationService;
-import cosmos.services.template.TemplateService;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.spongepowered.api.command.exception.CommandException;

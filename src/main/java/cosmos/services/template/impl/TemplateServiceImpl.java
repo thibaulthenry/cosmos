@@ -1,10 +1,7 @@
 package cosmos.services.template.impl;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import cosmos.Cosmos;
 import cosmos.registries.template.TemplateRegistry;
 import cosmos.services.template.TemplateService;
 import cosmos.services.template.UTF8Control;

@@ -8,7 +8,6 @@ import cosmos.executors.commands.weather.Rain;
 import cosmos.executors.commands.weather.Sun;
 import cosmos.executors.commands.weather.Thunder;
 import cosmos.executors.parameters.CosmosParameters;
-import cosmos.executors.parameters.builders.world.WorldAll;
 
 @Singleton
 class Weather extends AbstractModule {

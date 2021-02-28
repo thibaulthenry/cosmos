@@ -6,8 +6,6 @@ import com.google.inject.Singleton;
 import cosmos.registries.data.serializable.impl.AdvancementTreeData;
 import cosmos.registries.serializer.Serializer;
 import cosmos.services.io.FinderService;
-import cosmos.services.perworld.InventoriesService;
-import cosmos.services.serializer.SerializerProvider;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.persistence.DataContainer;
 

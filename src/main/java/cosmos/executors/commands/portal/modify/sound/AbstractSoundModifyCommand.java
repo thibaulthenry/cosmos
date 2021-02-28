@@ -14,7 +14,7 @@ import org.spongepowered.api.registry.RegistryTypes;
 
 abstract class AbstractSoundModifyCommand extends AbstractPortalModifyCommand {
 
-    AbstractSoundModifyCommand() {
+    AbstractSoundModifyCommand(Parameter... parameters) {
         super(
                 Parameter.seqBuilder(
                         Parameter.registryElement(TypeToken.get(SoundType.class), RegistryTypes.SOUND_TYPE)
@@ -23,7 +23,8 @@ abstract class AbstractSoundModifyCommand extends AbstractPortalModifyCommand {
                 ).then(
                         Parameter.doubleNumber().setKey(CosmosKeys.VOLUME).optional().build(),
                         Parameter.doubleNumber().setKey(CosmosKeys.PITCH).optional().build()
-                ).optional().build()
+
+                ).then(parameters).optional().build()
         );
     }
 
@@ -37,9 +38,9 @@ abstract class AbstractSoundModifyCommand extends AbstractPortalModifyCommand {
                 })
                 .orElse(null);
 
-        return this.getNewPortal(portal, sound);
+        return this.getNewPortal(src, context, portal, sound);
     }
 
-    protected abstract CosmosPortal getNewPortal(CosmosPortal portal, Sound sound) throws CommandException;
+    protected abstract CosmosPortal getNewPortal(Audience src, CommandContext context, CosmosPortal portal, Sound sound) throws CommandException;
 
 }

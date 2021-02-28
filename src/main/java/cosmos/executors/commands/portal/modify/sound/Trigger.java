@@ -1,12 +1,14 @@
 package cosmos.executors.commands.portal.modify.sound;
 
 import cosmos.registries.portal.CosmosPortal;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.sound.Sound;
+import org.spongepowered.api.command.parameter.CommandContext;
 
 public class Trigger extends AbstractSoundModifyCommand {
 
     @Override
-    protected CosmosPortal getNewPortal(final CosmosPortal portal, final Sound sound) {
+    protected CosmosPortal getNewPortal(Audience src, CommandContext context, final CosmosPortal portal, final Sound sound) {
         return portal.asBuilder().soundTrigger(sound).build();
     }
 

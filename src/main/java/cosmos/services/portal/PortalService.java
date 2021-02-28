@@ -7,9 +7,11 @@ import cosmos.services.CosmosService;
 import cosmos.services.portal.impl.PortalServiceImpl;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.util.Ticks;
+import org.spongepowered.api.world.LocatableBlock;
 import org.spongepowered.api.world.portal.PortalType;
 import org.spongepowered.api.world.server.ServerLocation;
 
@@ -20,9 +22,11 @@ public interface PortalService extends CosmosService {
 
     void delete(Audience src, ResourceKey key) throws CommandException;
 
-    void fill(Audience src, CosmosPortal portal);
+    void fill(Audience src, CosmosPortal portal) throws CommandException;
 
-    void fill(Audience src, ResourceKey key) throws CommandException;
+    void fill(Audience src, CosmosPortal portal, BlockState blockState) throws CommandException;
+
+    void fill(Audience src, CosmosPortal portal, LocatableBlock locatableBlock) throws CommandException;
 
     void highlight(BlockType blockType, Ticks duration, String tag, ServerLocation... locations);
 

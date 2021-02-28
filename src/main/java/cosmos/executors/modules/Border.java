@@ -15,7 +15,6 @@ import cosmos.executors.commands.border.Transpose;
 import cosmos.executors.commands.border.WarningDistance;
 import cosmos.executors.commands.border.WarningTime;
 import cosmos.executors.parameters.CosmosParameters;
-import cosmos.executors.parameters.builders.world.WorldAll;
 
 @Singleton
 class Border extends AbstractModule {

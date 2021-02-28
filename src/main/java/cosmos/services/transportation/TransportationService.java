@@ -5,7 +5,6 @@ import cosmos.registries.portal.CosmosPortal;
 import cosmos.services.CosmosService;
 import cosmos.services.transportation.impl.TransportationServiceImpl;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.entity.Entity;

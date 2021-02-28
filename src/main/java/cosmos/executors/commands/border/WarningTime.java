@@ -17,7 +17,7 @@ import java.util.Optional;
 public class WarningTime extends AbstractBorderCommand {
 
     public WarningTime() {
-        super(CosmosParameters.Builder.DURATION_WITH_TIME_UNIT.get().optional().build());
+        super(CosmosParameters.Builder.DURATION_WITH_UNIT.get().optional().build());
     }
 
     @Override

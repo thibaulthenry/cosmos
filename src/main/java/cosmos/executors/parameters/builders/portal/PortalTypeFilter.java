@@ -37,6 +37,7 @@ class PortalTypeFilter<T extends PortalType> implements ValueParameter<T> {
                 .filter(entry -> this.clazz.isAssignableFrom(entry.value().getClass()) && this.filter.test((T) entry.value()))
                 .map(RegistryEntry::key)
                 .map(ResourceKey::getFormatted)
+                .filter(formatted -> formatted.contains(currentInput))
                 .collect(Collectors.toList());
     }
 

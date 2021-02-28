@@ -2,7 +2,6 @@ package cosmos.executors.commands;
 
 import cosmos.executors.AbstractExecutor;
 import net.kyori.adventure.audience.Audience;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.exception.CommandException;

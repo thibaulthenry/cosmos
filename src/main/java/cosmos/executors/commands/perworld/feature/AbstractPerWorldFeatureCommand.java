@@ -5,7 +5,6 @@ import cosmos.executors.commands.AbstractCommand;
 import cosmos.executors.parameters.CosmosKeys;
 import cosmos.registries.listener.impl.perworld.AbstractPerWorldListener;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;

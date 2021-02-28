@@ -1,10 +1,8 @@
 package cosmos.registries.data.serializable.impl;
 
 import cosmos.constants.Queries;
-import cosmos.registries.backup.BackupArchetype;
 import cosmos.registries.data.serializable.CollectorSerializable;
 import org.spongepowered.api.data.persistence.DataContainer;
-import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.Team;

@@ -36,6 +36,7 @@ class PortalFilter<T extends CosmosPortal> implements ValueParameter<T> {
                 .filter(portal -> this.clazz.isAssignableFrom(portal.getClass()) && this.filter.test((T) portal))
                 .map(CosmosPortal::key)
                 .map(ResourceKey::getFormatted)
+                .filter(formatted -> formatted.contains(currentInput)) // todo do this everywhere with contains instead of start-with
                 .collect(Collectors.toList());
     }
 

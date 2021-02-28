@@ -37,9 +37,13 @@ public interface CosmosPortal extends DataSerializable, Portal {
 
     Optional<ParticleEffect> particles();
 
-    long particlesInterval();
+    Ticks particlesInterval();
 
     Optional<Sound> soundAmbiance();
+
+    Optional<Sound> soundDelay();
+
+    Ticks soundDelayInterval();
 
     Optional<Sound> soundTravel();
 
@@ -65,9 +69,13 @@ public interface CosmosPortal extends DataSerializable, Portal {
 
         Builder<T> particles(ParticleEffect particles);
 
-        Builder<T> particlesInterval(long particlesInterval);
+        Builder<T> particlesInterval(Ticks particlesInterval);
 
         Builder<T> soundAmbiance(Sound soundAmbiance);
+
+        Builder<T> soundDelay(Sound soundDelay);
+
+        Builder<T> soundDelayInterval(Ticks soundDelayInterval);
 
         Builder<T> soundTravel(Sound soundTravel);
 

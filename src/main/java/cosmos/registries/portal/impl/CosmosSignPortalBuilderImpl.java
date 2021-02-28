@@ -2,7 +2,6 @@ package cosmos.registries.portal.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
-import cosmos.registries.portal.CosmosPressurePlatePortal;
 import cosmos.registries.portal.CosmosSignPortal;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.spongepowered.api.block.BlockType;
@@ -34,6 +33,7 @@ public class CosmosSignPortalBuilderImpl extends AbstractCosmosPortalBuilder<Cos
                 super.delay, super.destination,
                 super.nausea, super.particles,
                 super.particlesInterval, super.soundAmbiance,
+                super.soundDelay, super.soundDelayInterval,
                 super.soundTravel, super.soundTrigger
         );
     }

@@ -11,8 +11,6 @@ import cosmos.services.serializer.SerializerProvider;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandCause;
-import org.spongepowered.api.command.selector.Selector;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.command.ExecuteCommandEvent;
@@ -49,7 +47,7 @@ public class ScoreboardsListener extends AbstractPerWorldListener implements Sch
 
     @Listener
     public void onPreExecuteCommandEvent(final ExecuteCommandEvent.Pre event) {
-        if (!event.getCommand().startsWith("scoreboard")) {
+        if (!event.getCommand().startsWith("scoreboard")) { // todo add /team
             return;
         }
 

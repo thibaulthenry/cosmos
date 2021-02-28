@@ -37,7 +37,7 @@ public class CosmosFramePortalType implements CosmosPortalType {
 
     @Override
     public BlockType defaultTrigger() {
-        return BlockTypes.STONE_PRESSURE_PLATE.get();
+        return BlockTypes.VOID_AIR.get();
     }
 
     @Override

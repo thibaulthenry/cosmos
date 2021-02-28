@@ -9,11 +9,9 @@ import cosmos.registries.CosmosRegistryEntry;
 import cosmos.registries.data.selector.impl.WorldSelectorType;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.selector.SelectorType;
-import org.spongepowered.api.scoreboard.Scoreboard;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
 @Singleton

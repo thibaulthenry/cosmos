@@ -4,21 +4,19 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.Cosmos;
+import cosmos.constants.CosmosPortalTypes;
 import cosmos.registries.listener.impl.AbstractListener;
 import cosmos.registries.portal.CosmosFramePortal;
+import cosmos.registries.portal.CosmosPortal;
 import cosmos.registries.portal.PortalRegistry;
+import cosmos.registries.portal.impl.PortalTeleportTask;
 import cosmos.services.transportation.TransportationService;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.Transaction;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.IsCancelled;
 import org.spongepowered.api.event.filter.cause.First;
-import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.util.Tristate;
-import org.spongepowered.api.world.LocatableBlock;
 import org.spongepowered.api.world.server.ServerLocation;
 
 import java.util.Optional;
@@ -46,14 +44,27 @@ public class PortalFrameListener extends AbstractListener {
         final ServerLocation feetLocation = player.getServerLocation();
 
         if (!(CosmosFramePortal.isAnyOfTriggers(eyesLocation.getBlockType()) || CosmosFramePortal.isAnyOfTriggers(feetLocation.getBlockType()))) {
+            this.cancelTaskIfExist(player);
             return;
         }
 
-        this.portalRegistry.find(feetLocation.asLocatableBlock())
+        final Optional<CosmosPortal> optionalPortal = this.portalRegistry.find(feetLocation.asLocatableBlock())
                 .map(Optional::of)
                 .orElse(this.portalRegistry.find(eyesLocation.asLocatableBlock()))
-                .filter(portal -> portal instanceof CosmosFramePortal)
-                .ifPresent(portal -> this.transportationService.teleport(player, portal));
+                .filter(portal -> portal instanceof CosmosFramePortal);
+
+        if (optionalPortal.isPresent()) {
+            this.transportationService.teleport(player, optionalPortal.get());
+        } else {
+            this.cancelTaskIfExist(player);
+        }
+    }
+
+    private void cancelTaskIfExist(final ServerPlayer player) {
+        Cosmos.getRegistries().portalTeleportTask()
+                .find(player.getUniqueId())
+                .filter(task -> task.isType(CosmosPortalTypes.FRAME.get()))
+                .ifPresent(PortalTeleportTask::cancel);
     }
 
 }

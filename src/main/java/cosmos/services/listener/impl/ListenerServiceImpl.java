@@ -82,7 +82,10 @@ public class ListenerServiceImpl implements ListenerService {
         listener.setRegistered(true);
         Sponge.getEventManager().registerListeners(Cosmos.getPluginContainer(), listener);
 
-        this.submitSaveTaskIfNot();
+        if (listener instanceof ScheduledSaveListener) {
+            this.submitSaveTaskIfNot();
+        }
+
     }
 
     private void saveTaskExecutor() {

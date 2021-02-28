@@ -7,7 +7,6 @@ import cosmos.services.io.impl.FinderServiceImpl;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.data.persistence.DataSerializable;
-import org.spongepowered.api.data.persistence.DataView;
 
 import java.io.IOException;
 import java.nio.file.Path;

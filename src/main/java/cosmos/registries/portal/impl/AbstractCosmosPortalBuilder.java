@@ -1,9 +1,7 @@
 package cosmos.registries.portal.impl;
 
 import com.google.common.base.Preconditions;
-import cosmos.registries.portal.CosmosFramePortal;
 import cosmos.registries.portal.CosmosPortal;
-import cosmos.registries.portal.CosmosPressurePlatePortal;
 import net.kyori.adventure.sound.Sound;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.block.BlockType;
@@ -24,8 +22,10 @@ abstract class AbstractCosmosPortalBuilder<T extends CosmosPortal> extends Abstr
     protected boolean nausea;
     protected Set<ServerLocation> origins = new HashSet<>();
     protected ParticleEffect particles;
-    protected long particlesInterval;
+    protected Ticks particlesInterval;
     protected Sound soundAmbiance;
+    protected Sound soundDelay;
+    protected Ticks soundDelayInterval;
     protected Sound soundTravel;
     protected Sound soundTrigger;
     protected BlockType trigger;
@@ -94,7 +94,7 @@ abstract class AbstractCosmosPortalBuilder<T extends CosmosPortal> extends Abstr
     }
 
     @Override
-    public CosmosPortal.Builder<T> particlesInterval(long particlesInterval) {
+    public CosmosPortal.Builder<T> particlesInterval(Ticks particlesInterval) {
         this.particlesInterval = particlesInterval;
         return this;
     }
@@ -102,6 +102,18 @@ abstract class AbstractCosmosPortalBuilder<T extends CosmosPortal> extends Abstr
     @Override
     public CosmosPortal.Builder<T> soundAmbiance(final Sound soundAmbiance) {
         this.soundAmbiance = soundAmbiance;
+        return this;
+    }
+
+    @Override
+    public CosmosPortal.Builder<T> soundDelay(final Sound soundDelay) {
+        this.soundDelay = soundDelay;
+        return this;
+    }
+
+    @Override
+    public CosmosPortal.Builder<T> soundDelayInterval(Ticks soundDelayInterval) {
+        this.soundDelayInterval = soundDelayInterval;
         return this;
     }
 

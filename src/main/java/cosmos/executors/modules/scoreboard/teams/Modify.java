@@ -14,7 +14,6 @@ import cosmos.executors.commands.scoreboard.teams.modify.SeeFriendlyInvisibles;
 import cosmos.executors.commands.scoreboard.teams.modify.Suffix;
 import cosmos.executors.modules.AbstractModule;
 import cosmos.executors.parameters.CosmosParameters;
-import cosmos.executors.parameters.builders.scoreboard.TeamAll;
 
 @Singleton
 public class Modify extends AbstractModule {

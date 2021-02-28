@@ -33,6 +33,7 @@ public class CosmosPressurePlatePortalBuilderImpl extends AbstractCosmosPortalBu
                 super.delay, super.destination,
                 super.nausea, super.particles,
                 super.particlesInterval, super.soundAmbiance,
+                super.soundDelay, super.soundDelayInterval,
                 super.soundTravel, super.soundTrigger
         );
     }

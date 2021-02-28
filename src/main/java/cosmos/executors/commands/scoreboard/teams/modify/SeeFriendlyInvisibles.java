@@ -1,7 +1,6 @@
 package cosmos.executors.commands.scoreboard.teams.modify;
 
 import com.google.common.base.CaseFormat;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import cosmos.executors.parameters.CosmosKeys;
 import net.kyori.adventure.audience.Audience;

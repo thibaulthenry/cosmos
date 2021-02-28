@@ -24,8 +24,10 @@ abstract class AbstractCosmosPortal implements CosmosPortal {
     protected final Set<ServerLocation> origins;
     protected final int originsSize;
     protected final ParticleEffect particles;
-    protected final long particlesInterval;
+    protected final Ticks particlesInterval;
     protected final Sound soundAmbiance;
+    protected final Sound soundDelay;
+    protected final Ticks soundDelayInterval;
     protected final Sound soundTravel;
     protected final Sound soundTrigger;
     protected final BlockType trigger;
@@ -35,7 +37,8 @@ abstract class AbstractCosmosPortal implements CosmosPortal {
                          final BlockType trigger, final PortalType type,
                          @Nullable final Ticks delay, @Nullable final ServerLocation destination,
                          @Nullable final Boolean nausea, @Nullable final ParticleEffect particles,
-                         @Nullable final Long particlesInterval, @Nullable final Sound soundAmbiance,
+                         @Nullable final Ticks particlesInterval, @Nullable final Sound soundAmbiance,
+                         @Nullable final Sound soundDelay, @Nullable final Ticks soundDelayInterval,
                          @Nullable final Sound soundTravel, @Nullable final Sound soundTrigger) {
         Preconditions.checkNotNull(key, "CosmosFramePortal key cannot be null");
         Preconditions.checkNotNull(origins, "CosmosFramePortal origins cannot be null");
@@ -50,8 +53,10 @@ abstract class AbstractCosmosPortal implements CosmosPortal {
         this.origins = origins;
         this.originsSize = origins.size();
         this.particles = particles;
-        this.particlesInterval = Optional.ofNullable(particlesInterval).orElse(20L);
+        this.particlesInterval = Optional.ofNullable(particlesInterval).orElse(Ticks.single());
         this.soundAmbiance = soundAmbiance;
+        this.soundDelay = soundDelay;
+        this.soundDelayInterval = Optional.ofNullable(soundDelayInterval).orElse(Ticks.single());
         this.soundTravel = soundTravel;
         this.soundTrigger = soundTrigger;
         this.trigger = trigger;
@@ -114,13 +119,23 @@ abstract class AbstractCosmosPortal implements CosmosPortal {
     }
 
     @Override
-    public long particlesInterval() {
+    public Ticks particlesInterval() {
         return this.particlesInterval;
     }
 
     @Override
     public Optional<Sound> soundAmbiance() {
         return Optional.ofNullable(this.soundAmbiance);
+    }
+
+    @Override
+    public Optional<Sound> soundDelay() {
+        return Optional.ofNullable(this.soundDelay);
+    }
+
+    @Override
+    public Ticks soundDelayInterval() {
+        return this.soundDelayInterval;
     }
 
     @Override

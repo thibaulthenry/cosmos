@@ -7,7 +7,6 @@ import cosmos.executors.modules.scoreboard.Objectives;
 import cosmos.executors.modules.scoreboard.Players;
 import cosmos.executors.modules.scoreboard.Teams;
 import cosmos.executors.parameters.CosmosParameters;
-import cosmos.executors.parameters.builders.world.WorldAll;
 
 @Singleton
 class Scoreboard extends AbstractModule {

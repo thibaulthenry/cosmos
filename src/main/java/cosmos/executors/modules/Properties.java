@@ -15,7 +15,6 @@ import cosmos.executors.commands.properties.Pvp;
 import cosmos.executors.commands.properties.SpawnPosition;
 import cosmos.executors.commands.properties.ViewDistance;
 import cosmos.executors.parameters.CosmosParameters;
-import cosmos.executors.parameters.builders.world.WorldAll;
 
 @Singleton
 class Properties extends AbstractModule {
