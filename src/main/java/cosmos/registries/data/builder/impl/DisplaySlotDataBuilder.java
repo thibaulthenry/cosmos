@@ -26,14 +26,14 @@ public class DisplaySlotDataBuilder extends AbstractDataBuilder<DisplaySlotData>
 
     @Override
     protected Optional<DisplaySlotData> buildContent(final DataView container) throws InvalidDataException {
-        if (!container.contains(Queries.Scoreboards.DisplaySlot.DISPLAY_SLOT, Queries.Scoreboards.DisplaySlot.OBJECTIVE)) {
+        if (!container.contains(Queries.Scoreboard.DisplaySlot.DISPLAY_SLOT, Queries.Scoreboard.DisplaySlot.OBJECTIVE)) {
             return Optional.empty();
         }
 
-        final DisplaySlot displaySlot = container.getRegistryValue(Queries.Scoreboards.DisplaySlot.DISPLAY_SLOT, RegistryTypes.DISPLAY_SLOT)
+        final DisplaySlot displaySlot = container.getRegistryValue(Queries.Scoreboard.DisplaySlot.DISPLAY_SLOT, RegistryTypes.DISPLAY_SLOT)
                 .orElseThrow(() -> new InvalidDataException("Missing display slot while building ObjectiveData"));
 
-        final String objective = container.getString(Queries.Scoreboards.DisplaySlot.OBJECTIVE)
+        final String objective = container.getString(Queries.Scoreboard.DisplaySlot.OBJECTIVE)
                 .orElseThrow(() -> new InvalidDataException("Missing objective while building ObjectiveData"));
 
         return Optional.of(new DisplaySlotData(displaySlot, objective));

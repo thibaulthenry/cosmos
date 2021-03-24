@@ -27,8 +27,6 @@ public interface FinderService extends CosmosService {
 
     Optional<Path> findCosmosPath(String directory, ServerPlayer player);
 
-    Optional<Path> findCosmosPath(String directory, ServerWorld world);
-
     Optional<Path> findCosmosPath(String directory, ResourceKey worldKey, ServerPlayer player);
 
     Optional<Path> findCosmosPath(String directory, ServerWorld world, ServerPlayer player);

@@ -154,7 +154,7 @@ public class Operation extends AbstractMultiTargetCommand {
                                 .asSupplier()
                 );
 
-        final Collection<Component> sources = super.serviceProvider.scoreboards().sources(context, worldKey, false);
+        final Collection<Component> sources = super.serviceProvider.scoreboard().sources(context, worldKey, false);
 
         if (targets.size() > 1 && sources.size() > 1) {
             throw super.serviceProvider.message().getError(src, "error.invalid.operation.cross");

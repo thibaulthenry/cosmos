@@ -29,7 +29,7 @@ public class Move extends AbstractCommand {
     public Move() {
         super(
                 CosmosParameters.ENTITIES.get().key(CosmosKeys.ENTITIES).optional().build(),
-                CosmosParameters.WORLD_ONLINE.get().build(),
+                CosmosParameters.WORLD_ONLINE.get().build(), // TODO optional
                 Parameter.vector3d().key(CosmosKeys.X_Y_Z).optional().build(),
                 Parameter.vector3d().key(CosmosKeys.PITCH_YAW_ROLL).optional().build()
         );

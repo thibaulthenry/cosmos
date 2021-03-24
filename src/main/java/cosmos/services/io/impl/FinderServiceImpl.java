@@ -77,11 +77,6 @@ public class FinderServiceImpl implements FinderService {
     }
 
     @Override
-    public Optional<Path> findCosmosPath(final String directory, final ServerWorld world) {
-        return this.findCosmosPath(directory, world.key());
-    }
-
-    @Override
     public Optional<Path> findCosmosPath(final String directory, final ResourceKey worldKey, final ServerPlayer player) {
         if (!this.isCosmosDirectory(directory)) {
             return Optional.empty();

@@ -18,7 +18,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Singleton
-public class TabListsListener extends AbstractPerWorldListener {
+public class TabListListener extends AbstractPerWorldListener {
 
     private void addEntrySafely(final ServerPlayer addedPlayer, final ServerPlayer affectedPlayer) {
         final TabList tabList = affectedPlayer.tabList();

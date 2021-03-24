@@ -27,7 +27,7 @@ public class Toggle extends AbstractPerWorldCommand {
     @Override
     protected void run(final Audience src, final CommandContext context, final AbstractPerWorldListener listener) throws CommandException {
         final Class<? extends AbstractPerWorldListener> listenerClass = listener.getClass();
-        final String formattedName = super.serviceProvider.listener().format(listenerClass);
+        final String featureName = super.serviceProvider.listener().format(listenerClass);
         final Optional<Boolean> optionalInput = context.one(CosmosKeys.STATE);
         boolean currentValue = super.serviceProvider.registry().listener().isRegisteredToSponge(listenerClass);
 
@@ -37,7 +37,7 @@ public class Toggle extends AbstractPerWorldCommand {
             if (inputValue && currentValue) {
                 throw super.serviceProvider.message()
                         .getMessage(src, "error.per-world.toggle")
-                        .replace("name", formattedName)
+                        .replace("name", featureName)
                         .condition("value", true)
                         .asError();
             }
@@ -45,7 +45,7 @@ public class Toggle extends AbstractPerWorldCommand {
             if (!inputValue && !currentValue) {
                 throw super.serviceProvider.message()
                         .getMessage(src, "error.per-world.toggle")
-                        .replace("name", formattedName)
+                        .replace("name", featureName)
                         .condition("value", false)
                         .asError();
             }
@@ -61,7 +61,7 @@ public class Toggle extends AbstractPerWorldCommand {
 
         super.serviceProvider.message()
                 .getMessage(src, optionalInput.isPresent() ? "success.per-world.toggle.set" : "success.per-world.toggle.get")
-                .replace("name", formattedName)
+                .replace("name", featureName)
                 .condition("value", currentValue)
                 .green()
                 .sendTo(src);
@@ -72,13 +72,13 @@ public class Toggle extends AbstractPerWorldCommand {
 
         final String rootNode = ConfigurationNodes.PER_WORLD;
 
-        if (!super.serviceProvider.configuration().saveValue(currentValue, rootNode, rootNode, formattedName)) {
-            throw super.serviceProvider.message().getError(src, "error.config.save", "node", formattedName);
+        if (!super.serviceProvider.configuration().saveValue(currentValue, rootNode, rootNode, featureName)) {
+            throw super.serviceProvider.message().getError(src, "error.config.save", "node", featureName);
         }
 
         super.serviceProvider.message()
                 .getMessage(src, "success.config.save")
-                .replace("node", formattedName)
+                .replace("node", featureName)
                 .gray()
                 .sendTo(src);
     }

@@ -28,45 +28,45 @@ public class TeamDataBuilder extends AbstractDataBuilder<TeamData> {
 
     @Override
     protected Optional<TeamData> buildContent(final DataView container) throws InvalidDataException {
-        if (!container.contains(Queries.Scoreboards.Team.ALLOW_FRIENDLY_FIRE, Queries.Scoreboards.Team.COLLISION_RULE,
-                Queries.Scoreboards.Team.COLOR, Queries.Scoreboards.Team.DEATH_MESSAGE_VISIBILITY,
-                Queries.Scoreboards.Team.DISPLAY_NAME, Queries.Scoreboards.Team.NAME, Queries.Scoreboards.Team.NAME_TAG_VISIBILITY,
-                Queries.Scoreboards.Team.PLAYERS, Queries.Scoreboards.Team.PREFIX,
-                Queries.Scoreboards.Team.SEE_FRIENDLY_INVISIBLES, Queries.Scoreboards.Team.SUFFIX)) {
+        if (!container.contains(Queries.Scoreboard.Team.ALLOW_FRIENDLY_FIRE, Queries.Scoreboard.Team.COLLISION_RULE,
+                Queries.Scoreboard.Team.COLOR, Queries.Scoreboard.Team.DEATH_MESSAGE_VISIBILITY,
+                Queries.Scoreboard.Team.DISPLAY_NAME, Queries.Scoreboard.Team.NAME, Queries.Scoreboard.Team.NAME_TAG_VISIBILITY,
+                Queries.Scoreboard.Team.PLAYERS, Queries.Scoreboard.Team.PREFIX,
+                Queries.Scoreboard.Team.SEE_FRIENDLY_INVISIBLES, Queries.Scoreboard.Team.SUFFIX)) {
             return Optional.empty();
         }
 
-        final boolean allowFriendlyFire = container.getBoolean(Queries.Scoreboards.Team.ALLOW_FRIENDLY_FIRE)
+        final boolean allowFriendlyFire = container.getBoolean(Queries.Scoreboard.Team.ALLOW_FRIENDLY_FIRE)
                 .orElseThrow(() -> new InvalidDataException("Missing allow friendly fire while building TeamData"));
 
-        final CollisionRule collisionRule = container.getRegistryValue(Queries.Scoreboards.Team.COLLISION_RULE, RegistryTypes.COLLISION_RULE)
+        final CollisionRule collisionRule = container.getRegistryValue(Queries.Scoreboard.Team.COLLISION_RULE, RegistryTypes.COLLISION_RULE)
                 .orElseThrow(() -> new InvalidDataException("Missing collision rule while building TeamData"));
 
-        final String color = container.getString(Queries.Scoreboards.Team.COLOR)
+        final String color = container.getString(Queries.Scoreboard.Team.COLOR)
                 .orElseThrow(() -> new InvalidDataException("Missing color while building TeamData"));
 
-        final Visibility deathMessageVisibility = container.getRegistryValue(Queries.Scoreboards.Team.DEATH_MESSAGE_VISIBILITY, RegistryTypes.VISIBILITY)
+        final Visibility deathMessageVisibility = container.getRegistryValue(Queries.Scoreboard.Team.DEATH_MESSAGE_VISIBILITY, RegistryTypes.VISIBILITY)
                 .orElseThrow(() -> new InvalidDataException("Missing death message visibility while building TeamData"));
 
-        final String displayName = container.getString(Queries.Scoreboards.Team.DISPLAY_NAME)
+        final String displayName = container.getString(Queries.Scoreboard.Team.DISPLAY_NAME)
                 .orElseThrow(() -> new InvalidDataException("Missing display name while building TeamData"));
 
-        final String name = container.getString(Queries.Scoreboards.Team.NAME)
+        final String name = container.getString(Queries.Scoreboard.Team.NAME)
                 .orElseThrow(() -> new InvalidDataException("Missing name while building TeamData"));
 
-        final Visibility nameTagVisibility = container.getRegistryValue(Queries.Scoreboards.Team.NAME_TAG_VISIBILITY, RegistryTypes.VISIBILITY)
+        final Visibility nameTagVisibility = container.getRegistryValue(Queries.Scoreboard.Team.NAME_TAG_VISIBILITY, RegistryTypes.VISIBILITY)
                 .orElseThrow(() -> new InvalidDataException("Missing name tag visibility while building TeamData"));
 
-        final List<String> players = container.getStringList(Queries.Scoreboards.Team.PLAYERS)
+        final List<String> players = container.getStringList(Queries.Scoreboard.Team.PLAYERS)
                 .orElseThrow(() -> new InvalidDataException("Missing players while building TeamData"));
 
-        final String prefix = container.getString(Queries.Scoreboards.Team.PREFIX)
+        final String prefix = container.getString(Queries.Scoreboard.Team.PREFIX)
                 .orElseThrow(() -> new InvalidDataException("Missing prefix while building TeamData"));
 
-        final boolean seeFriendlyInvisibles = container.getBoolean(Queries.Scoreboards.Team.SEE_FRIENDLY_INVISIBLES)
+        final boolean seeFriendlyInvisibles = container.getBoolean(Queries.Scoreboard.Team.SEE_FRIENDLY_INVISIBLES)
                 .orElseThrow(() -> new InvalidDataException("Missing see friendly invisibles while building TeamData"));
 
-        final String suffix = container.getString(Queries.Scoreboards.Team.SUFFIX)
+        final String suffix = container.getString(Queries.Scoreboard.Team.SUFFIX)
                 .orElseThrow(() -> new InvalidDataException("Missing suffix while building TeamData"));
 
         return Optional.of(

@@ -5,12 +5,11 @@ import cosmos.constants.Queries;
 import cosmos.registries.data.serializable.ShareableSerializable;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.data.persistence.DataContainer;
-import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.Slot;
 import org.spongepowered.api.registry.RegistryTypes;
 
-public class InventorySlotData implements ShareableSerializable<Inventory> {
+public class InventorySlotData implements ShareableSerializable<org.spongepowered.api.item.inventory.Inventory> {
 
     private final int slotIndex;
     private final ItemStack slotStack;
@@ -35,7 +34,7 @@ public class InventorySlotData implements ShareableSerializable<Inventory> {
     }
 
     @Override
-    public void share(final Inventory data) {
+    public void share(final org.spongepowered.api.item.inventory.Inventory data) {
         if (this.slotIndex < 0 || this.slotStack == null || this.slotStack.isEmpty()) {
             return;
         }
@@ -48,8 +47,8 @@ public class InventorySlotData implements ShareableSerializable<Inventory> {
     @Override
     public DataContainer toContainer() {
         return DataContainer.createNew()
-                .set(Queries.Inventories.SLOT_INDEX, this.slotIndex)
-                .set(Queries.Inventories.SLOT_STACK, this.slotStack);
+                .set(Queries.Inventory.SLOT_INDEX, this.slotIndex)
+                .set(Queries.Inventory.SLOT_STACK, this.slotStack);
     }
 
 }

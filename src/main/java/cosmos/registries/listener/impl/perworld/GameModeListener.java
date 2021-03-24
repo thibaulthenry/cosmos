@@ -9,7 +9,7 @@ import org.spongepowered.api.event.entity.ChangeEntityWorldEvent;
 import org.spongepowered.api.event.filter.cause.First;
 
 @Singleton
-public class GameModesListener extends AbstractPerWorldListener {
+public class GameModeListener extends AbstractPerWorldListener {
 
     @Listener
     public void onPostChangeEntityWorldEvent(final ChangeEntityWorldEvent.Post event, @First final ServerPlayer player) {

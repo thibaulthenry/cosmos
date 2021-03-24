@@ -8,11 +8,11 @@ import cosmos.constants.CosmosKeys;
 import cosmos.constants.Directories;
 import cosmos.registries.CosmosRegistryEntry;
 import cosmos.registries.data.serializable.impl.ScoreboardData;
-import cosmos.registries.perworld.ScoreboardsRegistry;
-import cosmos.registries.serializer.impl.ScoreboardsSerializer;
+import cosmos.registries.perworld.ScoreboardRegistry;
+import cosmos.registries.serializer.impl.ScoreboardSerializer;
 import cosmos.services.io.FinderService;
 import cosmos.services.message.MessageService;
-import cosmos.services.perworld.ScoreboardsService;
+import cosmos.services.perworld.ScoreboardService;
 import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -34,19 +34,19 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
-public class ScoreboardsServiceImpl implements ScoreboardsService {
+public class ScoreboardServiceImpl implements ScoreboardService {
 
     private final FinderService finderService;
     private final MessageService messageService;
-    private final ScoreboardsRegistry scoreboardsRegistry;
-    private final ScoreboardsSerializer scoreboardsSerializer;
+    private final ScoreboardRegistry scoreboardRegistry;
+    private final ScoreboardSerializer scoreboardSerializer;
 
     @Inject
-    public ScoreboardsServiceImpl(final Injector injector) {
+    public ScoreboardServiceImpl(final Injector injector) {
         this.finderService = injector.getInstance(FinderService.class);
         this.messageService = injector.getInstance(MessageService.class);
-        this.scoreboardsRegistry = injector.getInstance(ScoreboardsRegistry.class);
-        this.scoreboardsSerializer = injector.getInstance(ScoreboardsSerializer.class);
+        this.scoreboardRegistry = injector.getInstance(ScoreboardRegistry.class);
+        this.scoreboardSerializer = injector.getInstance(ScoreboardSerializer.class);
     }
 
     @Override
@@ -84,18 +84,18 @@ public class ScoreboardsServiceImpl implements ScoreboardsService {
 
     @Override
     public Scoreboard scoreboardOrCreate(final ResourceKey worldKey) {
-        return this.scoreboardsRegistry.find(worldKey)
+        return this.scoreboardRegistry.find(worldKey)
                 .map(Optional::of)
                 .orElse(
                         this.finderService.findCosmosPath(Directories.SCOREBOARDS, worldKey)
-                                .flatMap(this.scoreboardsSerializer::deserialize)
+                                .flatMap(this.scoreboardSerializer::deserialize)
                                 .flatMap(ScoreboardData::collect)
                 )
-                .flatMap(scoreboard -> this.scoreboardsRegistry.register(worldKey, scoreboard).map(CosmosRegistryEntry::value))
+                .flatMap(scoreboard -> this.scoreboardRegistry.register(worldKey, scoreboard).map(CosmosRegistryEntry::value))
                 .orElseGet(() -> {
                     final Scoreboard scoreboard = Scoreboard.builder().build();
 
-                    if (!this.scoreboardsRegistry.register(worldKey, scoreboard).isPresent()) {
+                    if (!this.scoreboardRegistry.register(worldKey, scoreboard).isPresent()) {
                         Cosmos.logger().error("An unexpected error occurred while registering a new scoreboard for world " + worldKey);
                     }
 

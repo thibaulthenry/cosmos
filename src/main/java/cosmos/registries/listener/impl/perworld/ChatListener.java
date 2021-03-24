@@ -11,7 +11,7 @@ import org.spongepowered.api.event.message.PlayerChatEvent;
 import org.spongepowered.api.util.Tristate;
 
 @Singleton
-public class ChatsListener extends AbstractPerWorldListener {
+public class ChatListener extends AbstractPerWorldListener {
 
     @Listener
     @IsCancelled(Tristate.FALSE)

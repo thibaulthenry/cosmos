@@ -8,7 +8,7 @@ import cosmos.services.io.FinderService;
 import cosmos.services.listener.ListenerService;
 import cosmos.services.message.MessageService;
 import cosmos.services.pagination.PaginationService;
-import cosmos.services.perworld.ScoreboardsService;
+import cosmos.services.perworld.ScoreboardService;
 import cosmos.services.portal.PortalService;
 import cosmos.services.registry.RegistryProvider;
 import cosmos.services.serializer.SerializerProvider;
@@ -39,7 +39,7 @@ public interface ServiceProvider {
 
     RegistryProvider registry();
 
-    ScoreboardsService scoreboards();
+    ScoreboardService scoreboard();
 
     SerializerProvider serializer();
 

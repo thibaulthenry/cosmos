@@ -7,16 +7,16 @@ import cosmos.Cosmos;
 import cosmos.constants.ConfigurationNodes;
 import cosmos.registries.CosmosRegistry;
 import cosmos.registries.CosmosRegistryEntry;
-import cosmos.registries.listener.impl.perworld.AdvancementsListener;
-import cosmos.registries.listener.impl.perworld.ChatsListener;
-import cosmos.registries.listener.impl.perworld.CommandBlocksListener;
-import cosmos.registries.listener.impl.perworld.ExperiencesListener;
-import cosmos.registries.listener.impl.perworld.GameModesListener;
-import cosmos.registries.listener.impl.perworld.HealthsListener;
-import cosmos.registries.listener.impl.perworld.HungersListener;
-import cosmos.registries.listener.impl.perworld.InventoriesListener;
-import cosmos.registries.listener.impl.perworld.ScoreboardsListener;
-import cosmos.registries.listener.impl.perworld.TabListsListener;
+import cosmos.registries.listener.impl.perworld.AdvancementListener;
+import cosmos.registries.listener.impl.perworld.ChatListener;
+import cosmos.registries.listener.impl.perworld.CommandBlockListener;
+import cosmos.registries.listener.impl.perworld.ExperienceListener;
+import cosmos.registries.listener.impl.perworld.GameModeListener;
+import cosmos.registries.listener.impl.perworld.HealthListener;
+import cosmos.registries.listener.impl.perworld.HungerListener;
+import cosmos.registries.listener.impl.perworld.InventoryListener;
+import cosmos.registries.listener.impl.perworld.ScoreboardListener;
+import cosmos.registries.listener.impl.perworld.TabListListener;
 import cosmos.registries.listener.impl.portal.PortalDispatcherListener;
 import cosmos.registries.listener.impl.portal.PortalGenerationListener;
 import cosmos.registries.listener.impl.portal.PortalProtectionListener;
@@ -43,20 +43,20 @@ public class ListenerRegistry implements CosmosRegistry<Class<? extends Listener
         this.configurationService = injector.getInstance(ConfigurationService.class);
         this.listenerService = injector.getInstance(ListenerService.class);
 
-        this.listenerMap.put(AdvancementsListener.class, injector.getInstance(AdvancementsListener.class));
-        this.listenerMap.put(ChatsListener.class, injector.getInstance(ChatsListener.class));
-        this.listenerMap.put(CommandBlocksListener.class, injector.getInstance(CommandBlocksListener.class));
-        this.listenerMap.put(ExperiencesListener.class, injector.getInstance(ExperiencesListener.class));
-        this.listenerMap.put(GameModesListener.class, injector.getInstance(GameModesListener.class));
-        this.listenerMap.put(HealthsListener.class, injector.getInstance(HealthsListener.class));
-        this.listenerMap.put(HungersListener.class, injector.getInstance(HungersListener.class));
-        this.listenerMap.put(InventoriesListener.class, injector.getInstance(InventoriesListener.class));
+        this.listenerMap.put(AdvancementListener.class, injector.getInstance(AdvancementListener.class));
+        this.listenerMap.put(ChatListener.class, injector.getInstance(ChatListener.class));
+        this.listenerMap.put(CommandBlockListener.class, injector.getInstance(CommandBlockListener.class));
+        this.listenerMap.put(ExperienceListener.class, injector.getInstance(ExperienceListener.class));
+        this.listenerMap.put(GameModeListener.class, injector.getInstance(GameModeListener.class));
+        this.listenerMap.put(HealthListener.class, injector.getInstance(HealthListener.class));
+        this.listenerMap.put(HungerListener.class, injector.getInstance(HungerListener.class));
+        this.listenerMap.put(InventoryListener.class, injector.getInstance(InventoryListener.class));
         this.listenerMap.put(PortalDispatcherListener.class, injector.getInstance(PortalDispatcherListener.class));
         this.listenerMap.put(PortalGenerationListener.class, injector.getInstance(PortalGenerationListener.class));
         this.listenerMap.put(PortalProtectionListener.class, injector.getInstance(PortalProtectionListener.class));
         this.listenerMap.put(PortalTeleportListener.class, injector.getInstance(PortalTeleportListener.class));
-        this.listenerMap.put(ScoreboardsListener.class, injector.getInstance(ScoreboardsListener.class));
-        this.listenerMap.put(TabListsListener.class, injector.getInstance(TabListsListener.class));
+        this.listenerMap.put(ScoreboardListener.class, injector.getInstance(ScoreboardListener.class));
+        this.listenerMap.put(TabListListener.class, injector.getInstance(TabListListener.class));
     }
 
     public boolean isRegisteredToSponge(final Class<? extends Listener> clazz) {

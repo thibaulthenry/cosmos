@@ -24,24 +24,24 @@ public class HungerDataBuilder extends AbstractDataBuilder<HungerData> {
 
     @Override
     protected Optional<HungerData> buildContent(final DataView container) throws InvalidDataException {
-        if (!container.contains(Queries.Hungers.EXHAUSTION, Queries.Hungers.FOOD_LEVEL,
-                Queries.Hungers.MAX_EXHAUSTION, Queries.Hungers.MAX_FOOD_LEVEL, Queries.Hungers.SATURATION)) {
+        if (!container.contains(Queries.Hunger.EXHAUSTION, Queries.Hunger.FOOD_LEVEL,
+                Queries.Hunger.MAX_EXHAUSTION, Queries.Hunger.MAX_FOOD_LEVEL, Queries.Hunger.SATURATION)) {
             return Optional.empty();
         }
 
-        final double exhaustion = container.getInt(Queries.Hungers.EXHAUSTION)
+        final double exhaustion = container.getInt(Queries.Hunger.EXHAUSTION)
                 .orElseThrow(() -> new InvalidDataException("Missing exhaustion while building HungerData"));
 
-        final int foodLevel = container.getInt(Queries.Hungers.FOOD_LEVEL)
+        final int foodLevel = container.getInt(Queries.Hunger.FOOD_LEVEL)
                 .orElseThrow(() -> new InvalidDataException("Missing food level building HungerData"));
 
-        final double maxExhaustion = container.getInt(Queries.Hungers.MAX_EXHAUSTION)
+        final double maxExhaustion = container.getInt(Queries.Hunger.MAX_EXHAUSTION)
                 .orElseThrow(() -> new InvalidDataException("Missing max exhaustion building HungerData"));
 
-        final int maxFoodLevel = container.getInt(Queries.Hungers.MAX_FOOD_LEVEL)
+        final int maxFoodLevel = container.getInt(Queries.Hunger.MAX_FOOD_LEVEL)
                 .orElseThrow(() -> new InvalidDataException("Missing max food level while building HungerData"));
 
-        final double saturation = container.getInt(Queries.Hungers.SATURATION)
+        final double saturation = container.getInt(Queries.Hunger.SATURATION)
                 .orElseThrow(() -> new InvalidDataException("Missing saturation while building HungerData"));
 
         return Optional.of(new HungerData(exhaustion, foodLevel, maxExhaustion, maxFoodLevel, saturation));

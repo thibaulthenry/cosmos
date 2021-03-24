@@ -24,21 +24,21 @@ public class ScoreDataBuilder extends AbstractDataBuilder<ScoreData> {
 
     @Override
     protected Optional<ScoreData> buildContent(final DataView container) throws InvalidDataException {
-        if (!container.contains(Queries.Scoreboards.Score.LOCKED, Queries.Scoreboards.Score.OBJECTIVE,
-                Queries.Scoreboards.Score.SCORE, Queries.Scoreboards.Score.TARGET_NAME)) {
+        if (!container.contains(Queries.Scoreboard.Score.LOCKED, Queries.Scoreboard.Score.OBJECTIVE,
+                Queries.Scoreboard.Score.SCORE, Queries.Scoreboard.Score.TARGET_NAME)) {
             return Optional.empty();
         }
 
-        final boolean locked = container.getBoolean(Queries.Scoreboards.Score.LOCKED)
+        final boolean locked = container.getBoolean(Queries.Scoreboard.Score.LOCKED)
                 .orElseThrow(() -> new InvalidDataException("Missing locked while building ScoreData"));
 
-        final String objective = container.getString(Queries.Scoreboards.Score.OBJECTIVE)
+        final String objective = container.getString(Queries.Scoreboard.Score.OBJECTIVE)
                 .orElseThrow(() -> new InvalidDataException("Missing objective while building ScoreData"));
 
-        final int score = container.getInt(Queries.Scoreboards.Score.SCORE)
+        final int score = container.getInt(Queries.Scoreboard.Score.SCORE)
                 .orElseThrow(() -> new InvalidDataException("Missing score while building ScoreData"));
 
-        final String targetName = container.getString(Queries.Scoreboards.Score.TARGET_NAME)
+        final String targetName = container.getString(Queries.Scoreboard.Score.TARGET_NAME)
                 .orElseThrow(() -> new InvalidDataException("Missing target name while building ScoreData"));
 
         return Optional.of(new ScoreData(locked, objective, score, targetName));

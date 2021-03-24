@@ -118,17 +118,17 @@ public class TeamData implements CollectorSerializable<Team> {
     @Override
     public DataContainer toContainer() {
         return DataContainer.createNew()
-                .set(Queries.Scoreboards.Team.ALLOW_FRIENDLY_FIRE, this.allowFriendlyFire)
-                .set(Queries.Scoreboards.Team.COLLISION_RULE, this.collisionRule.key(RegistryTypes.COLLISION_RULE))
-                .set(Queries.Scoreboards.Team.COLOR, this.color)
-                .set(Queries.Scoreboards.Team.DEATH_MESSAGE_VISIBILITY, this.deathMessageVisibility.key(RegistryTypes.VISIBILITY))
-                .set(Queries.Scoreboards.Team.DISPLAY_NAME, this.displayName)
-                .set(Queries.Scoreboards.Team.NAME, this.name)
-                .set(Queries.Scoreboards.Team.NAME_TAG_VISIBILITY, this.nameTagVisibility.key(RegistryTypes.VISIBILITY))
-                .set(Queries.Scoreboards.Team.PLAYERS, this.players)
-                .set(Queries.Scoreboards.Team.PREFIX, this.prefix)
-                .set(Queries.Scoreboards.Team.SEE_FRIENDLY_INVISIBLES, this.seeFriendlyInvisibles)
-                .set(Queries.Scoreboards.Team.SUFFIX, this.suffix);
+                .set(Queries.Scoreboard.Team.ALLOW_FRIENDLY_FIRE, this.allowFriendlyFire)
+                .set(Queries.Scoreboard.Team.COLLISION_RULE, this.collisionRule.key(RegistryTypes.COLLISION_RULE))
+                .set(Queries.Scoreboard.Team.COLOR, this.color)
+                .set(Queries.Scoreboard.Team.DEATH_MESSAGE_VISIBILITY, this.deathMessageVisibility.key(RegistryTypes.VISIBILITY))
+                .set(Queries.Scoreboard.Team.DISPLAY_NAME, this.displayName)
+                .set(Queries.Scoreboard.Team.NAME, this.name)
+                .set(Queries.Scoreboard.Team.NAME_TAG_VISIBILITY, this.nameTagVisibility.key(RegistryTypes.VISIBILITY))
+                .set(Queries.Scoreboard.Team.PLAYERS, this.players)
+                .set(Queries.Scoreboard.Team.PREFIX, this.prefix)
+                .set(Queries.Scoreboard.Team.SEE_FRIENDLY_INVISIBLES, this.seeFriendlyInvisibles)
+                .set(Queries.Scoreboard.Team.SUFFIX, this.suffix);
     }
 
 }

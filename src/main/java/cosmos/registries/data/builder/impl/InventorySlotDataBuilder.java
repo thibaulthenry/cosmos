@@ -26,14 +26,14 @@ public class InventorySlotDataBuilder extends AbstractDataBuilder<InventorySlotD
 
     @Override
     protected Optional<InventorySlotData> buildContent(final DataView container) throws InvalidDataException {
-        if (!container.contains(Queries.Inventories.SLOT_INDEX, Queries.Inventories.SLOT_STACK)) {
+        if (!container.contains(Queries.Inventory.SLOT_INDEX, Queries.Inventory.SLOT_STACK)) {
             return Optional.empty();
         }
 
-        final int index = container.getInt(Queries.Inventories.SLOT_INDEX)
+        final int index = container.getInt(Queries.Inventory.SLOT_INDEX)
                 .orElseThrow(() -> new InvalidDataException("Missing slot index while building InventorySlotData"));
 
-        final ItemStack itemStack = container.getView(Queries.Inventories.SLOT_STACK)
+        final ItemStack itemStack = container.getView(Queries.Inventory.SLOT_STACK)
                 .flatMap(view -> Sponge.dataManager().deserialize(ItemStack.class, view))
                 .orElseThrow(() -> new InvalidDataException("Missing slot stack while building InventorySlotData"));
 

@@ -3,7 +3,7 @@ package cosmos.registries.serializer.impl;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import cosmos.registries.data.serializable.impl.HealthData;
+import cosmos.registries.data.serializable.impl.HungerData;
 import cosmos.registries.serializer.Serializer;
 import cosmos.services.io.FinderService;
 import org.spongepowered.api.Sponge;
@@ -13,28 +13,28 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 @Singleton
-public class HealthsSerializer implements Serializer<HealthData> {
+public class HungerSerializer implements Serializer<HungerData> {
 
     private final FinderService finderService;
 
     @Inject
-    public HealthsSerializer(final Injector injector) {
+    public HungerSerializer(final Injector injector) {
         this.finderService = injector.getInstance(FinderService.class);
     }
 
     @Override
-    public Optional<HealthData> deserialize(final Path path) {
-        final DataContainer dataContainer = this.finderService.readFromFile(path).orElse(new HealthData().toContainer());
+    public Optional<HungerData> deserialize(final Path path) {
+        final DataContainer dataContainer = this.finderService.readFromFile(path).orElse(new HungerData().toContainer());
 
         if (dataContainer.isEmpty()) {
             return Optional.empty();
         }
 
-        return Sponge.dataManager().deserialize(HealthData.class, dataContainer);
+        return Sponge.dataManager().deserialize(HungerData.class, dataContainer);
     }
 
     @Override
-    public void serialize(final Path path, final HealthData data) {
+    public void serialize(final Path path, final HungerData data) {
         this.finderService.writeToFile(data, path);
     }
 

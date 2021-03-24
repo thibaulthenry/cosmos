@@ -6,10 +6,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.scoreboard.Score;
-import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.objective.Objective;
 
-public class ScoreData implements ShareableSerializable<Scoreboard> {
+public class ScoreData implements ShareableSerializable<org.spongepowered.api.scoreboard.Scoreboard> {
 
     private final boolean locked;
     private final String objective;
@@ -36,7 +35,7 @@ public class ScoreData implements ShareableSerializable<Scoreboard> {
     }
 
     @Override
-    public void share(final Scoreboard data) {
+    public void share(final org.spongepowered.api.scoreboard.Scoreboard data) {
         final Component target = GsonComponentSerializer.gson().deserialize(this.targetName);
 
         data.objective(this.objective).ifPresent(objective -> {
@@ -50,10 +49,10 @@ public class ScoreData implements ShareableSerializable<Scoreboard> {
     @Override
     public DataContainer toContainer() {
         return DataContainer.createNew()
-                .set(Queries.Scoreboards.Score.LOCKED, this.locked)
-                .set(Queries.Scoreboards.Score.OBJECTIVE, this.objective)
-                .set(Queries.Scoreboards.Score.SCORE, this.score)
-                .set(Queries.Scoreboards.Score.TARGET_NAME, this.targetName);
+                .set(Queries.Scoreboard.Score.LOCKED, this.locked)
+                .set(Queries.Scoreboard.Score.OBJECTIVE, this.objective)
+                .set(Queries.Scoreboard.Score.SCORE, this.score)
+                .set(Queries.Scoreboard.Score.TARGET_NAME, this.targetName);
     }
 
 }

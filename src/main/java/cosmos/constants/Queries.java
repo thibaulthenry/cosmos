@@ -4,7 +4,7 @@ import org.spongepowered.api.data.persistence.DataQuery;
 
 public class Queries {
 
-    public static final class Advancements {
+    public static final class Advancement {
 
         public static final class Criterion {
 
@@ -24,7 +24,7 @@ public class Queries {
 
     }
 
-    public static final class Experiences {
+    public static final class Experience {
 
         public static final DataQuery EXPERIENCE = DataQuery.of("Experience");
         public static final DataQuery EXPERIENCE_FROM_START_OF_LEVEL = DataQuery.of("ExperienceFromStartOfLevel");
@@ -33,7 +33,7 @@ public class Queries {
 
     }
 
-    public static final class Healths {
+    public static final class Health {
 
         public static final DataQuery HEALTH = DataQuery.of("Health");
         public static final DataQuery MAX_HEALTH = DataQuery.of("MaxHealth");
@@ -41,7 +41,7 @@ public class Queries {
 
     }
 
-    public static final class Hungers {
+    public static final class Hunger {
 
         public static final DataQuery EXHAUSTION = DataQuery.of("Exhaustion");
         public static final DataQuery FOOD_LEVEL = DataQuery.of("FoodLevel");
@@ -51,7 +51,7 @@ public class Queries {
 
     }
 
-    public static final class Inventories {
+    public static final class Inventory {
 
         public static final DataQuery INVENTORY = DataQuery.of("Inventories");
         public static final DataQuery SLOT_INDEX = DataQuery.of("SlotIndex");
@@ -107,7 +107,7 @@ public class Queries {
 
     }
 
-    public static final class Scoreboards {
+    public static final class Scoreboard {
 
         public static final DataQuery DISPLAY_SLOTS = DataQuery.of("DisplaySlots");
         public static final DataQuery OBJECTIVES = DataQuery.of("Objectives");

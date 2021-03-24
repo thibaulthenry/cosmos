@@ -10,7 +10,7 @@ import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.util.Tristate;
 
 @Singleton
-public class CommandBlocksListener extends AbstractPerWorldListener {
+public class CommandBlockListener extends AbstractPerWorldListener {
 
     @Listener(order = Order.FIRST)
     @IsCancelled(Tristate.FALSE)

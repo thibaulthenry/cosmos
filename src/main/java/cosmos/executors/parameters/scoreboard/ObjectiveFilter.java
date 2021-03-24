@@ -25,7 +25,7 @@ class ObjectiveFilter implements ValueParameter<Objective> {
     @Override
     public List<String> complete(final CommandContext context, final String currentInput) {
         return Cosmos.services().world().findKeyOrSource(context)
-                .map(worldKey -> Cosmos.services().scoreboards().objectives(worldKey))
+                .map(worldKey -> Cosmos.services().scoreboard().objectives(worldKey))
                 .orElse(Collections.emptySet())
                 .stream()
                 .filter(this.filter)
@@ -39,7 +39,7 @@ class ObjectiveFilter implements ValueParameter<Objective> {
         final String input = reader.parseString();
 
         return Cosmos.services().world().findKeyOrSource(context)
-                .map(worldKey -> Cosmos.services().scoreboards().scoreboardOrCreate(worldKey))
+                .map(worldKey -> Cosmos.services().scoreboard().scoreboardOrCreate(worldKey))
                 .flatMap(scoreboard -> scoreboard.objective(input));
     }
 

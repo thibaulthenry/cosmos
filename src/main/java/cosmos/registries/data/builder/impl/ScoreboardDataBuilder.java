@@ -32,7 +32,7 @@ public class ScoreboardDataBuilder extends AbstractDataBuilder<ScoreboardData> {
 
     @Override
     protected Optional<ScoreboardData> buildContent(final DataView container) throws InvalidDataException {
-        final List<DisplaySlotData> displaySlotsData = container.getViewList(Queries.Scoreboards.DISPLAY_SLOTS)
+        final List<DisplaySlotData> displaySlotsData = container.getViewList(Queries.Scoreboard.DISPLAY_SLOTS)
                 .map(viewList -> viewList
                         .stream()
                         .map(view -> Sponge.dataManager().deserialize(DisplaySlotData.class, view))
@@ -42,7 +42,7 @@ public class ScoreboardDataBuilder extends AbstractDataBuilder<ScoreboardData> {
                 )
                 .orElse(Collections.emptyList());
 
-        final List<ObjectiveData> objectivesData = container.getViewList(Queries.Scoreboards.OBJECTIVES)
+        final List<ObjectiveData> objectivesData = container.getViewList(Queries.Scoreboard.OBJECTIVES)
                 .map(viewList -> viewList
                         .stream()
                         .map(view -> Sponge.dataManager().deserialize(ObjectiveData.class, view))
@@ -52,7 +52,7 @@ public class ScoreboardDataBuilder extends AbstractDataBuilder<ScoreboardData> {
                 )
                 .orElse(Collections.emptyList());
 
-        final List<ScoreData> scoresData = container.getViewList(Queries.Scoreboards.SCORES)
+        final List<ScoreData> scoresData = container.getViewList(Queries.Scoreboard.SCORES)
                 .map(viewList -> viewList
                         .stream()
                         .map(view -> Sponge.dataManager().deserialize(ScoreData.class, view))
@@ -62,7 +62,7 @@ public class ScoreboardDataBuilder extends AbstractDataBuilder<ScoreboardData> {
                 )
                 .orElse(Collections.emptyList());
 
-        final List<TeamData> teamsData = container.getViewList(Queries.Scoreboards.TEAMS)
+        final List<TeamData> teamsData = container.getViewList(Queries.Scoreboard.TEAMS)
                 .map(viewList -> viewList
                         .stream()
                         .map(view -> Sponge.dataManager().deserialize(TeamData.class, view))

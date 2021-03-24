@@ -61,7 +61,7 @@ public class ScoreHolders implements ValueParameter<List<Component>> {
 
     private Collection<String> worldScoreHolders(final CommandContext context) {
         return Cosmos.services().world().findKeyOrSource(context)
-                .map(worldKey -> Cosmos.services().scoreboards().scoreHolders(worldKey))
+                .map(worldKey -> Cosmos.services().scoreboard().scoreHolders(worldKey))
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(displayName -> {

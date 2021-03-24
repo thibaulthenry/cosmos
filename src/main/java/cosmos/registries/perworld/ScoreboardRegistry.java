@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Singleton
-public class ScoreboardsRegistry implements CosmosRegistry<ResourceKey, Scoreboard> {
+public class ScoreboardRegistry implements CosmosRegistry<ResourceKey, Scoreboard> {
 
     private final Map<ResourceKey, Scoreboard> scoreboardMap = new HashMap<>();
 

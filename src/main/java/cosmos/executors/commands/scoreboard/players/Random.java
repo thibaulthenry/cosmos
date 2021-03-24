@@ -40,8 +40,8 @@ public class Random extends AbstractMultiTargetCommand {
                                 .asSupplier()
                 );
 
-        final int min = super.serviceProvider.scoreboards().extremum(context, CosmosKeys.MIN, true);
-        final int max = super.serviceProvider.scoreboards().extremum(context, CosmosKeys.MAX, false);
+        final int min = super.serviceProvider.scoreboard().extremum(context, CosmosKeys.MIN, true);
+        final int max = super.serviceProvider.scoreboard().extremum(context, CosmosKeys.MAX, false);
 
         if (min >= max) {
             throw super.serviceProvider.message().getError(src, "error.invalid.operation.range-difference", "value", 0);

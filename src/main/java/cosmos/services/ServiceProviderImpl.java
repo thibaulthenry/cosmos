@@ -10,7 +10,7 @@ import cosmos.services.io.FinderService;
 import cosmos.services.listener.ListenerService;
 import cosmos.services.message.MessageService;
 import cosmos.services.pagination.PaginationService;
-import cosmos.services.perworld.ScoreboardsService;
+import cosmos.services.perworld.ScoreboardService;
 import cosmos.services.portal.PortalService;
 import cosmos.services.registry.RegistryProvider;
 import cosmos.services.serializer.SerializerProvider;
@@ -32,7 +32,7 @@ public class ServiceProviderImpl implements ServiceProvider {
     private final PaginationService paginationService;
     private final PortalService portalService;
     private final RegistryProvider registryProvider;
-    private final ScoreboardsService scoreboardsService;
+    private final ScoreboardService scoreboardService;
     private final SerializerProvider serializerProvider;
     private final TemplateService templateService;
     private final TimeService timeService;
@@ -51,7 +51,7 @@ public class ServiceProviderImpl implements ServiceProvider {
         this.paginationService = injector.getInstance(PaginationService.class);
         this.portalService = injector.getInstance(PortalService.class);
         this.registryProvider = injector.getInstance(RegistryProvider.class);
-        this.scoreboardsService = injector.getInstance(ScoreboardsService.class);
+        this.scoreboardService = injector.getInstance(ScoreboardService.class);
         this.serializerProvider = injector.getInstance(SerializerProvider.class);
         this.templateService = injector.getInstance(TemplateService.class);
         this.timeService = injector.getInstance(TimeService.class);
@@ -106,8 +106,8 @@ public class ServiceProviderImpl implements ServiceProvider {
     }
 
     @Override
-    public ScoreboardsService scoreboards() {
-        return this.scoreboardsService;
+    public ScoreboardService scoreboard() {
+        return this.scoreboardService;
     }
 
     @Override

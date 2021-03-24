@@ -4,7 +4,6 @@ import cosmos.constants.Queries;
 import cosmos.registries.data.serializable.CollectorSerializable;
 import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.registry.RegistryTypes;
-import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.scoreboard.objective.Objective;
 
@@ -14,14 +13,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ScoreboardData implements CollectorSerializable<Scoreboard> {
+public class ScoreboardData implements CollectorSerializable<org.spongepowered.api.scoreboard.Scoreboard> {
 
     private final List<DisplaySlotData> displaySlotsData;
     private final List<ObjectiveData> objectivesData;
     private final List<ScoreData> scoresData;
     private final List<TeamData> teamsData;
 
-    public ScoreboardData(final Scoreboard scoreboard) {
+    public ScoreboardData(final org.spongepowered.api.scoreboard.Scoreboard scoreboard) {
         this.displaySlotsData = RegistryTypes.DISPLAY_SLOT.get()
                 .stream()
                 .map(displaySlot -> scoreboard.objective(displaySlot)
@@ -60,7 +59,7 @@ public class ScoreboardData implements CollectorSerializable<Scoreboard> {
     }
 
     @Override
-    public Optional<Scoreboard> collect() {
+    public Optional<org.spongepowered.api.scoreboard.Scoreboard> collect() {
         final List<Objective> objectives = this.objectivesData
                 .stream()
                 .map(ObjectiveData::collect)
@@ -75,7 +74,7 @@ public class ScoreboardData implements CollectorSerializable<Scoreboard> {
                 .map(Optional::get)
                 .collect(Collectors.toList());
 
-        final Scoreboard scoreboard = Scoreboard.builder().objectives(objectives).teams(teams).build();
+        final org.spongepowered.api.scoreboard.Scoreboard scoreboard = org.spongepowered.api.scoreboard.Scoreboard.builder().objectives(objectives).teams(teams).build();
 
         this.displaySlotsData.forEach(data -> data.share(scoreboard));
         this.scoresData.forEach(data -> data.share(scoreboard));
@@ -91,10 +90,10 @@ public class ScoreboardData implements CollectorSerializable<Scoreboard> {
     @Override
     public DataContainer toContainer() {
         return DataContainer.createNew()
-                .set(Queries.Scoreboards.DISPLAY_SLOTS, this.displaySlotsData)
-                .set(Queries.Scoreboards.OBJECTIVES, this.objectivesData)
-                .set(Queries.Scoreboards.SCORES, this.scoresData)
-                .set(Queries.Scoreboards.TEAMS, this.teamsData);
+                .set(Queries.Scoreboard.DISPLAY_SLOTS, this.displaySlotsData)
+                .set(Queries.Scoreboard.OBJECTIVES, this.objectivesData)
+                .set(Queries.Scoreboard.SCORES, this.scoresData)
+                .set(Queries.Scoreboard.TEAMS, this.teamsData);
     }
 
 }

@@ -33,7 +33,7 @@ public class Reset extends AbstractMultiTargetCommand {
 
         final Collection<Objective> objectives = optionalObjective
                 .map(Collections::singleton)
-                .orElse(super.serviceProvider.scoreboards().objectives(worldKey));
+                .orElse(super.serviceProvider.scoreboard().objectives(worldKey));
 
         final Collection<Component> contents = targets
                 .stream()

@@ -16,12 +16,12 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 @Singleton
-public class PortalsSerializer implements Serializer<CosmosPortal> {
+public class PortalSerializer implements Serializer<CosmosPortal> {
 
     private final FinderService finderService;
 
     @Inject
-    public PortalsSerializer(final Injector injector) {
+    public PortalSerializer(final Injector injector) {
         this.finderService = injector.getInstance(FinderService.class);
     }
 

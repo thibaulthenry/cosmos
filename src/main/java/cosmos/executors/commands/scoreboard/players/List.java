@@ -67,7 +67,7 @@ public class List extends AbstractMultiTargetCommand {
     }
 
     private PaginationList getScoreHolders(final Audience src, final ResourceKey worldKey) throws CommandException {
-        final Collection<Component> targets = super.serviceProvider.scoreboards().scoreHolders(worldKey);
+        final Collection<Component> targets = super.serviceProvider.scoreboard().scoreHolders(worldKey);
 
         if (targets.isEmpty()) {
             throw super.serviceProvider.message().getError(src, "error.missing.score-holders", "world", worldKey);
@@ -86,7 +86,7 @@ public class List extends AbstractMultiTargetCommand {
     }
 
     private PaginationList getScores(final Audience src, final ResourceKey worldKey, final Component target, final boolean nested) throws CommandException {
-        final Collection<Score> targetScores = super.serviceProvider.scoreboards()
+        final Collection<Score> targetScores = super.serviceProvider.scoreboard()
                 .scoreboardOrCreate(worldKey)
                 .scores(target);
 
@@ -133,7 +133,7 @@ public class List extends AbstractMultiTargetCommand {
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Collection<Component> targets) throws CommandException {
         final PaginationList paginationList;
 
-        if (!super.serviceProvider.scoreboards().isTargetsParameterFilled(context)) {
+        if (!super.serviceProvider.scoreboard().isTargetsParameterFilled(context)) {
             paginationList = this.getScoreHolders(src, worldKey);
         } else if (targets.size() == 1) {
             paginationList = this.getScores(src, worldKey, Iterables.get(targets, 0), false);
