@@ -4,10 +4,11 @@ import cosmos.constants.Queries;
 import cosmos.registries.data.serializable.ShareableSerializable;
 import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.registry.RegistryTypes;
+import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.displayslot.DisplaySlot;
 import org.spongepowered.api.scoreboard.objective.Objective;
 
-public class DisplaySlotData implements ShareableSerializable<org.spongepowered.api.scoreboard.Scoreboard> {
+public class DisplaySlotData implements ShareableSerializable<Scoreboard> {
 
     private final DisplaySlot displaySlot;
     private final String objective;
@@ -28,7 +29,7 @@ public class DisplaySlotData implements ShareableSerializable<org.spongepowered.
     }
 
     @Override
-    public void share(final org.spongepowered.api.scoreboard.Scoreboard data) {
+    public void share(final Scoreboard data) {
         data.objective(this.objective).ifPresent(objective -> data.updateDisplaySlot(objective, this.displaySlot));
     }
 

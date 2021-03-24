@@ -6,9 +6,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.scoreboard.Score;
+import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.objective.Objective;
 
-public class ScoreData implements ShareableSerializable<org.spongepowered.api.scoreboard.Scoreboard> {
+public class ScoreData implements ShareableSerializable<Scoreboard> {
 
     private final boolean locked;
     private final String objective;
@@ -35,7 +36,7 @@ public class ScoreData implements ShareableSerializable<org.spongepowered.api.sc
     }
 
     @Override
-    public void share(final org.spongepowered.api.scoreboard.Scoreboard data) {
+    public void share(final Scoreboard data) {
         final Component target = GsonComponentSerializer.gson().deserialize(this.targetName);
 
         data.objective(this.objective).ifPresent(objective -> {

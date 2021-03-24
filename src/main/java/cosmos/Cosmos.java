@@ -2,11 +2,7 @@ package cosmos;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import cosmos.constants.CosmosKeys;
-import cosmos.constants.CosmosParameters;
-import cosmos.executors.commands.root.New;
 import cosmos.executors.modules.Root;
-import cosmos.executors.parameters.scoreboard.ScoreHolders;
 import cosmos.registries.portal.CosmosButtonPortal;
 import cosmos.registries.portal.CosmosFramePortal;
 import cosmos.registries.portal.CosmosPressurePlatePortal;
@@ -16,12 +12,9 @@ import cosmos.registries.portal.impl.CosmosFramePortalBuilderImpl;
 import cosmos.registries.portal.impl.CosmosPressurePlatePortalBuilderImpl;
 import cosmos.registries.portal.impl.CosmosSignPortalBuilderImpl;
 import cosmos.services.ServiceProvider;
-import io.leangen.geantyref.TypeToken;
-import net.kyori.adventure.text.Component;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.command.Command;
-import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.RegisterBuilderEvent;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
@@ -30,8 +23,6 @@ import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
 import org.spongepowered.api.event.lifecycle.StartingEngineEvent;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.jvm.Plugin;
-
-import java.util.List;
 
 @Plugin(value = "cosmos")
 public class Cosmos {

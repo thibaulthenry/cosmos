@@ -5,6 +5,7 @@ import cosmos.registries.data.serializable.ShareableSerializable;
 import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.item.inventory.Container;
+import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.crafting.CraftingGridInventory;
 
@@ -80,7 +81,7 @@ public class ExtendedInventoryData implements ShareableSerializable<ServerPlayer
             // TODO https://github.com/SpongePowered/Sponge/issues/3258
         }
 
-        final Optional<org.spongepowered.api.item.inventory.Inventory> optionalCraftingInventory = playerContainer.viewed()
+        final Optional<Inventory> optionalCraftingInventory = playerContainer.viewed()
                 .stream()
                 .filter(inventory -> inventory instanceof CraftingGridInventory)
                 .findFirst();

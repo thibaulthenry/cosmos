@@ -3,15 +3,16 @@ package cosmos.registries.data.serializable.impl;
 import cosmos.constants.Queries;
 import cosmos.registries.data.serializable.ShareableSerializable;
 import org.spongepowered.api.data.persistence.DataContainer;
+import org.spongepowered.api.item.inventory.Inventory;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class InventoryData implements ShareableSerializable<org.spongepowered.api.item.inventory.Inventory> {
+public class InventoryData implements ShareableSerializable<Inventory> {
 
     private final List<InventorySlotData> slots;
 
-    public InventoryData(final org.spongepowered.api.item.inventory.Inventory inventory) {
+    public InventoryData(final Inventory inventory) {
         this.slots = inventory.slots()
                 .stream()
                 .map(InventorySlotData::new)
@@ -32,7 +33,7 @@ public class InventoryData implements ShareableSerializable<org.spongepowered.ap
     }
 
     @Override
-    public void share(final org.spongepowered.api.item.inventory.Inventory data) {
+    public void share(final Inventory data) {
         data.clear();
 
         if (this.slots == null) {

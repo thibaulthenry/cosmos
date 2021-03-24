@@ -5,11 +5,12 @@ import cosmos.constants.Queries;
 import cosmos.registries.data.serializable.ShareableSerializable;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.data.persistence.DataContainer;
+import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.Slot;
 import org.spongepowered.api.registry.RegistryTypes;
 
-public class InventorySlotData implements ShareableSerializable<org.spongepowered.api.item.inventory.Inventory> {
+public class InventorySlotData implements ShareableSerializable<Inventory> {
 
     private final int slotIndex;
     private final ItemStack slotStack;
@@ -34,7 +35,7 @@ public class InventorySlotData implements ShareableSerializable<org.spongepowere
     }
 
     @Override
-    public void share(final org.spongepowered.api.item.inventory.Inventory data) {
+    public void share(final Inventory data) {
         if (this.slotIndex < 0 || this.slotStack == null || this.slotStack.isEmpty()) {
             return;
         }
