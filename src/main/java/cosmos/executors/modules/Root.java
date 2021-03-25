@@ -34,7 +34,7 @@ public class Root extends AbstractModule {
                 injector.getInstance(Information.class),
                 injector.getInstance(List.class),
                 injector.getInstance(Load.class),
-                injector.getInstance(Move.class),
+                //injector.getInstance(Move.class),
                 injector.getInstance(MoveTo.class),
                 injector.getInstance(New.class),
                 injector.getInstance(PerWorld.class),

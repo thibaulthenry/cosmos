@@ -2,6 +2,9 @@ package cosmos;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import cosmos.constants.CosmosKeys;
+import cosmos.executors.commands.root.Move;
+import cosmos.executors.commands.root.New;
 import cosmos.executors.modules.Root;
 import cosmos.registries.portal.CosmosButtonPortal;
 import cosmos.registries.portal.CosmosFramePortal;
@@ -15,6 +18,8 @@ import cosmos.services.ServiceProvider;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.command.Command;
+import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.command.parameter.managed.Flag;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.RegisterBuilderEvent;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
@@ -66,6 +71,18 @@ public class Cosmos {
     @Listener
     public void onRegisterCommandEvent(final RegisterCommandEvent<Command.Parameterized> event) {
         event.register(Cosmos.pluginContainer, this.injector.getInstance(Root.class).parametrized(), "cosmos", "cm");
+
+
+        Command.Parameterized child1 = Command.builder()
+                .executor(injector.getInstance(New.class))
+                .addFlag(Flag.builder().alias("safe-only").build())
+                .addParameter(Parameter.entity().optional().key("entities-moved").build())
+                .addParameter(Parameter.world().key("world").optional().build())
+                .addParameter(Parameter.vector3d().key("x> <y> <z").optional().build())
+                .addParameter(Parameter.vector3d().key("rx> <ry> <rz").optional().build())
+                .build();
+
+        event.register(Cosmos.pluginContainer(), injector.getInstance(Move.class).parametrized(), "move", "mv", "tp");
     }
 
     @Listener
