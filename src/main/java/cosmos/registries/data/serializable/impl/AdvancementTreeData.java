@@ -31,6 +31,10 @@ public class AdvancementTreeData implements ShareableSerializable<ServerPlayer> 
     public AdvancementTreeData(final List<AdvancementProgressData> advancementProgressesData) {
         this.advancementProgressesData = advancementProgressesData;
     }
+    
+    public AdvancementTreeData() {
+        this.advancementProgressesData = Collections.emptyList();
+    }
 
     @Override
     public int contentVersion() {

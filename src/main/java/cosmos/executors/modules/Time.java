@@ -4,7 +4,15 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.constants.CosmosParameters;
-import cosmos.executors.commands.time.*;
+import cosmos.executors.commands.time.Calendar;
+import cosmos.executors.commands.time.Dawn;
+import cosmos.executors.commands.time.Dusk;
+import cosmos.executors.commands.time.IgnorePlayersSleeping;
+import cosmos.executors.commands.time.Midday;
+import cosmos.executors.commands.time.Midnight;
+import cosmos.executors.commands.time.RealTime;
+import cosmos.executors.commands.time.Set;
+import cosmos.executors.commands.time.Tomorrow;
 
 @Singleton
 class Time extends AbstractModule {

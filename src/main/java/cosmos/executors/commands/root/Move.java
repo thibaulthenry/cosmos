@@ -19,8 +19,11 @@ import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.api.world.server.ServerWorld;
 import org.spongepowered.math.vector.Vector3d;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.*;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -29,7 +32,7 @@ public class Move extends AbstractCommand {
     public Move() {
         super(
                 CosmosParameters.ENTITIES.get().key(CosmosKeys.ENTITIES).optional().build(),
-                CosmosParameters.WORLD_ONLINE.get().build(), // TODO optional
+                CosmosParameters.WORLD_ONLINE.get().optional().build(),
                 Parameter.vector3d().key(CosmosKeys.X_Y_Z).optional().build(),
                 Parameter.vector3d().key(CosmosKeys.PITCH_YAW_ROLL).optional().build()
         );
@@ -49,7 +52,8 @@ public class Move extends AbstractCommand {
     protected void run(final Audience src, final CommandContext context) throws CommandException {
         final ResourceKey worldKey = super.serviceProvider.world().keyOrSource(context);
 
-        final ServerWorld world = Sponge.server().worldManager().world(worldKey)
+        final ServerWorld world = super.serviceProvider.world().findKeyOrSource(context)
+                .flatMap(Sponge.server().worldManager()::world)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.missing.world", "world", worldKey));
 
         final Optional<List<Entity>> optionalEntities = context.one(CosmosKeys.ENTITIES);

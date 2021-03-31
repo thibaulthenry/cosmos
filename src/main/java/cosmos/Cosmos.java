@@ -71,18 +71,6 @@ public class Cosmos {
     @Listener
     public void onRegisterCommandEvent(final RegisterCommandEvent<Command.Parameterized> event) {
         event.register(Cosmos.pluginContainer, this.injector.getInstance(Root.class).parametrized(), "cosmos", "cm");
-
-
-        Command.Parameterized child1 = Command.builder()
-                .executor(injector.getInstance(New.class))
-                .addFlag(Flag.builder().alias("safe-only").build())
-                .addParameter(Parameter.entity().optional().key("entities-moved").build())
-                .addParameter(Parameter.world().key("world").optional().build())
-                .addParameter(Parameter.vector3d().key("x> <y> <z").optional().build())
-                .addParameter(Parameter.vector3d().key("rx> <ry> <rz").optional().build())
-                .build();
-
-        event.register(Cosmos.pluginContainer(), injector.getInstance(Move.class).parametrized(), "move", "mv", "tp");
     }
 
     @Listener
@@ -94,6 +82,7 @@ public class Cosmos {
 
     @Listener
     public void onStartingServerEvent(final StartingEngineEvent<Server> event) {
+        Cosmos.serviceProvider.registry().group().registerAll();
         Cosmos.serviceProvider.registry().listener().registerAll();
 
         if (!Cosmos.serviceProvider.finder().initDirectories()) {

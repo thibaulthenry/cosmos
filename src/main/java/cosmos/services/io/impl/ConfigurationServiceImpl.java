@@ -15,9 +15,7 @@ import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 @Singleton
 public class ConfigurationServiceImpl implements ConfigurationService {
@@ -114,22 +112,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             return true;
         }
 
-        return node.removeChild(element) && this.save(node);
+        return node.removeChild(element) && this.save();
     }
 
     @Override
     public boolean save() {
-        return this.save(this.rootNode);
-    }
-
-    @Override
-    public boolean save(final ConfigurationNode node) {
-        if (!this.loader.canSave() || !node.isMap()) {
+        if (!this.loader.canSave() || !this.rootNode.isMap()) {
             return false;
         }
 
         try {
-            this.loader.save(node);
+            this.loader.save(this.rootNode);
 
             return true;
         } catch (final Exception e) {
@@ -139,29 +132,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public boolean saveValue(final Object value, final Object startSaveAt, Object... paths) {
-        final int parentIndex = IntStream.range(0, paths.length)
-                .filter(index -> startSaveAt.equals(paths[index]))
-                .findFirst()
-                .orElse(-1);
-
-        if (parentIndex < 0) {
-            return false;
-        }
-
-        return this.findNode(Arrays.copyOfRange(paths, 0, parentIndex))
-                .map(node -> this.saveValue(value, node, paths))
-                .orElse(false);
-    }
-
-    @Override
-    public boolean saveValue(final Object value, final ConfigurationNode savedNode, final Object... paths) {
-        return this.findNode(paths).map(node -> this.saveValue(value, savedNode, node)).orElse(false);
-    }
-
-    @Override
-    public boolean saveValue(final Object value, final ConfigurationNode savedNode, final ConfigurationNode valueNode) {
-        return this.setValue(value, valueNode) && this.save(savedNode);
+    public boolean saveValue(final Object value, final Object... paths) {
+        return this.setValue(value, paths) && this.save();
     }
 
     private boolean setValue(final Object value, final ConfigurationNode node) {

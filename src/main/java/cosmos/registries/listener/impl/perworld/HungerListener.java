@@ -4,44 +4,106 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.constants.Directories;
+import cosmos.constants.PerWorldFeatures;
 import cosmos.registries.data.serializable.impl.HungerData;
 import cosmos.registries.listener.ScheduledAsyncSaveListener;
+import cosmos.registries.perworld.GroupRegistry;
 import cosmos.registries.serializer.impl.HungerSerializer;
 import cosmos.services.io.FinderService;
+import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.entity.ChangeEntityWorldEvent;
+import org.spongepowered.api.event.entity.HarvestEntityEvent;
+import org.spongepowered.api.event.entity.living.player.RespawnPlayerEvent;
+import org.spongepowered.api.event.filter.IsCancelled;
 import org.spongepowered.api.event.filter.cause.First;
+import org.spongepowered.api.event.lifecycle.StoppingEngineEvent;
+import org.spongepowered.api.event.network.ServerSideConnectionEvent;
+import org.spongepowered.api.util.Tristate;
+import org.spongepowered.api.util.Tuple;
+
+import java.util.Collections;
+import java.util.Optional;
 
 @Singleton
 public class HungerListener extends AbstractPerWorldListener implements ScheduledAsyncSaveListener {
 
     private final FinderService finderService;
-    private final HungerSerializer hungerSerializer;
+    private final GroupRegistry groupRegistry;
+    private final HungerSerializer serializer;
 
     @Inject
     public HungerListener(final Injector injector) {
         this.finderService = injector.getInstance(FinderService.class);
-        this.hungerSerializer = injector.getInstance(HungerSerializer.class);
+        this.groupRegistry = injector.getInstance(GroupRegistry.class);
+        this.serializer = injector.getInstance(HungerSerializer.class);
+    }
+
+    @Listener
+    public void onDisconnectServerSideConnectionEvent(final ServerSideConnectionEvent.Disconnect event, @First final ServerPlayer player) {
+        this.save(player.world().key(), player);
+    }
+
+    @Listener(order = Order.POST)
+    @IsCancelled(Tristate.FALSE)
+    public void onHarvestEntityEvent(final HarvestEntityEvent event, @First final ServerPlayer player) {
+        this.save(player.world().key(), player, new HungerData());
+    }
+
+    @Listener
+    public void onJoinServerSideConnectionEvent(final ServerSideConnectionEvent.Join event, @First final ServerPlayer player) {
+        this.share(player.world().key(), player);
     }
 
     @Listener
     public void onPostChangeEntityWorldEvent(final ChangeEntityWorldEvent.Post event, @First final ServerPlayer player) {
-        this.finderService.findCosmosPath(Directories.HUNGERS, event.originalWorld(), player)
-                .ifPresent(path -> this.hungerSerializer.serialize(path, new HungerData(player)));
+        final ResourceKey originalWorldKey = event.originalWorld().key();
+        final ResourceKey destinationWorldKey = event.destinationWorld().key();
+        this.save(originalWorldKey, player);
 
-        this.finderService.findCosmosPath(Directories.HUNGERS, event.destinationWorld(), player)
-                .flatMap(this.hungerSerializer::deserialize)
-                .ifPresent(data -> data.share(player));
+        if (!this.groupRegistry.find(Tuple.of(PerWorldFeatures.HUNGER, originalWorldKey)).map(group -> group.contains(destinationWorldKey)).orElse(false)) {
+            this.share(destinationWorldKey, player);
+        }
+    }
+
+    @Listener
+    public void onRespawnPlayerEvent(final RespawnPlayerEvent.Post event, @First final ServerPlayer player) {
+        this.share(event.destinationWorld().key(), event.entity());
+    }
+
+    @Listener
+    public void onStoppingServerEvent(final StoppingEngineEvent<Server> event) {
+        this.save();
     }
 
     @Override
     public void save() {
-        Sponge.server().onlinePlayers().forEach(player ->
-                this.finderService.findCosmosPath(Directories.HUNGERS, player)
-                        .ifPresent(path -> this.hungerSerializer.serialize(path, new HungerData(player)))
-        );
+        Sponge.server().onlinePlayers().forEach(player -> this.save(player.world().key(), player));
+    }
+
+    private void save(final ResourceKey worldKey, final ServerPlayer player) {
+        this.save(worldKey, player, new HungerData(player));
+    }
+
+    private void save(final ResourceKey worldKey, final ServerPlayer player, final HungerData data) {
+        this.groupRegistry.find(Tuple.of(PerWorldFeatures.HUNGER, worldKey))
+                .orElse(Collections.singleton(worldKey))
+                .stream()
+                .map(key -> this.finderService.findCosmosPath(Directories.HUNGERS, key, player))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .forEach(path -> this.serializer.serialize(path, data));
+    }
+
+    private void share(final ResourceKey worldKey, final ServerPlayer player) {
+        this.finderService.findCosmosPath(Directories.HUNGERS, worldKey, player)
+                .flatMap(this.serializer::deserialize)
+                .orElse(new HungerData())
+                .share(player);
     }
 
 }

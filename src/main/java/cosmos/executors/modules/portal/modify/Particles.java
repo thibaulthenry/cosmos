@@ -4,7 +4,18 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.constants.CosmosParameters;
-import cosmos.executors.commands.portal.modify.particles.*;
+import cosmos.executors.commands.portal.modify.particles.Block;
+import cosmos.executors.commands.portal.modify.particles.Color;
+import cosmos.executors.commands.portal.modify.particles.Direction;
+import cosmos.executors.commands.portal.modify.particles.Fluctuation;
+import cosmos.executors.commands.portal.modify.particles.Item;
+import cosmos.executors.commands.portal.modify.particles.Offset;
+import cosmos.executors.commands.portal.modify.particles.PotionType;
+import cosmos.executors.commands.portal.modify.particles.Quantity;
+import cosmos.executors.commands.portal.modify.particles.SpawnInterval;
+import cosmos.executors.commands.portal.modify.particles.Type;
+import cosmos.executors.commands.portal.modify.particles.Velocity;
+import cosmos.executors.commands.portal.modify.particles.ViewDistance;
 import cosmos.executors.modules.AbstractModule;
 
 @Singleton

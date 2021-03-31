@@ -124,7 +124,7 @@ public class RegistryProviderImpl implements RegistryProvider {
     }
 
     @Override
-    public ScoreboardRegistry scoreboards() {
+    public ScoreboardRegistry scoreboard() {
         return this.scoreboardRegistry;
     }
 

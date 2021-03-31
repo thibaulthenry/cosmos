@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.constants.Directories;
-import cosmos.registries.data.serializable.impl.ExtendedInventoryData;
+import cosmos.constants.PerWorldFeatures;
 import cosmos.registries.data.serializable.impl.HealthData;
 import cosmos.registries.listener.ScheduledAsyncSaveListener;
 import cosmos.registries.perworld.GroupRegistry;
@@ -13,7 +13,6 @@ import cosmos.services.io.FinderService;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -29,20 +28,19 @@ import org.spongepowered.api.util.Tuple;
 
 import java.util.Collections;
 import java.util.Optional;
-import java.util.Set;
 
 @Singleton
 public class HealthListener extends AbstractPerWorldListener implements ScheduledAsyncSaveListener {
 
     private final FinderService finderService;
     private final GroupRegistry groupRegistry;
-    private final HealthSerializer healthSerializer;
+    private final HealthSerializer serializer;
 
     @Inject
     public HealthListener(final Injector injector) {
         this.finderService = injector.getInstance(FinderService.class);
         this.groupRegistry = injector.getInstance(GroupRegistry.class);
-        this.healthSerializer = injector.getInstance(HealthSerializer.class);
+        this.serializer = injector.getInstance(HealthSerializer.class);
     }
 
     @Listener
@@ -64,15 +62,12 @@ public class HealthListener extends AbstractPerWorldListener implements Schedule
     @Listener
     public void onPostChangeEntityWorldEvent(final ChangeEntityWorldEvent.Post event, @First final ServerPlayer player) {
         final ResourceKey originalWorldKey = event.originalWorld().key();
-        this.save(originalWorldKey, player);
-        final Optional<Set<ResourceKey>> optionalGroup = this.groupRegistry.find(Tuple.of(Directories.HEALTHS, originalWorldKey));
         final ResourceKey destinationWorldKey = event.destinationWorld().key();
+        this.save(originalWorldKey, player);
 
-        if (optionalGroup.map(group -> group.contains(destinationWorldKey)).orElse(false)) {
-            return;
+        if (!this.groupRegistry.find(Tuple.of(PerWorldFeatures.HEALTH, originalWorldKey)).map(group -> group.contains(destinationWorldKey)).orElse(false)) {
+            this.share(destinationWorldKey, player);
         }
-
-        this.share(destinationWorldKey, player);
     }
 
     @Listener
@@ -95,18 +90,18 @@ public class HealthListener extends AbstractPerWorldListener implements Schedule
     }
 
     private void save(final ResourceKey worldKey, final ServerPlayer player, final HealthData data) {
-        this.groupRegistry.find(Tuple.of("health", worldKey))
+        this.groupRegistry.find(Tuple.of(PerWorldFeatures.HEALTH, worldKey))
                 .orElse(Collections.singleton(worldKey))
                 .stream()
                 .map(key -> this.finderService.findCosmosPath(Directories.HEALTHS, key, player))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .forEach(path -> this.healthSerializer.serialize(path, data));
+                .forEach(path -> this.serializer.serialize(path, data));
     }
 
     private void share(final ResourceKey worldKey, final ServerPlayer player) {
         this.finderService.findCosmosPath(Directories.HEALTHS, worldKey, player)
-                .flatMap(this.healthSerializer::deserialize)
+                .flatMap(this.serializer::deserialize)
                 .orElse(new HealthData())
                 .share(player);
     }

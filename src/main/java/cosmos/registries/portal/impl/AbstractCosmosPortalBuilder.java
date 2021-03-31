@@ -21,7 +21,11 @@ import org.spongepowered.api.util.Ticks;
 import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.math.vector.Vector3d;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 abstract class AbstractCosmosPortalBuilder<T extends CosmosPortal> extends AbstractDataBuilder<T> implements CosmosPortal.Builder<T> {

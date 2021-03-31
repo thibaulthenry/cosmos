@@ -13,7 +13,7 @@ public class Directories {
     public static final String HUNGERS = "hungers";
     public static final String INVENTORIES = "inventories";
     public static final String PORTALS = "portals";
-    public static final String SCOREBOARDS = "scoreboards";
+    public static final String SCOREBOARDS = "scoreboard";
 
     public static final class Files {
 

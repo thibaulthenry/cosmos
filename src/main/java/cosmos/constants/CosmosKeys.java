@@ -69,7 +69,7 @@ public class CosmosKeys {
     public static final Parameter.Key<Objective> OBJECTIVE = Parameter.key("objective", Objective.class);
     public static final Parameter.Key<Operands> OPERAND = Parameter.key("operand", Operands.class);
     public static final Parameter.Key<ParticleType> PARTICLE_TYPE = Parameter.key("particle-type", ParticleType.class);
-    public static final Parameter.Key<Listener> PER_WORLD_FEATURE = Parameter.key("feature", Listener.class);
+    public static final Parameter.Key<PerWorldFeatures> PER_WORLD_FEATURE = Parameter.key("feature", PerWorldFeatures.class);
     public static final Parameter.Key<Double> PITCH = Parameter.key("pitch", Double.class);
     public static final Parameter.Key<Vector3d> PITCH_YAW_ROLL = Parameter.key("pitch> <yaw> <roll", Vector3d.class);
     public static final Parameter.Key<CosmosPortal> PORTAL_COSMOS = Parameter.key("portal", CosmosPortal.class);

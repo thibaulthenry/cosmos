@@ -6,8 +6,9 @@ import com.google.inject.Singleton;
 import cosmos.Cosmos;
 import cosmos.constants.CosmosKeys;
 import cosmos.constants.Directories;
-import cosmos.registries.CosmosRegistryEntry;
+import cosmos.constants.PerWorldFeatures;
 import cosmos.registries.data.serializable.impl.ScoreboardData;
+import cosmos.registries.perworld.GroupRegistry;
 import cosmos.registries.perworld.ScoreboardRegistry;
 import cosmos.registries.serializer.impl.ScoreboardSerializer;
 import cosmos.services.io.FinderService;
@@ -28,15 +29,23 @@ import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.scoreboard.objective.Objective;
 import org.spongepowered.api.util.Identifiable;
+import org.spongepowered.api.util.Tuple;
 import org.spongepowered.api.world.server.ServerWorld;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
 public class ScoreboardServiceImpl implements ScoreboardService {
 
     private final FinderService finderService;
+    private final GroupRegistry groupRegistry;
     private final MessageService messageService;
     private final ScoreboardRegistry scoreboardRegistry;
     private final ScoreboardSerializer scoreboardSerializer;
@@ -44,6 +53,7 @@ public class ScoreboardServiceImpl implements ScoreboardService {
     @Inject
     public ScoreboardServiceImpl(final Injector injector) {
         this.finderService = injector.getInstance(FinderService.class);
+        this.groupRegistry = injector.getInstance(GroupRegistry.class);
         this.messageService = injector.getInstance(MessageService.class);
         this.scoreboardRegistry = injector.getInstance(ScoreboardRegistry.class);
         this.scoreboardSerializer = injector.getInstance(ScoreboardSerializer.class);
@@ -82,22 +92,34 @@ public class ScoreboardServiceImpl implements ScoreboardService {
         return this.scoreboardOrCreate(worldKey).objectives();
     }
 
+    private void registerSafely(final Scoreboard scoreboard, final Set<ResourceKey> group) {
+        group.forEach(key -> {
+            if (!this.scoreboardRegistry.register(key, scoreboard).isPresent()) {
+                Cosmos.logger().error("An unexpected error occurred while registering a new scoreboard for world " + key);
+            }
+        });
+    }
+
     @Override
     public Scoreboard scoreboardOrCreate(final ResourceKey worldKey) {
+        final Set<ResourceKey> group = this.groupRegistry.find(Tuple.of(PerWorldFeatures.SCOREBOARD, worldKey))
+                .orElse(Collections.singleton(worldKey));
+
         return this.scoreboardRegistry.find(worldKey)
                 .map(Optional::of)
                 .orElse(
                         this.finderService.findCosmosPath(Directories.SCOREBOARDS, worldKey)
                                 .flatMap(this.scoreboardSerializer::deserialize)
                                 .flatMap(ScoreboardData::collect)
+                                .map(scoreboard -> {
+                                    this.registerSafely(scoreboard, group);
+
+                                    return scoreboard;
+                                })
                 )
-                .flatMap(scoreboard -> this.scoreboardRegistry.register(worldKey, scoreboard).map(CosmosRegistryEntry::value))
                 .orElseGet(() -> {
                     final Scoreboard scoreboard = Scoreboard.builder().build();
-
-                    if (!this.scoreboardRegistry.register(worldKey, scoreboard).isPresent()) {
-                        Cosmos.logger().error("An unexpected error occurred while registering a new scoreboard for world " + worldKey);
-                    }
+                    this.registerSafely(scoreboard, group);
 
                     return scoreboard;
                 });

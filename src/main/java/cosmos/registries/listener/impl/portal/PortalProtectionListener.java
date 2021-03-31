@@ -81,7 +81,8 @@ public class PortalProtectionListener extends AbstractListener {
                                 .isPresent()
                 );
 
-        event.setCancelled(affectPortal);
+        event.filterTickets(ticket -> affectPortal);
+        event.filterTargetPositions(position -> affectPortal);
     }
 
 }

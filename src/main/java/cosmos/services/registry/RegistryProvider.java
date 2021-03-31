@@ -48,7 +48,7 @@ public interface RegistryProvider extends CosmosService {
 
     RealTimeRegistry realTime();
 
-    ScoreboardRegistry scoreboards();
+    ScoreboardRegistry scoreboard();
 
     SelectorTypeRegistry selector();
 

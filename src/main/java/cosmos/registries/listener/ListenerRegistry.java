@@ -104,7 +104,7 @@ public class ListenerRegistry implements CosmosRegistry<Class<? extends Listener
 
                     final String listenerNode = this.listenerService.format(entry.key());
 
-                    return this.configurationService.findNode(ConfigurationNodes.PER_WORLD, listenerNode)
+                    return this.configurationService.findNode(ConfigurationNodes.PER_WORLD, listenerNode, ConfigurationNodes.PER_WORLD_STATE)
                             .map(this.configurationService::isEnabled)
                             .orElse(false);
                 })
@@ -123,7 +123,7 @@ public class ListenerRegistry implements CosmosRegistry<Class<? extends Listener
 
     @Override
     public Optional<CosmosRegistryEntry<Class<? extends Listener>, Listener>> unregister(final Class<? extends Listener> key) {
-        return Optional.ofNullable(this.listenerMap.remove(key))
+        return this.find(key)
                 .map(v -> {
                     if (!v.registeredToSponge()) {
                         return CosmosRegistryEntry.of(key, v);

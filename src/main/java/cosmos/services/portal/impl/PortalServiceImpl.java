@@ -30,11 +30,14 @@ import org.spongepowered.api.entity.FallingBlock;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.util.Ticks;
-import org.spongepowered.api.world.BlockChangeFlags;
 import org.spongepowered.api.world.portal.PortalType;
 import org.spongepowered.api.world.server.ServerLocation;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 @Singleton
 public class PortalServiceImpl implements PortalService {

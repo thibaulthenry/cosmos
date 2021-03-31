@@ -4,7 +4,17 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.constants.CosmosParameters;
-import cosmos.executors.commands.properties.*;
+import cosmos.executors.commands.properties.Difficulty;
+import cosmos.executors.commands.properties.EnableCommandBlocks;
+import cosmos.executors.commands.properties.EnableFeatures;
+import cosmos.executors.commands.properties.GameMode;
+import cosmos.executors.commands.properties.GameRule;
+import cosmos.executors.commands.properties.Hardcore;
+import cosmos.executors.commands.properties.KeepSpawnLoaded;
+import cosmos.executors.commands.properties.LoadOnStartup;
+import cosmos.executors.commands.properties.Pvp;
+import cosmos.executors.commands.properties.SpawnPosition;
+import cosmos.executors.commands.properties.ViewDistance;
 
 @Singleton
 class Properties extends AbstractModule {

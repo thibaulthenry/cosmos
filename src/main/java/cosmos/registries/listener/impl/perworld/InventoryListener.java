@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.constants.Directories;
+import cosmos.constants.PerWorldFeatures;
 import cosmos.registries.data.serializable.impl.ExtendedInventoryData;
 import cosmos.registries.listener.ScheduledAsyncSaveListener;
 import cosmos.registries.perworld.GroupRegistry;
@@ -27,20 +28,19 @@ import org.spongepowered.api.util.Tuple;
 
 import java.util.Collections;
 import java.util.Optional;
-import java.util.Set;
 
 @Singleton
 public class InventoryListener extends AbstractPerWorldListener implements ScheduledAsyncSaveListener {
 
     private final FinderService finderService;
     private final GroupRegistry groupRegistry;
-    private final InventorySerializer inventorySerializer;
+    private final InventorySerializer serializer;
 
     @Inject
     public InventoryListener(final Injector injector) {
         this.finderService = injector.getInstance(FinderService.class);
         this.groupRegistry = injector.getInstance(GroupRegistry.class);
-        this.inventorySerializer = injector.getInstance(InventorySerializer.class);
+        this.serializer = injector.getInstance(InventorySerializer.class);
     }
 
     @Listener
@@ -62,15 +62,12 @@ public class InventoryListener extends AbstractPerWorldListener implements Sched
     @Listener
     public void onPostChangeEntityWorldEvent(final ChangeEntityWorldEvent.Post event, @First final ServerPlayer player) {
         final ResourceKey originalWorldKey = event.originalWorld().key();
-        this.save(originalWorldKey, player);
-        final Optional<Set<ResourceKey>> optionalGroup = this.groupRegistry.find(Tuple.of("inventories", originalWorldKey));
         final ResourceKey destinationWorldKey = event.destinationWorld().key();
+        this.save(originalWorldKey, player);
 
-        if (optionalGroup.map(group -> group.contains(destinationWorldKey)).orElse(false)) {
-            return;
+        if (!this.groupRegistry.find(Tuple.of(PerWorldFeatures.INVENTORY, originalWorldKey)).map(group -> group.contains(destinationWorldKey)).orElse(false)) {
+            this.share(destinationWorldKey, player);
         }
-
-        this.share(destinationWorldKey, player);
     }
 
     @Listener
@@ -89,18 +86,18 @@ public class InventoryListener extends AbstractPerWorldListener implements Sched
     }
 
     private void save(final ResourceKey worldKey, final ServerPlayer player) {
-        this.groupRegistry.find(Tuple.of("inventories", worldKey))
+        this.groupRegistry.find(Tuple.of(PerWorldFeatures.INVENTORY, worldKey))
                 .orElse(Collections.singleton(worldKey))
                 .stream()
                 .map(key -> this.finderService.findCosmosPath(Directories.INVENTORIES, key, player))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .forEach(path -> this.inventorySerializer.serialize(path, new ExtendedInventoryData(player)));
+                .forEach(path -> this.serializer.serialize(path, new ExtendedInventoryData(player)));
     }
 
     private void share(final ResourceKey worldKey, final ServerPlayer player) {
         this.finderService.findCosmosPath(Directories.INVENTORIES, worldKey, player)
-                .flatMap(this.inventorySerializer::deserialize)
+                .flatMap(this.serializer::deserialize)
                 .orElse(new ExtendedInventoryData())
                 .share(player);
     }
