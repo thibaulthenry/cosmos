@@ -107,4 +107,8 @@ public class AbstractModule extends AbstractCommand {
         );
     }
 
+    protected final void addRequiredArgument(CommandElement argument) {
+        moduleSpecBuilder.arguments(Arguments.limitCompleteElement(argument));
+    }
+
 }

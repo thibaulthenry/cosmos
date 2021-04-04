@@ -2,10 +2,10 @@ package cosmos.listeners;
 
 import com.google.common.base.Functions;
 import cosmos.Cosmos;
-import cosmos.listeners.perworld.AbstractPerWorldListener;
 import cosmos.listeners.perworld.AdvancementsListener;
 import cosmos.listeners.perworld.ChatsListener;
 import cosmos.listeners.perworld.CommandBlocksListener;
+import cosmos.listeners.perworld.EnderChestsListener;
 import cosmos.listeners.perworld.ExperiencesListener;
 import cosmos.listeners.perworld.GameModesListener;
 import cosmos.listeners.perworld.HealthsListener;
@@ -16,13 +16,16 @@ import cosmos.listeners.perworld.TabListsListener;
 import cosmos.listeners.time.IgnorePlayersSleepingListener;
 import cosmos.listeners.time.RealTimeListener;
 import cosmos.statics.config.Config;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -43,6 +46,7 @@ public class ListenerRegister {
                 new AdvancementsListener(),
                 new ChatsListener(),
                 new CommandBlocksListener(),
+                new EnderChestsListener(),
                 new ExperiencesListener(),
                 new GameModesListener(),
                 new HealthsListener(),
@@ -71,8 +75,8 @@ public class ListenerRegister {
 
         AbstractListener listener = listenerMap.get(listenerClass);
 
-        if (listener instanceof AbstractPerWorldListener) {
-            ((AbstractPerWorldListener) listener).onStart();
+        if (listener instanceof ToggleListener) {
+            ((ToggleListener) listener).onStart();
         }
 
         listener.setRegistered(true);
@@ -90,8 +94,8 @@ public class ListenerRegister {
         listener.setRegistered(false);
         Sponge.getEventManager().unregisterListeners(listener);
 
-        if (listener instanceof AbstractPerWorldListener) {
-            ((AbstractPerWorldListener) listener).onStop();
+        if (listener instanceof ToggleListener) {
+            ((ToggleListener) listener).onStop();
         }
 
         cancelScheduledSaveTaskIfEmpty();
@@ -120,7 +124,7 @@ public class ListenerRegister {
                 .anyMatch(AbstractListener::isRegistered);
     }
 
-    private static void applyScheduledSave() {
+    public static void applyScheduledSave() {
         listenerMap.values().forEach(listener -> {
             if (!listener.isRegistered()) {
                 return;
@@ -130,6 +134,38 @@ public class ListenerRegister {
                 ((ScheduledAsyncSaveListener) listener).save();
             } else if (listener instanceof ScheduledSaveListener) {
                 Task.builder().execute(((ScheduledSaveListener) listener)::save).submit(Cosmos.instance);
+            }
+        });
+    }
+
+    public static void triggerToggleListener(Class<? extends AbstractListener> listenerClass, boolean state) {
+        triggerToggleListener(listenerClass, state, null);
+    }
+
+    public static void triggerToggleListener(Class<? extends AbstractListener> listenerClass, boolean state, @Nullable Player player) {
+        Optional.ofNullable(listenerMap.get(listenerClass)).ifPresent(listener -> {
+            if (!listener.isRegistered()) {
+                return;
+            }
+
+            if (!(listener instanceof ToggleListener)) {
+                return;
+            }
+
+            ToggleListener toggleListener = ((ToggleListener) listener);
+
+            if (player == null) {
+                if (state) {
+                    toggleListener.onStart();
+                } else {
+                    toggleListener.onStop();
+                }
+            } else {
+                if (state) {
+                    toggleListener.onStart(player);
+                } else {
+                    toggleListener.onStop(player);
+                }
             }
         });
     }

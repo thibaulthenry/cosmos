@@ -42,7 +42,7 @@ public class Get extends AbstractMultiTargetCommand {
                         addSuccess();
                         return Outputs.GET_SCORE.asText(target, objective, score.getScore());
                     })
-                    .orElse(Outputs.MISSING_TARGET_SCORE.asText(target.toPlain(), objective));
+                    .orElse(Outputs.MISSING_TARGET_SCORE.asText(target, objective));
         }).collect(Collectors.toList());
 
         Text title = Outputs.SHOW_SCORE_OPERATIONS.asText(contents.size(), "retrieval(s)", worldName);

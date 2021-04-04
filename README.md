@@ -20,6 +20,7 @@ Something wrong? Feel free to use the help command that will provides you a bunc
 - Load / unload world
 - Enable / disable world
 - List all worlds including exported ones *(i.e non-imported world folders)*
+- Modify many world properties
 - Delete world including exported ones
 - Rename world
 - Duplicate world
@@ -40,6 +41,7 @@ Something wrong? Feel free to use the help command that will provides you a bunc
 - Advancements
 - Chats
 - Command blocks
+- Ender chests  
 - Experiences
 - Game modes
 - Healths
@@ -47,6 +49,8 @@ Something wrong? Feel free to use the help command that will provides you a bunc
 - Inventories
 - Scoreboards
 - Tab lists
+
+For each per-world feature, you can build groups of worlds that act as one.
 
 **[More information](https://github.com/thibaulthenry/cosmos/wiki/Configuration "Configuration section on Cosmos Wiki") about per world features**
 

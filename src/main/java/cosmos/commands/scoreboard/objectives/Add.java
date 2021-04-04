@@ -65,7 +65,7 @@ public class Add extends AbstractScoreboardCommand {
 
         Objective objective = objectiveBuilder.build();
 
-        scoreboard.addObjective(objectiveBuilder.build());
+        scoreboard.addObjective(objective);
 
         src.sendMessage(Outputs.ADD_OBJECTIVE.asText(objective, worldName));
     }

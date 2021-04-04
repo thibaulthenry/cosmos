@@ -2,6 +2,7 @@ package cosmos.statics.arguments;
 
 import cosmos.constants.ArgKeys;
 import cosmos.models.BackupArchetype;
+import cosmos.statics.arguments.implementations.WorldDistinctElement;
 import cosmos.statics.finders.FinderBackup;
 import cosmos.statics.finders.FinderWorldName;
 import org.spongepowered.api.command.args.CommandElement;
@@ -19,6 +20,10 @@ public class WorldNameArguments {
                 FinderWorldName::getLoadedWorldNames,
                 false
         );
+    }
+
+    public static CommandElement distinctChoices(ArgKeys argName) {
+        return new WorldDistinctElement(argName.t);
     }
 
     public static CommandElement unloadedChoices(ArgKeys argName, boolean includeDisabled) {

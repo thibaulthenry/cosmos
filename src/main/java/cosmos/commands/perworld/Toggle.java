@@ -1,4 +1,4 @@
-package cosmos.commands.root;
+package cosmos.commands.perworld;
 
 import cosmos.commands.AbstractCommand;
 import cosmos.constants.ArgKeys;
@@ -15,11 +15,10 @@ import org.spongepowered.api.command.args.GenericArguments;
 
 import java.util.Optional;
 
-public class PerWorld extends AbstractCommand {
+public class Toggle extends AbstractCommand {
 
-    public PerWorld() {
+    public Toggle() {
         super(
-                Arguments.perWorldChoices(ArgKeys.PER_WORLD_COMMAND),
                 GenericArguments.optionalWeak(
                         GenericArguments.bool(ArgKeys.STATE.t)
                 ),

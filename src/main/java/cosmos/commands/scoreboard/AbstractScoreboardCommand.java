@@ -2,6 +2,7 @@ package cosmos.commands.scoreboard;
 
 import cosmos.commands.properties.AbstractPropertyCommand;
 import cosmos.constants.Outputs;
+import cosmos.constants.PerWorldCommands;
 import cosmos.listeners.ListenerRegister;
 import cosmos.listeners.perworld.ScoreboardsListener;
 import org.spongepowered.api.command.CommandException;
@@ -26,7 +27,7 @@ public abstract class AbstractScoreboardCommand extends AbstractPropertyCommand 
     @Override
     protected void runWithProperties(CommandSource src, CommandContext args, WorldProperties worldProperties) throws CommandException {
         if (!ListenerRegister.isListenerRegistered(ScoreboardsListener.class)) {
-            throw Outputs.PER_WORLD_SCOREBOARDS_DISABLED.asException();
+            throw Outputs.PER_WORLD_DISABLED.asException(PerWorldCommands.SCOREBOARDS.getName());
         }
 
         scoreboard = ScoreboardsListener.getScoreboard(worldProperties.getUniqueId());

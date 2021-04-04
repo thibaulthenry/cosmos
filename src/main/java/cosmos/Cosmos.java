@@ -1,5 +1,6 @@
 package cosmos;
 
+import cosmos.commands.perworld.GroupRegister;
 import cosmos.commands.time.IgnorePlayersSleeping;
 import cosmos.commands.time.RealTime;
 import cosmos.listeners.ListenerRegister;
@@ -24,7 +25,7 @@ import java.util.Arrays;
 @Plugin(
         id = "cosmos",
         name = "Cosmos",
-        version = "1.0.1-7.3.0",
+        version = "1.1.0-7.3.0",
         description = "Cosmos | Worlds management | Per-world management",
         url = "https://ore.spongepowered.org/Kazz96/Cosmos",
         authors = "Kazz"
@@ -62,6 +63,7 @@ public class Cosmos {
 
     @Listener
     public void onGameStarting(GameStartingServerEvent event) {
+        GroupRegister.registerAll();
         IgnorePlayersSleeping.enableSleepIgnoranceFromConfig();
         RealTime.enableRealTimeFromConfig();
     }

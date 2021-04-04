@@ -18,7 +18,6 @@ class Time extends AbstractModule {
     Time() {
         super("Time module commands");
 
-
         addArgument(
                 Arguments.limitCompleteElement(
                         WorldPropertiesArguments.allChoices(ArgKeys.WORLD, true)
