@@ -33,7 +33,7 @@ abstract class AbstractScoreboardChoiceElement<T> extends EnhancedCommandElement
 
     @Override
     public void parse(CommandSource source, CommandArgs args, CommandContext context) throws ArgumentParseException {
-        setSuppliersSingleton(source, context);
+        setSuppliers(source, context);
         super.parse(source, args, context);
     }
 
@@ -55,7 +55,7 @@ abstract class AbstractScoreboardChoiceElement<T> extends EnhancedCommandElement
 
     @Override
     public List<String> complete(CommandSource src, CommandArgs args, CommandContext context) {
-        setSuppliersSingleton(src, context);
+        setSuppliers(src, context);
 
         String prefix = args.nextIfPresent().orElse("");
         return keySupplier.get()
@@ -63,14 +63,12 @@ abstract class AbstractScoreboardChoiceElement<T> extends EnhancedCommandElement
                 .filter(new StartsWithPredicate(prefix)).collect(Collectors.toList());
     }
 
-    private void setSuppliersSingleton(CommandSource source, CommandContext context) {
-        if (keySupplier == null || valueSupplier == null) {
-            FinderWorldProperties.getGivenWorldPropertiesOrElse(source, context, worldKey)
-                    .ifPresent(worldProperties -> {
-                        setKeySupplier(worldProperties);
-                        setValueSupplier(worldProperties);
-                    });
-        }
+    private void setSuppliers(CommandSource source, CommandContext context) {
+        FinderWorldProperties.getGivenWorldPropertiesOrElse(source, context, worldKey)
+                .ifPresent(worldProperties -> {
+                    setKeySupplier(worldProperties);
+                    setValueSupplier(worldProperties);
+                });
     }
 
     abstract void setKeySupplier(WorldProperties worldProperties);

@@ -6,6 +6,8 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.persistence.DataFormats;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +15,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
@@ -25,6 +26,7 @@ import java.util.stream.Stream;
 public class FinderFile {
 
     public static final String ADVANCEMENTS_DIRECTORY_NAME = "advancements";
+    public static final String ENDER_CHESTS_DIRECTORY_NAME = "enderchests";
     public static final String EXPERIENCES_DIRECTORY_NAME = "experiences";
     public static final String HEALTHS_DIRECTORY_NAME = "healths";
     public static final String HUNGERS_DIRECTORY_NAME = "hungers";
@@ -38,6 +40,7 @@ public class FinderFile {
         return Stream.of(
                 ADVANCEMENTS_DIRECTORY_NAME,
                 BACKUPS_DIRECTORY_NAME,
+                ENDER_CHESTS_DIRECTORY_NAME,
                 EXPERIENCES_DIRECTORY_NAME,
                 HEALTHS_DIRECTORY_NAME,
                 HUNGERS_DIRECTORY_NAME,
@@ -65,7 +68,9 @@ public class FinderFile {
     private static Optional<Path> getPath(String first, String... subs) {
         try {
             return Optional.of(Paths.get(first, subs));
-        } catch (InvalidPathException ignored) {
+        } catch (Exception ignored) {
+            String subsPath = subs.length > 0 ? "\\" + String.join("\\", subs) : "";
+            Cosmos.sendConsole(Text.of(TextColors.GOLD, "Unable to access file or directory: .\\" + first + subsPath));
             return Optional.empty();
         }
     }
@@ -83,9 +88,9 @@ public class FinderFile {
     }
 
     static Optional<Path> getBackupPath(BackupArchetype backupArchetype, boolean useTag) {
-        String directory = backupArchetype.getWorldName() + "_" +
-                backupArchetype.getCreationDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + "_" +
-                backupArchetype.getWorldUUID();
+        String directory = backupArchetype.getWorldName() + "_"
+                + backupArchetype.getCreationDateTime().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + "_"
+                + backupArchetype.getWorldUUID();
 
         Optional<String> optionalTag = backupArchetype.getTag();
 

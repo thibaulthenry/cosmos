@@ -11,6 +11,7 @@ import cosmos.commands.properties.KeepSpawnLoaded;
 import cosmos.commands.properties.LoadOnStartup;
 import cosmos.commands.properties.Pvp;
 import cosmos.commands.properties.Rules;
+import cosmos.commands.properties.Seed;
 import cosmos.commands.properties.SpawnPosition;
 import cosmos.constants.ArgKeys;
 import cosmos.statics.arguments.Arguments;
@@ -20,7 +21,6 @@ class Properties extends AbstractModule {
 
     Properties() {
         super("Properties module commands");
-
 
         addArgument(
                 Arguments.limitCompleteElement(
@@ -38,6 +38,7 @@ class Properties extends AbstractModule {
         addChild(new LoadOnStartup());
         addChild(new Pvp());
         addChild(new Rules());
+        addChild(new Seed());
         addChild(new SpawnPosition());
     }
 }

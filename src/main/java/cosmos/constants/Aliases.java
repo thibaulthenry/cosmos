@@ -22,6 +22,7 @@ public enum Aliases {
 
     BORDER_INFORMATION(Information.class, "info"),
     BORDER_TRANSPOSE(Transpose.class, "move"),
+    PER_WORLD_INFORMATION(cosmos.commands.perworld.Information.class, "info"),
     PROPERTIES_RULES(Rules.class, "gamerules"),
     ROOT_DELETE(Delete.class, "remove"),
     ROOT_DUPLICATE(Duplicate.class, "copy"),

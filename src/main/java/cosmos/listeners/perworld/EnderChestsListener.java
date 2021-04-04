@@ -2,13 +2,11 @@ package cosmos.listeners.perworld;
 
 import cosmos.commands.perworld.Bypass;
 import cosmos.commands.perworld.GroupRegister;
-import cosmos.constants.DefaultData;
 import cosmos.constants.PerWorldCommands;
 import cosmos.listeners.ScheduledAsyncSaveListener;
 import cosmos.statics.finders.FinderFile;
-import cosmos.statics.serializers.HealthsSerializer;
+import cosmos.statics.serializers.EnderChestsSerializer;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.manipulator.mutable.entity.HealthData;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -27,11 +25,11 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Optional;
 
-public class HealthsListener extends AbstractPerWorldListener implements ScheduledAsyncSaveListener {
+public class EnderChestsListener extends AbstractPerWorldListener implements ScheduledAsyncSaveListener {
 
-    private static Optional<Path> getHealthsPath(World world, Player player) {
+    private static Optional<Path> getEnderChestsPath(World world, Player player) {
         String fileName = world.getUniqueId() + "_" + player.getUniqueId() + ".dat";
-        return FinderFile.getCosmosPath(FinderFile.HEALTHS_DIRECTORY_NAME, fileName);
+        return FinderFile.getCosmosPath(FinderFile.ENDER_CHESTS_DIRECTORY_NAME, fileName);
     }
 
     @Listener
@@ -42,9 +40,7 @@ public class HealthsListener extends AbstractPerWorldListener implements Schedul
     @Listener(order = Order.POST)
     @IsCancelled(Tristate.FALSE)
     public void onDeathDestructEntityEventEvent(DestructEntityEvent.Death event, @First Player player) {
-        Sponge.getDataManager()
-                .deserialize(HealthData.class, DefaultData.DEFAULT_HEALTH_DATA)
-                .ifPresent(healthData -> save(player.getWorld(), player, healthData));
+        save(player.getWorld(), player);
     }
 
     @Listener
@@ -64,7 +60,7 @@ public class HealthsListener extends AbstractPerWorldListener implements Schedul
 
         save(from, player);
 
-        if (!GroupRegister.find(Tuple.of(PerWorldCommands.HEALTHS, from.getName())).map(group -> group.contains(to.getName())).orElse(false)) {
+        if (!GroupRegister.find(Tuple.of(PerWorldCommands.ENDER_CHESTS, from.getName())).map(group -> group.contains(to.getName())).orElse(false)) {
             share(to, player);
         }
     }
@@ -88,31 +84,26 @@ public class HealthsListener extends AbstractPerWorldListener implements Schedul
     }
 
     private void save(World world, Player player) {
-        save(world, player, player.getHealthData());
-    }
-
-    private void save(World world, Player player, HealthData healthData) {
-        if (Bypass.doesBypass(PerWorldCommands.HEALTHS, player)) {
+        if (Bypass.doesBypass(PerWorldCommands.ENDER_CHESTS, player)) {
             return;
         }
 
-        GroupRegister.find(Tuple.of(PerWorldCommands.HEALTHS, world.getName()))
+        GroupRegister.find(Tuple.of(PerWorldCommands.ENDER_CHESTS, world.getName()))
                 .orElse(Collections.singleton(world.getName()))
                 .stream()
-                .map(worldName -> Sponge.getServer().getWorld(worldName).flatMap(w -> getHealthsPath(w, player)))
+                .map(worldName -> Sponge.getServer().getWorld(worldName).flatMap(w -> getEnderChestsPath(w, player)))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .forEach(path -> HealthsSerializer.serialize(path, healthData));
+                .forEach(path -> EnderChestsSerializer.serialize(path, player));
     }
 
     private void share(World world, Player player) {
-        if (Bypass.doesBypass(PerWorldCommands.HEALTHS, player)) {
+        if (Bypass.doesBypass(PerWorldCommands.ENDER_CHESTS, player)) {
             return;
         }
 
-        getHealthsPath(world, player)
-                .flatMap(HealthsSerializer::deserialize)
-                .ifPresent(player::offer);
+        player.getEnderChestInventory().clear();
+        getEnderChestsPath(world, player).ifPresent(path -> EnderChestsSerializer.deserialize(path, player));
     }
 
 }

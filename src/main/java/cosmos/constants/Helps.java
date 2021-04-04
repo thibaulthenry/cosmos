@@ -18,6 +18,9 @@ import cosmos.commands.border.Size;
 import cosmos.commands.border.Transpose;
 import cosmos.commands.border.WarningDistance;
 import cosmos.commands.border.WarningTime;
+import cosmos.commands.perworld.Bypass;
+import cosmos.commands.perworld.Group;
+import cosmos.commands.perworld.Toggle;
 import cosmos.commands.properties.AllowCommandBlocks;
 import cosmos.commands.properties.Difficulty;
 import cosmos.commands.properties.EnableStructures;
@@ -29,6 +32,7 @@ import cosmos.commands.properties.KeepSpawnLoaded;
 import cosmos.commands.properties.LoadOnStartup;
 import cosmos.commands.properties.Pvp;
 import cosmos.commands.properties.Rules;
+import cosmos.commands.properties.Seed;
 import cosmos.commands.properties.SpawnPosition;
 import cosmos.commands.root.Delete;
 import cosmos.commands.root.Disable;
@@ -40,7 +44,6 @@ import cosmos.commands.root.Load;
 import cosmos.commands.root.Move;
 import cosmos.commands.root.MoveTo;
 import cosmos.commands.root.New;
-import cosmos.commands.root.PerWorld;
 import cosmos.commands.root.Position;
 import cosmos.commands.root.Rename;
 import cosmos.commands.root.Unload;
@@ -301,14 +304,38 @@ public enum Helps {
             Pair.of(Outputs.EX_NEW_4.asText("MyNewWorld", "nether", "overworld", "skylands"), Outputs.DESC_NEW_4.asText("MyNewWorld", "overworld", "skylands", "nether"))
     ),
 
-    PER_WORLD(
-            PerWorld.class,
-            Outputs.USAGE_PER_WORLD.asText(ArgKeys.PER_WORLD_COMMAND, ArgKeys.STATE, "--" + ArgKeys.SAVE_CONFIG.t.toPlain()),
-            Pair.of(Outputs.EX_PER_WORLD_0.asText(PerWorldCommands.COMMAND_BLOCKS, true), Outputs.DESC_PER_WORLD_0.asText(PerWorldCommands.COMMAND_BLOCKS, true)),
-            Pair.of(Outputs.EX_PER_WORLD_1.asText(PerWorldCommands.TAB_LISTS, 0), Outputs.DESC_PER_WORLD_1.asText(PerWorldCommands.TAB_LISTS, 0)),
-            Pair.of(Outputs.EX_PER_WORLD_2.asText(PerWorldCommands.SCOREBOARDS, "yes",  "--" + ArgKeys.SAVE_CONFIG.t.toPlain()), Outputs.DESC_PER_WORLD_2.asText(PerWorldCommands.SCOREBOARDS, "yes")),
-            Pair.of(Outputs.EX_PER_WORLD_3.asText(PerWorldCommands.INVENTORIES), Outputs.DESC_PER_WORLD_3.asText(PerWorldCommands.INVENTORIES)),
-            Pair.of(Outputs.EX_PER_WORLD_4.asText(PerWorldCommands.INVENTORIES,  "--" + ArgKeys.SAVE_CONFIG.t.toPlain()), Outputs.DESC_PER_WORLD_4.asText(PerWorldCommands.INVENTORIES))
+    PER_WORLD_BYPASS(
+            Bypass.class,
+            Outputs.USAGE_PER_WORLD_BYPASS.asText(ArgKeys.PER_WORLD_COMMAND, ArgKeys.PLAYER, ArgKeys.STATE),
+            Pair.of(Outputs.EX_PER_WORLD_BYPASS_0.asText(PerWorldCommands.ADVANCEMENTS), Outputs.DESC_PER_WORLD_BYPASS_0.asText(PerWorldCommands.ADVANCEMENTS)),
+            Pair.of(Outputs.EX_PER_WORLD_BYPASS_1.asText(PerWorldCommands.TAB_LISTS, false), Outputs.DESC_PER_WORLD_BYPASS_1.asText(PerWorldCommands.TAB_LISTS)),
+            Pair.of(Outputs.EX_PER_WORLD_BYPASS_2.asText(PerWorldCommands.SCOREBOARDS, "Someone", true), Outputs.DESC_PER_WORLD_BYPASS_2.asText("Someone", PerWorldCommands.SCOREBOARDS)),
+            Pair.of(Outputs.EX_PER_WORLD_BYPASS_3.asText(PerWorldCommands.INVENTORIES, "Someone", false), Outputs.DESC_PER_WORLD_BYPASS_3.asText("Someone", PerWorldCommands.INVENTORIES))
+    ),
+
+    PER_WORLD_GROUP(
+            Group.class,
+            Outputs.USAGE_PER_WORLD_GROUP.asText(ArgKeys.PER_WORLD_COMMAND, ArgKeys.WORLD),
+            Pair.of(Outputs.EX_PER_WORLD_GROUP_0.asText(PerWorldCommands.INVENTORIES, "world", "DIM-1", "DIM1"), Outputs.DESC_PER_WORLD_GROUP_0.asText("world", "DIM-1", "DIM1", PerWorldCommands.INVENTORIES)),
+            Pair.of(Outputs.EX_PER_WORLD_GROUP_1.asText(PerWorldCommands.ENDER_CHESTS, "world"), Outputs.DESC_PER_WORLD_GROUP_1.asText("world", PerWorldCommands.ENDER_CHESTS)),
+            Pair.of(Outputs.EX_PER_WORLD_GROUP_2.asText(PerWorldCommands.SCOREBOARDS, "creative", "creative_end"), Outputs.DESC_PER_WORLD_GROUP_2.asText("creative", "creative_end", PerWorldCommands.SCOREBOARDS))
+    ),
+
+    PER_WORLD_INFORMATION(
+            cosmos.commands.perworld.Information.class,
+            Outputs.USAGE_PER_WORLD_INFORMATION.asText(ArgKeys.PER_WORLD_COMMAND),
+            Pair.of(Outputs.EX_PER_WORLD_INFORMATION_0.asText(PerWorldCommands.CHATS), Outputs.DESC_PER_WORLD_INFORMATION_0.asText(PerWorldCommands.CHATS)),
+            Pair.of(Outputs.EX_PER_WORLD_INFORMATION_1.asText(PerWorldCommands.TAB_LISTS), Outputs.DESC_PER_WORLD_INFORMATION_1.asText(PerWorldCommands.TAB_LISTS))
+    ),
+
+    PER_WORLD_TOGGLE(
+            Toggle.class,
+            Outputs.USAGE_PER_WORLD_TOGGLE.asText(ArgKeys.PER_WORLD_COMMAND, ArgKeys.STATE, "--" + ArgKeys.SAVE_CONFIG.t.toPlain()),
+            Pair.of(Outputs.EX_PER_WORLD_TOGGLE_0.asText(PerWorldCommands.COMMAND_BLOCKS, true), Outputs.DESC_PER_WORLD_TOGGLE_0.asText(PerWorldCommands.COMMAND_BLOCKS, true)),
+            Pair.of(Outputs.EX_PER_WORLD_TOGGLE_1.asText(PerWorldCommands.TAB_LISTS, 0), Outputs.DESC_PER_WORLD_TOGGLE_1.asText(PerWorldCommands.TAB_LISTS, 0)),
+            Pair.of(Outputs.EX_PER_WORLD_TOGGLE_2.asText(PerWorldCommands.SCOREBOARDS, "yes", "--" + ArgKeys.SAVE_CONFIG.t.toPlain()), Outputs.DESC_PER_WORLD_TOGGLE_2.asText(PerWorldCommands.SCOREBOARDS, "yes")),
+            Pair.of(Outputs.EX_PER_WORLD_TOGGLE_3.asText(PerWorldCommands.INVENTORIES), Outputs.DESC_PER_WORLD_TOGGLE_3.asText(PerWorldCommands.INVENTORIES)),
+            Pair.of(Outputs.EX_PER_WORLD_TOGGLE_4.asText(PerWorldCommands.INVENTORIES, "--" + ArgKeys.SAVE_CONFIG.t.toPlain()), Outputs.DESC_PER_WORLD_TOGGLE_4.asText(PerWorldCommands.INVENTORIES))
     ),
 
     POSITION(
@@ -416,6 +443,15 @@ public enum Helps {
             Pair.of(Outputs.EX_PROPERTIES_RULES_1.asText(DefaultGameRules.RANDOM_TICK_SPEED, 15), Outputs.DESC_PROPERTIES_RULES_1.asText(DefaultGameRules.RANDOM_TICK_SPEED, 15)),
             Pair.of(Outputs.EX_PROPERTIES_RULES_2.asText("MyWorld", DefaultGameRules.DO_WEATHER_CYCLE), Outputs.DESC_PROPERTIES_RULES_2.asText(DefaultGameRules.DO_WEATHER_CYCLE, "MyWorld")),
             Pair.of(Outputs.EX_PROPERTIES_RULES_3.asText(DefaultGameRules.DO_FIRE_TICK), Outputs.DESC_PROPERTIES_RULES_3.asText(DefaultGameRules.DO_FIRE_TICK))
+    ),
+
+    PROPERTIES_SEED(
+            Seed.class,
+            Outputs.USAGE_PROPERTIES_SEED.asText(ArgKeys.WORLD, ArgKeys.SEED),
+            Pair.of(Outputs.EX_PROPERTIES_SEED_0.asText("MyWorld", -7244175196467643454L), Outputs.DESC_PROPERTIES_SEED_0.asText("MyWorld", -7244175196467643454L)),
+            Pair.of(Outputs.EX_PROPERTIES_SEED_1.asText(4258581462117660292L), Outputs.DESC_PROPERTIES_SEED_1.asText(4258581462117660292L)),
+            Pair.of(Outputs.EX_PROPERTIES_SEED_2.asText("MyWorld"), Outputs.DESC_PROPERTIES_SEED_2.asText("MyWorld")),
+            Pair.of(Outputs.EX_PROPERTIES_SEED_3.asText(), Outputs.DESC_PROPERTIES_SEED_3.asText())
     ),
 
     PROPERTIES_SPAWN_POSITION(

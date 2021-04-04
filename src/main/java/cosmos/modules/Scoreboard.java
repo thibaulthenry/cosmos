@@ -12,7 +12,6 @@ class Scoreboard extends AbstractModule {
     Scoreboard() {
         super("Scoreboard module commands", true);
 
-
         addArgument(
                 Arguments.limitCompleteElement(
                         WorldPropertiesArguments.allChoices(ArgKeys.WORLD, true)

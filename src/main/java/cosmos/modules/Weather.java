@@ -13,7 +13,6 @@ class Weather extends AbstractModule {
     Weather() {
         super("Weather module commands");
 
-
         addArgument(
                 Arguments.limitCompleteElement(
                         WorldPropertiesArguments.allChoices(ArgKeys.WORLD, true)

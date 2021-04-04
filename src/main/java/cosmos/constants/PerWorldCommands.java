@@ -4,6 +4,7 @@ import cosmos.listeners.AbstractListener;
 import cosmos.listeners.perworld.AdvancementsListener;
 import cosmos.listeners.perworld.ChatsListener;
 import cosmos.listeners.perworld.CommandBlocksListener;
+import cosmos.listeners.perworld.EnderChestsListener;
 import cosmos.listeners.perworld.ExperiencesListener;
 import cosmos.listeners.perworld.GameModesListener;
 import cosmos.listeners.perworld.HealthsListener;
@@ -17,6 +18,7 @@ public enum PerWorldCommands {
     ADVANCEMENTS(AdvancementsListener.class),
     CHATS(ChatsListener.class),
     COMMAND_BLOCKS(CommandBlocksListener.class),
+    ENDER_CHESTS(EnderChestsListener.class),
     EXPERIENCES(ExperiencesListener.class),
     GAME_MODES(GameModesListener.class),
     HEALTHS(HealthsListener.class),

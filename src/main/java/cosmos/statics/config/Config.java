@@ -17,9 +17,11 @@ import org.spongepowered.api.world.storage.WorldProperties;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @SuppressWarnings("StaticVariableUsedBeforeInitialization")
 public class Config {
@@ -45,6 +47,14 @@ public class Config {
                 .map(configurationNode -> configurationNode
                         .getNode(StringUtils.removeStart(listenerClass.getPackage().getName(), "cosmos.listeners.").toLowerCase())
                         .getNode(StringUtils.removeEnd(listenerClass.getSimpleName(), "Listener").toLowerCase())
+                );
+    }
+
+    public static Optional<ConfigurationNode> getGroupNode(Class<? extends AbstractListener> listenerClass) {
+        return getRootNode()
+                .map(configurationNode -> configurationNode
+                        .getNode(StringUtils.removeStart(listenerClass.getPackage().getName(), "cosmos.listeners.").toLowerCase())
+                        .getNode(StringUtils.removeEnd(listenerClass.getSimpleName(), "Listener").toLowerCase() + "-groups")
                 );
     }
 
@@ -89,6 +99,15 @@ public class Config {
         return getListenerNode(listenerClass)
                 .map(listenerNode -> {
                     listenerNode.setValue(state);
+                    return save();
+                })
+                .orElse(false);
+    }
+
+    public static boolean saveGroup(Class<? extends AbstractListener> listenerClass, Collection<Set<String>> group) {
+        return getGroupNode(listenerClass)
+                .map(listenerNode -> {
+                    listenerNode.setValue(group);
                     return save();
                 })
                 .orElse(false);
@@ -185,7 +204,7 @@ public class Config {
 
             return true;
         } catch (IOException ignored) {
-            Cosmos.sendConsole(Text.of(TextColors.RED, "An error occurred while loading configuration file"));
+            Cosmos.sendConsole(Text.of(TextColors.RED, "An error occurred while saving configuration file"));
             return false;
         }
     }
