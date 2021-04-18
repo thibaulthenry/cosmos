@@ -5,10 +5,12 @@ import cosmos.commands.perworld.GroupRegister;
 import cosmos.constants.DefaultData;
 import cosmos.constants.PerWorldCommands;
 import cosmos.listeners.ScheduledAsyncSaveListener;
+import cosmos.statics.config.Config;
 import cosmos.statics.finders.FinderFile;
 import cosmos.statics.serializers.HealthsSerializer;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.manipulator.mutable.entity.HealthData;
+import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -22,15 +24,24 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.util.Tuple;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.storage.WorldProperties;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class HealthsListener extends AbstractPerWorldListener implements ScheduledAsyncSaveListener {
 
     private static Optional<Path> getHealthsPath(World world, Player player) {
-        String fileName = world.getUniqueId() + "_" + player.getUniqueId() + ".dat";
+        return getHealthsPath(world, player.getUniqueId());
+    }
+
+    private static Optional<Path> getHealthsPath(World world, UUID playerUUID) {
+        String fileName = world.getUniqueId() + "_" + playerUUID + ".dat";
         return FinderFile.getCosmosPath(FinderFile.HEALTHS_DIRECTORY_NAME, fileName);
     }
 
@@ -113,6 +124,47 @@ public class HealthsListener extends AbstractPerWorldListener implements Schedul
         getHealthsPath(world, player)
                 .flatMap(HealthsSerializer::deserialize)
                 .ifPresent(player::offer);
+    }
+
+    public void onStart() {
+        if (!Config.isPersistedOnActivation(PerWorldCommands.HEALTHS.getListenerClass())) {
+            return;
+        }
+
+        Optional<WorldProperties> optionalDefaultWorld = Sponge.getServer().getDefaultWorld();
+
+        if (!optionalDefaultWorld.isPresent()) {
+            return;
+        }
+
+        WorldProperties worldProperties = optionalDefaultWorld.get();
+
+        FinderFile.streamPlayerData().forEach(playerDataPath -> {
+            Optional<UUID> optionalPlayerUUID = extractUUIDFromFile(playerDataPath, DataFormats.NBT);
+
+            if (!optionalPlayerUUID.isPresent()) {
+                return;
+            }
+
+            UUID playerUUID = optionalPlayerUUID.get();
+
+            List<Path> savedPath = GroupRegister.find(Tuple.of(PerWorldCommands.HEALTHS, worldProperties.getWorldName()))
+                    .orElse(Collections.singleton(worldProperties.getWorldName()))
+                    .stream()
+                    .map(worldName -> Sponge.getServer().getWorld(worldName).flatMap(w -> getHealthsPath(w, playerUUID)))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .filter(path -> {
+                        try {
+                            return !Files.exists(path);
+                        } catch (Exception ignored) {
+                            return false;
+                        }
+                    })
+                    .collect(Collectors.toList());
+
+            HealthsSerializer.serializePlayerData(savedPath, playerDataPath);
+        });
     }
 
 }

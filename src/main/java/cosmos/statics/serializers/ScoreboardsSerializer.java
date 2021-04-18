@@ -150,7 +150,7 @@ public class ScoreboardsSerializer {
     }
 
     public static Optional<Scoreboard> deserialize(Path path) {
-        DataContainer dataContainer = FinderFile.readFromFile(path).orElse(DataContainer.createNew());
+        DataContainer dataContainer = FinderFile.readFromNbtFile(path).orElse(DataContainer.createNew());
 
         if (dataContainer.isEmpty()) {
             return Optional.empty();
