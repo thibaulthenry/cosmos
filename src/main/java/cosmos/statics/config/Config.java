@@ -58,6 +58,14 @@ public class Config {
                 );
     }
 
+    private static Optional<ConfigurationNode> getPersistOnActivationNode(Class<? extends AbstractListener> listenerClass) {
+        return getRootNode()
+                .map(configurationNode -> configurationNode
+                        .getNode(StringUtils.removeStart(listenerClass.getPackage().getName(), "cosmos.listeners.").toLowerCase())
+                        .getNode(StringUtils.removeEnd(listenerClass.getSimpleName(), "Listener").toLowerCase() + "-persist-on-activation")
+                );
+    }
+
     private static Optional<ConfigurationNode> getTimeNode(String key) {
         return getRootNode()
                 .map(configurationNode -> configurationNode
@@ -115,6 +123,12 @@ public class Config {
 
     public static boolean isListenerEnabled(Class<? extends AbstractListener> listenerClass) {
         return getListenerNode(listenerClass)
+                .map(ConfigurationNode::getBoolean)
+                .orElse(false);
+    }
+
+    public static boolean isPersistedOnActivation(Class<? extends AbstractListener> listenerClass) {
+        return getPersistOnActivationNode(listenerClass)
                 .map(ConfigurationNode::getBoolean)
                 .orElse(false);
     }

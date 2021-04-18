@@ -4,8 +4,10 @@ import cosmos.commands.perworld.Bypass;
 import cosmos.commands.perworld.GroupRegister;
 import cosmos.constants.PerWorldCommands;
 import cosmos.listeners.ScheduledSaveListener;
+import cosmos.statics.config.Config;
 import cosmos.statics.finders.FinderFile;
 import cosmos.statics.serializers.AdvancementsSerializer;
+import cosmos.statics.serializers.HungersSerializer;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -20,15 +22,23 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.util.Tuple;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.storage.WorldProperties;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.UUID;
 
 public class AdvancementsListener extends AbstractPerWorldListener implements ScheduledSaveListener {
 
     private static Optional<Path> getAdvancementsPath(World world, Player player) {
         String fileName = world.getUniqueId() + "_" + player.getUniqueId() + ".dat";
+        return FinderFile.getCosmosPath(FinderFile.ADVANCEMENTS_DIRECTORY_NAME, fileName);
+    }
+
+    private static Optional<Path> getAdvancementsPath(UUID worldUUID, UUID playerUUID) {
+        String fileName = worldUUID + "_" + playerUUID + ".dat";
         return FinderFile.getCosmosPath(FinderFile.ADVANCEMENTS_DIRECTORY_NAME, fileName);
     }
 
@@ -103,6 +113,56 @@ public class AdvancementsListener extends AbstractPerWorldListener implements Sc
         }
 
         getAdvancementsPath(world, player).ifPresent(path -> AdvancementsSerializer.deserialize(path, player));
+    }
+
+    public void onStart() {
+        if (!Config.isPersistedOnActivation(PerWorldCommands.ADVANCEMENTS.getListenerClass())) {
+            return;
+        }
+
+        Optional<UUID> optionalDefaultWorldUUID = Sponge.getServer().getDefaultWorld().map(WorldProperties::getUniqueId);
+
+        if (!optionalDefaultWorldUUID.isPresent()) {
+            return;
+        }
+
+        UUID defaultWorldUUID = optionalDefaultWorldUUID.get();
+
+        FinderFile.streamAdvancements().forEach(playerDataPath -> {
+            UUID playerUUID;
+
+            try {
+                String fileName = playerDataPath.getFileName().toString();
+
+                if (!fileName.endsWith(".json")) {
+                    return;
+                }
+
+                int index = fileName.lastIndexOf('.');
+
+                if (index == -1) {
+                    playerUUID = UUID.fromString(fileName);
+                } else {
+                    playerUUID = UUID.fromString(fileName.substring(0, index));
+                }
+            } catch (Exception ignored) {
+                return;
+            }
+
+            Optional<Path> optionalPath = getAdvancementsPath(defaultWorldUUID, playerUUID);
+
+            if (!optionalPath.isPresent()) {
+                return;
+            }
+
+            Path path = optionalPath.get();
+
+            if (Files.exists(path)) {
+                return;
+            }
+
+            AdvancementsSerializer.serializePlayerData(path, playerDataPath);
+        });
     }
 
 }
