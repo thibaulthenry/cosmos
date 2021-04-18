@@ -25,7 +25,7 @@ import java.util.Arrays;
 @Plugin(
         id = "cosmos",
         name = "Cosmos",
-        version = "1.1.0-7.3.0",
+        version = "1.2.0-7.3.0",
         description = "Cosmos | Worlds management | Per-world management",
         url = "https://ore.spongepowered.org/Kazz96/Cosmos",
         authors = "Kazz"

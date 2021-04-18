@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,6 +45,62 @@ public class AdvancementsSerializer {
         }
 
         FinderFile.writeToFile(dataContainer, path);
+    }
+
+    public static void serializePlayerData(List<Path> savedPath, Path inputPath) {
+        if (savedPath.isEmpty()) {
+            return;
+        }
+
+        DataContainer dataContainer = DataContainer.createNew();
+
+        DateTimeFormatter vanillaDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss Z");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(ZoneId.systemDefault());
+
+        FinderFile.readFromJsonFile(inputPath)
+                .flatMap(playerDataContainer -> playerDataContainer.getMap(DataQuery.of()))
+                .ifPresent(vanillaAdvancementMap -> vanillaAdvancementMap.forEach((key, value) -> {
+                    if (!(key instanceof String && value instanceof Map)) {
+                        return;
+                    }
+
+                    Map<String, Map<String, String>> criterionMap = new HashMap<>();
+                    Object vanillaCriterionDataMap = ((Map<?, ?>) value).get("criteria");
+
+                    if (!(vanillaCriterionDataMap instanceof Map)) {
+                        return;
+                    }
+
+                    ((Map<?, ?>) vanillaCriterionDataMap).forEach((criterionDataKey, criterionDataValue) -> {
+                        if (!(criterionDataKey instanceof String && criterionDataValue instanceof String)) {
+                            return;
+                        }
+
+                        Map<String, String> criterionDataMap = new HashMap<>();
+                        String criterionName = (String) criterionDataKey;
+
+                        try {
+                            String dateValue = dateTimeFormatter.format(vanillaDateTimeFormatter.parse((String) criterionDataValue));
+                            criterionDataMap.put("Date", dateValue);
+                            criterionDataMap.put("Name", criterionName);
+                        } catch (Exception ignored) {
+                        }
+
+                        if (!criterionDataMap.isEmpty()) {
+                            criterionMap.put(criterionName, criterionDataMap);
+                        }
+                    });
+
+                    String advancementName = ((String) key).replaceAll("/", "_");
+
+                    if (!criterionMap.isEmpty()) {
+                        dataContainer.set(DataQuery.of(advancementName), criterionMap);
+                    }
+                }));
+
+        if (!dataContainer.isEmpty()) {
+            savedPath.forEach(path -> FinderFile.writeToFile(dataContainer, path));
+        }
     }
 
     private static void serializeAdvancement(DataContainer dataContainer, AdvancementProgress advancementProgress) {
@@ -112,7 +169,7 @@ public class AdvancementsSerializer {
     }
 
     public static void deserialize(Path path, Player player) {
-        DataContainer dataContainer = FinderFile.readFromFile(path).orElse(DataContainer.createNew());
+        DataContainer dataContainer = FinderFile.readFromNbtFile(path).orElse(DataContainer.createNew());
 
         String announceAdvancements = player.getWorld()
                 .getProperties()

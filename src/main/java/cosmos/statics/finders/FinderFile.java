@@ -5,6 +5,7 @@ import cosmos.models.BackupArchetype;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataView;
+import org.spongepowered.api.data.persistence.DataFormat;
 import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +24,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.stream.Stream;
+import java.util.zip.GZIPInputStream;
 
 public class FinderFile {
 
@@ -103,6 +106,16 @@ public class FinderFile {
 
     static Optional<Path> getDefaultWorldPath() {
         return getPath(Sponge.getGame().getGameDirectory().toString(), Sponge.getServer().getDefaultWorldName());
+    }
+
+    static Optional<Path> getDefaultWorldPath(String... subs) {
+        Optional<Path> optionalDefaultWorldPath = getDefaultWorldPath();
+
+        if (!optionalDefaultWorldPath.isPresent()) {
+            return Optional.empty();
+        }
+
+        return getPath(optionalDefaultWorldPath.get().toString(), subs);
     }
 
     public static Optional<Path> getWorldPath(String worldName) {
@@ -191,6 +204,27 @@ public class FinderFile {
         });
     }
 
+    public static Stream<Path> streamDirectory(final Path path) {
+        try {
+            return Files.walk(path).filter(sub -> sub.toFile().isFile());
+        } catch (final Exception e) {
+            Cosmos.sendConsole("An error occurred while walking through directory " + path, e);
+            return Stream.empty();
+        }
+    }
+
+    public static Stream<Path> streamAdvancements() {
+        return getDefaultWorldPath("advancements")
+                .map(FinderFile::streamDirectory)
+                .orElse(Stream.empty());
+    }
+
+    public static Stream<Path> streamPlayerData() {
+        return getDefaultWorldPath("playerdata")
+                .map(FinderFile::streamDirectory)
+                .orElse(Stream.empty());
+    }
+
     public static void writeToFile(DataView dataContainer, Path path) {
         if (dataContainer == null || dataContainer.isEmpty()) {
             return;
@@ -203,9 +237,17 @@ public class FinderFile {
         }
     }
 
-    public static Optional<DataContainer> readFromFile(Path path) {
-        try (InputStream inputStream = Files.newInputStream(path)) {
-            DataContainer dataContainer = DataFormats.NBT.readFrom(inputStream);
+    public static Optional<DataContainer> readFromJsonFile(Path path) {
+        return readFromFile(DataFormats.JSON, path);
+    }
+
+    public static Optional<DataContainer> readFromNbtFile(Path path) {
+        return readFromFile(DataFormats.NBT, path);
+    }
+
+    private static Optional<DataContainer> readFromFile(DataFormat dataFormat, Path path) {
+        try (InputStream inputStream = isGzipped(path) ? new GZIPInputStream(Files.newInputStream(path)) : Files.newInputStream(path)) {
+            DataContainer dataContainer = dataFormat.readFrom(inputStream);
 
             if (dataContainer.isEmpty()) {
                 return Optional.empty();
@@ -214,6 +256,17 @@ public class FinderFile {
             return Optional.of(dataContainer);
         } catch (IllegalArgumentException | UnsupportedOperationException | IOException | SecurityException ignored) {
             return Optional.empty();
+        }
+    }
+
+    private static boolean isGzipped(Path path) {
+        try {
+            RandomAccessFile raf = new RandomAccessFile(path.toString(), "r");
+            int magic = raf.read() & 0xff | (raf.read() << 8) & 0xff00;
+            raf.close();
+            return magic == GZIPInputStream.GZIP_MAGIC;
+        } catch (Exception ignored) {
+            return false;
         }
     }
 }
