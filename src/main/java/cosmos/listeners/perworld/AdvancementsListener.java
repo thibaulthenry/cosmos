@@ -7,8 +7,8 @@ import cosmos.listeners.ScheduledSaveListener;
 import cosmos.statics.config.Config;
 import cosmos.statics.finders.FinderFile;
 import cosmos.statics.serializers.AdvancementsSerializer;
-import cosmos.statics.serializers.HungersSerializer;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -27,18 +27,19 @@ import org.spongepowered.api.world.storage.WorldProperties;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class AdvancementsListener extends AbstractPerWorldListener implements ScheduledSaveListener {
 
     private static Optional<Path> getAdvancementsPath(World world, Player player) {
-        String fileName = world.getUniqueId() + "_" + player.getUniqueId() + ".dat";
-        return FinderFile.getCosmosPath(FinderFile.ADVANCEMENTS_DIRECTORY_NAME, fileName);
+        return getAdvancementsPath(world, player.getUniqueId());
     }
 
-    private static Optional<Path> getAdvancementsPath(UUID worldUUID, UUID playerUUID) {
-        String fileName = worldUUID + "_" + playerUUID + ".dat";
+    private static Optional<Path> getAdvancementsPath(World world, UUID playerUUID) {
+        String fileName = world.getUniqueId() + "_" + playerUUID + ".dat";
         return FinderFile.getCosmosPath(FinderFile.ADVANCEMENTS_DIRECTORY_NAME, fileName);
     }
 
@@ -120,48 +121,39 @@ public class AdvancementsListener extends AbstractPerWorldListener implements Sc
             return;
         }
 
-        Optional<UUID> optionalDefaultWorldUUID = Sponge.getServer().getDefaultWorld().map(WorldProperties::getUniqueId);
+        Optional<WorldProperties> optionalDefaultWorld = Sponge.getServer().getDefaultWorld();
 
-        if (!optionalDefaultWorldUUID.isPresent()) {
+        if (!optionalDefaultWorld.isPresent()) {
             return;
         }
 
-        UUID defaultWorldUUID = optionalDefaultWorldUUID.get();
+        WorldProperties worldProperties = optionalDefaultWorld.get();
 
         FinderFile.streamAdvancements().forEach(playerDataPath -> {
-            UUID playerUUID;
+            Optional<UUID> optionalPlayerUUID = extractUUIDFromFile(playerDataPath, DataFormats.JSON);
 
-            try {
-                String fileName = playerDataPath.getFileName().toString();
-
-                if (!fileName.endsWith(".json")) {
-                    return;
-                }
-
-                int index = fileName.lastIndexOf('.');
-
-                if (index == -1) {
-                    playerUUID = UUID.fromString(fileName);
-                } else {
-                    playerUUID = UUID.fromString(fileName.substring(0, index));
-                }
-            } catch (Exception ignored) {
+            if (!optionalPlayerUUID.isPresent()) {
                 return;
             }
 
-            Optional<Path> optionalPath = getAdvancementsPath(defaultWorldUUID, playerUUID);
+            UUID playerUUID = optionalPlayerUUID.get();
 
-            if (!optionalPath.isPresent()) {
-                return;
-            }
+            List<Path> savedPath = GroupRegister.find(Tuple.of(PerWorldCommands.ADVANCEMENTS, worldProperties.getWorldName()))
+                    .orElse(Collections.singleton(worldProperties.getWorldName()))
+                    .stream()
+                    .map(worldName -> Sponge.getServer().getWorld(worldName).flatMap(w -> getAdvancementsPath(w, playerUUID)))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .filter(path -> {
+                        try {
+                            return !Files.exists(path);
+                        } catch (Exception ignored) {
+                            return false;
+                        }
+                    })
+                    .collect(Collectors.toList());
 
-            Path path = optionalPath.get();
-
-            if (Files.exists(path)) {
-                return;
-            }
-
-            AdvancementsSerializer.serializePlayerData(path, playerDataPath);
+            AdvancementsSerializer.serializePlayerData(savedPath, playerDataPath);
         });
     }
 

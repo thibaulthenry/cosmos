@@ -9,6 +9,7 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.entity.FoodData;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 public class HungersSerializer {
@@ -17,7 +18,11 @@ public class HungersSerializer {
         FinderFile.writeToFile(foodData.toContainer(), path);
     }
 
-    public static void serializePlayerData(Path path, Path inputPath) {
+    public static void serializePlayerData(List<Path> savedPath, Path inputPath) {
+        if (savedPath.isEmpty()) {
+            return;
+        }
+
         DataContainer dataContainer = DataContainer.createNew();
 
         DataQuery exhaustionQuery = DataQuery.of("foodExhaustionLevel");
@@ -46,9 +51,11 @@ public class HungersSerializer {
             return;
         }
 
-        Sponge.getDataManager()
-                .deserialize(FoodData.class, dataContainer)
-                .ifPresent(data -> serialize(path, data));
+        savedPath.forEach(path ->
+                Sponge.getDataManager()
+                        .deserialize(FoodData.class, dataContainer)
+                        .ifPresent(data -> serialize(path, data))
+        );
     }
 
     public static Optional<FoodData> deserialize(Path path) {

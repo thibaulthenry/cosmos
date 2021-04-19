@@ -9,6 +9,7 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.entity.ExperienceHolderData;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 public class ExperiencesSerializer {
@@ -17,7 +18,11 @@ public class ExperiencesSerializer {
         FinderFile.writeToFile(experienceHolderData.toContainer(), path);
     }
 
-    public static void serializePlayerData(Path path, Path inputPath) {
+    public static void serializePlayerData(List<Path> savedPath, Path inputPath) {
+        if (savedPath.isEmpty()) {
+            return;
+        }
+
         DataContainer dataContainer = DataContainer.createNew();
 
         DataQuery experienceTotalQuery = DataQuery.of("XpTotal");
@@ -50,9 +55,11 @@ public class ExperiencesSerializer {
             return;
         }
 
-        Sponge.getDataManager()
-                .deserialize(ExperienceHolderData.class, dataContainer)
-                .ifPresent(data -> serialize(path, data));
+        savedPath.forEach(path ->
+                Sponge.getDataManager()
+                        .deserialize(ExperienceHolderData.class, dataContainer)
+                        .ifPresent(data -> serialize(path, data))
+        );
     }
 
     public static Optional<ExperienceHolderData> deserialize(Path path) {

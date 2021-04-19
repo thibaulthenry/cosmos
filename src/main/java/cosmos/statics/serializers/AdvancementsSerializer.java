@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,7 +47,11 @@ public class AdvancementsSerializer {
         FinderFile.writeToFile(dataContainer, path);
     }
 
-    public static void serializePlayerData(Path path, Path inputPath) {
+    public static void serializePlayerData(List<Path> savedPath, Path inputPath) {
+        if (savedPath.isEmpty()) {
+            return;
+        }
+
         DataContainer dataContainer = DataContainer.createNew();
 
         DateTimeFormatter vanillaDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss Z");
@@ -66,13 +71,12 @@ public class AdvancementsSerializer {
                         return;
                     }
 
-                    Map<String, String> criterionDataMap = new HashMap<>();
-
                     ((Map<?, ?>) vanillaCriterionDataMap).forEach((criterionDataKey, criterionDataValue) -> {
                         if (!(criterionDataKey instanceof String && criterionDataValue instanceof String)) {
                             return;
                         }
 
+                        Map<String, String> criterionDataMap = new HashMap<>();
                         String criterionName = (String) criterionDataKey;
 
                         try {
@@ -95,7 +99,7 @@ public class AdvancementsSerializer {
                 }));
 
         if (!dataContainer.isEmpty()) {
-            FinderFile.writeToFile(dataContainer, path);
+            savedPath.forEach(path -> FinderFile.writeToFile(dataContainer, path));
         }
     }
 

@@ -10,25 +10,21 @@ import org.spongepowered.api.item.inventory.ItemStack;
 
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class EnderChestsSerializer {
 
     public static void serialize(Path path, Player player) {
         DataContainer dataContainer = DataContainer.createNew();
+        DataQuery query = DataQuery.of("EnderChestInventory");
 
         int index = 0;
         for (Inventory slot : player.getEnderChestInventory().slots()) {
-            DataQuery slotPath = DataQuery.of("EnderChestInventory", Integer.toString(index));
+            DataQuery slotPath = query.then(Integer.toString(index));
             slot.peek().ifPresent(itemStack -> dataContainer.set(slotPath, itemStack));
             index++;
         }
-
-        serialize(path, dataContainer);
-    }
-
-    public static void serialize(Path path, DataContainer dataContainer) {
-        DataQuery query = DataQuery.of("EnderChestInventory");
 
         if (dataContainer.isEmpty() || !dataContainer.contains(query)) {
             dataContainer.set(query, Collections.emptyMap());
@@ -37,54 +33,19 @@ public class EnderChestsSerializer {
         FinderFile.writeToFile(dataContainer, path);
     }
 
-    public static void serializePlayerData(Path path, Path inputPath) {
-        DataQuery inventoryQuery = DataQuery.of("EnderItems");
-        DataContainer dataContainer = DataContainer.createNew();
+    public static void serializePlayerData(List<Path> savedPath, Path inputPath) {
+        if (savedPath.isEmpty()) {
+            return;
+        }
 
-        DataQuery contentVersionQuery = DataQuery.of("ContentVersion");
-        DataQuery slotQuery = DataQuery.of("Slot");
-        DataQuery itemTypeQuery = DataQuery.of("ItemType");
-        DataQuery idQuery = DataQuery.of("id");
-        DataQuery countQuery = DataQuery.of("Count");
-        DataQuery damageQuery = DataQuery.of("Damage");
-        DataQuery unsafeDamageQuery = DataQuery.of("UnsafeDamage");
+        DataContainer dataContainer = InventoriesSerializer.extractPlayerDataInventory(inputPath, "EnderItems", "EnderChestInventory");
+        DataQuery query = DataQuery.of("EnderChestInventory");
 
-        FinderFile.readFromNbtFile(inputPath)
-                .flatMap(playerDataContainer -> playerDataContainer.getViewList(inventoryQuery))
-                .ifPresent(viewList -> viewList.forEach(view -> {
-                    if (!view.contains(slotQuery, idQuery, countQuery, damageQuery)) {
-                        return;
-                    }
+        if (dataContainer.isEmpty() || !dataContainer.contains(query)) {
+            dataContainer.set(query, Collections.emptyMap());
+        }
 
-                    Optional<Integer> optionalSlotIndex = view.getByte(slotQuery).map(Byte::intValue);
-
-                    if (!optionalSlotIndex.isPresent()) {
-                        return;
-                    }
-
-                    int slotIndex = optionalSlotIndex.get();
-                    DataQuery slotPath = DataQuery.of("EnderChestInventory", Integer.toString(slotIndex));
-                    DataContainer itemStackContainer = DataContainer.createNew().set(contentVersionQuery, 1);
-
-                    view.getString(idQuery)
-                            .ifPresent(value -> itemStackContainer.set(itemTypeQuery, value));
-
-                    view.getByte(countQuery)
-                            .map(Byte::intValue)
-                            .ifPresent(value -> itemStackContainer.set(countQuery, value));
-
-                    view.getByte(damageQuery)
-                            .map(Byte::intValue)
-                            .ifPresent(value -> itemStackContainer.set(unsafeDamageQuery, value));
-
-                    if (!itemStackContainer.contains(itemTypeQuery, countQuery, unsafeDamageQuery)) {
-                        return;
-                    }
-
-                    dataContainer.set(slotPath, itemStackContainer);
-                }));
-
-        serialize(path, dataContainer);
+        savedPath.forEach(path -> FinderFile.writeToFile(dataContainer, path));
     }
 
     public static void deserialize(Path path, Player player) {

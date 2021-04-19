@@ -10,6 +10,7 @@ import org.spongepowered.api.data.manipulator.mutable.entity.HealthData;
 
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class HealthsSerializer {
@@ -18,7 +19,11 @@ public class HealthsSerializer {
         FinderFile.writeToFile(healthData.toContainer(), path);
     }
 
-    public static void serializePlayerData(Path path, Path inputPath) {
+    public static void serializePlayerData(List<Path> savedPath, Path inputPath) {
+        if (savedPath.isEmpty()) {
+            return;
+        }
+
         DataContainer dataContainer = DataContainer.createNew();
 
         DataQuery healthQuery = DataQuery.of("Health");
@@ -52,9 +57,11 @@ public class HealthsSerializer {
             return;
         }
 
-        Sponge.getDataManager()
-                .deserialize(HealthData.class, dataContainer)
-                .ifPresent(data -> serialize(path, data));
+        savedPath.forEach(path ->
+                Sponge.getDataManager()
+                        .deserialize(HealthData.class, dataContainer)
+                        .ifPresent(data -> serialize(path, data))
+        );
     }
 
     public static Optional<HealthData> deserialize(Path path) {

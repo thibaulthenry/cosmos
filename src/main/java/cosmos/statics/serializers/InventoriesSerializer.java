@@ -10,25 +10,21 @@ import org.spongepowered.api.item.inventory.ItemStack;
 
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class InventoriesSerializer {
 
     public static void serialize(Path path, Player player) {
         DataContainer dataContainer = DataContainer.createNew();
+        DataQuery query = DataQuery.of("Inventory");
 
         int index = 0;
         for (Inventory slot : player.getInventory().slots()) {
-            DataQuery slotPath = DataQuery.of("Inventory", Integer.toString(index));
+            DataQuery slotPath = query.then(Integer.toString(index));
             slot.peek().ifPresent(itemStack -> dataContainer.set(slotPath, itemStack));
             index++;
         }
-
-        serialize(path, dataContainer);
-    }
-
-    public static void serialize(Path path, DataContainer dataContainer) {
-        DataQuery query = DataQuery.of("Inventory");
 
         if (dataContainer.isEmpty() || !dataContainer.contains(query)) {
             dataContainer.set(query, Collections.emptyMap());
@@ -37,9 +33,24 @@ public class InventoriesSerializer {
         FinderFile.writeToFile(dataContainer, path);
     }
 
-    public static void serializePlayerData(Path path, Path inputPath) {
-        DataQuery inventoryQuery = DataQuery.of("Inventory");
+    public static void serializePlayerData(List<Path> savedPath, Path inputPath) {
+        if (savedPath.isEmpty()) {
+            return;
+        }
+
+        DataContainer dataContainer = extractPlayerDataInventory(inputPath, "Inventory", "Inventory");
+        DataQuery query = DataQuery.of("Inventory");
+
+        if (dataContainer.isEmpty() || !dataContainer.contains(query)) {
+            dataContainer.set(query, Collections.emptyMap());
+        }
+
+        savedPath.forEach(path -> FinderFile.writeToFile(dataContainer, path));
+    }
+
+    public static DataContainer extractPlayerDataInventory(Path inputPath, String vanillaInventoryNode, String cosmosInventoryNode) {
         DataContainer dataContainer = DataContainer.createNew();
+        boolean convertArmorSlots = "Inventory".equals(vanillaInventoryNode);
 
         DataQuery contentVersionQuery = DataQuery.of("ContentVersion");
         DataQuery slotQuery = DataQuery.of("Slot");
@@ -50,20 +61,23 @@ public class InventoriesSerializer {
         DataQuery unsafeDamageQuery = DataQuery.of("UnsafeDamage");
 
         FinderFile.readFromNbtFile(inputPath)
-                .flatMap(playerDataContainer -> playerDataContainer.getViewList(inventoryQuery))
+                .flatMap(playerDataContainer -> playerDataContainer.getViewList(DataQuery.of(vanillaInventoryNode)))
                 .ifPresent(viewList -> viewList.forEach(view -> {
                     if (!view.contains(slotQuery, idQuery, countQuery, damageQuery)) {
                         return;
                     }
 
-                    Optional<Integer> optionalSlotIndex = view.getByte(slotQuery).map(Byte::intValue);
+                    Optional<Integer> optionalSlotIndex = view
+                            .getByte(slotQuery)
+                            .map(Byte::intValue)
+                            .map(slotIndex -> convertArmorSlots ? convertVanillaIndexesToSponge(slotIndex) : slotIndex);
 
                     if (!optionalSlotIndex.isPresent()) {
                         return;
                     }
 
                     int slotIndex = optionalSlotIndex.get();
-                    DataQuery slotPath = DataQuery.of("Inventory", Integer.toString(slotIndex));
+                    DataQuery slotPath = DataQuery.of(cosmosInventoryNode, Integer.toString(slotIndex));
                     DataContainer itemStackContainer = DataContainer.createNew().set(contentVersionQuery, 1);
 
                     view.getString(idQuery)
@@ -84,7 +98,7 @@ public class InventoriesSerializer {
                     dataContainer.set(slotPath, itemStackContainer);
                 }));
 
-        serialize(path, dataContainer);
+        return dataContainer;
     }
 
     public static void deserialize(Path path, Player player) {
