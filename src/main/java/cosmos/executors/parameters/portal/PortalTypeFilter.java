@@ -3,6 +3,7 @@ package cosmos.executors.parameters.portal;
 import cosmos.registries.message.Message;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.command.CommandCompletion;
 import org.spongepowered.api.command.exception.ArgumentParseException;
 import org.spongepowered.api.command.parameter.ArgumentReader;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -40,13 +41,14 @@ class PortalTypeFilter<T extends PortalType> implements ValueParameter<T> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<String> complete(final CommandContext context, final String currentInput) {
+    public List<CommandCompletion> complete(final CommandContext context, final String currentInput) {
         return RegistryTypes.PORTAL_TYPE.get()
                 .streamEntries()
                 .filter(entry -> this.clazz.isAssignableFrom(entry.value().getClass()) && this.filter.test((T) entry.value()))
                 .map(RegistryEntry::key)
                 .map(ResourceKey::formatted)
                 .filter(formatted -> formatted.contains(currentInput))
+                .map(CommandCompletion::of)
                 .collect(Collectors.toList());
     }
 

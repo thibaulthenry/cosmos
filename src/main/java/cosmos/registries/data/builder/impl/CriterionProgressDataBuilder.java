@@ -24,11 +24,11 @@ public class CriterionProgressDataBuilder extends AbstractDataBuilder<CriterionP
 
     @Override
     protected Optional<CriterionProgressData> buildContent(final DataView container) throws InvalidDataException {
-        if (!container.contains(Queries.Advancements.Criterion.DATE)) {
+        if (!container.contains(Queries.Advancement.Criterion.DATE)) {
             return Optional.empty();
         }
 
-        final String date = container.getString(Queries.Advancements.Criterion.DATE)
+        final String date = container.getString(Queries.Advancement.Criterion.DATE)
                 .orElseThrow(() -> new InvalidDataException("Missing date while building CriterionProgressData"));
 
         final String name = container.parent()

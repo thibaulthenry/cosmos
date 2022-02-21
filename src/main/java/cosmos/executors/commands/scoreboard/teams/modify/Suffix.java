@@ -20,7 +20,7 @@ public class Suffix extends AbstractTeamModifyCommand {
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Scoreboard scoreboard, final Team team) throws CommandException {
-        final Component suffix = super.serviceProvider.scoreboards().findComponent(context)
+        final Component suffix = super.serviceProvider.scoreboard().findComponent(context)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.text"));
 
         team.setSuffix(suffix);

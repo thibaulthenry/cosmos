@@ -3,70 +3,70 @@ package cosmos.services.serializer.impl;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import cosmos.registries.serializer.impl.AdvancementsSerializer;
-import cosmos.registries.serializer.impl.ExperiencesSerializer;
-import cosmos.registries.serializer.impl.HealthsSerializer;
-import cosmos.registries.serializer.impl.HungersSerializer;
-import cosmos.registries.serializer.impl.InventoriesSerializer;
-import cosmos.registries.serializer.impl.PortalsSerializer;
-import cosmos.registries.serializer.impl.ScoreboardsSerializer;
+import cosmos.registries.serializer.impl.AdvancementSerializer;
+import cosmos.registries.serializer.impl.ExperienceSerializer;
+import cosmos.registries.serializer.impl.HealthSerializer;
+import cosmos.registries.serializer.impl.HungerSerializer;
+import cosmos.registries.serializer.impl.InventorySerializer;
+import cosmos.registries.serializer.impl.PortalSerializer;
+import cosmos.registries.serializer.impl.ScoreboardSerializer;
 import cosmos.services.serializer.SerializerProvider;
 
 @Singleton
 public class SerializerProviderImpl implements SerializerProvider {
 
-    private final AdvancementsSerializer advancementsSerializer;
-    private final ExperiencesSerializer experiencesSerializer;
-    private final HealthsSerializer healthsSerializer;
-    private final HungersSerializer hungersSerializer;
-    private final InventoriesSerializer inventoriesSerializer;
-    private final PortalsSerializer portalsSerializer;
-    private final ScoreboardsSerializer scoreboardsSerializer;
+    private final AdvancementSerializer advancementSerializer;
+    private final ExperienceSerializer experienceSerializer;
+    private final HealthSerializer healthSerializer;
+    private final HungerSerializer hungerSerializer;
+    private final InventorySerializer inventorySerializer;
+    private final PortalSerializer portalSerializer;
+    private final ScoreboardSerializer scoreboardSerializer;
 
     @Inject
     public SerializerProviderImpl(final Injector injector) {
-        this.advancementsSerializer = injector.getInstance(AdvancementsSerializer.class);
-        this.experiencesSerializer = injector.getInstance(ExperiencesSerializer.class);
-        this.healthsSerializer = injector.getInstance(HealthsSerializer.class);
-        this.hungersSerializer = injector.getInstance(HungersSerializer.class);
-        this.inventoriesSerializer = injector.getInstance(InventoriesSerializer.class);
-        this.portalsSerializer = injector.getInstance(PortalsSerializer.class);
-        this.scoreboardsSerializer = injector.getInstance(ScoreboardsSerializer.class);
+        this.advancementSerializer = injector.getInstance(AdvancementSerializer.class);
+        this.experienceSerializer = injector.getInstance(ExperienceSerializer.class);
+        this.healthSerializer = injector.getInstance(HealthSerializer.class);
+        this.hungerSerializer = injector.getInstance(HungerSerializer.class);
+        this.inventorySerializer = injector.getInstance(InventorySerializer.class);
+        this.portalSerializer = injector.getInstance(PortalSerializer.class);
+        this.scoreboardSerializer = injector.getInstance(ScoreboardSerializer.class);
     }
 
     @Override
-    public AdvancementsSerializer advancements() {
-        return this.advancementsSerializer;
+    public AdvancementSerializer advancement() {
+        return this.advancementSerializer;
     }
 
     @Override
-    public ExperiencesSerializer experiences() {
-        return this.experiencesSerializer;
+    public ExperienceSerializer experience() {
+        return this.experienceSerializer;
     }
 
     @Override
-    public HealthsSerializer healths() {
-        return this.healthsSerializer;
+    public HealthSerializer health() {
+        return this.healthSerializer;
     }
 
     @Override
-    public HungersSerializer hungers() {
-        return this.hungersSerializer;
+    public HungerSerializer hunger() {
+        return this.hungerSerializer;
     }
 
     @Override
-    public InventoriesSerializer inventories() {
-        return this.inventoriesSerializer;
+    public InventorySerializer inventory() {
+        return this.inventorySerializer;
     }
 
     @Override
-    public PortalsSerializer portals() {
-        return this.portalsSerializer;
+    public PortalSerializer portal() {
+        return this.portalSerializer;
     }
 
     @Override
-    public ScoreboardsSerializer scoreboards() {
-        return this.scoreboardsSerializer;
+    public ScoreboardSerializer scoreboard() {
+        return this.scoreboardSerializer;
     }
 
 }

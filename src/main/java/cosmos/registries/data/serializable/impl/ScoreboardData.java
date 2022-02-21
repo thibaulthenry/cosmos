@@ -91,10 +91,10 @@ public class ScoreboardData implements CollectorSerializable<Scoreboard> {
     @Override
     public DataContainer toContainer() {
         return DataContainer.createNew()
-                .set(Queries.Scoreboards.DISPLAY_SLOTS, this.displaySlotsData)
-                .set(Queries.Scoreboards.OBJECTIVES, this.objectivesData)
-                .set(Queries.Scoreboards.SCORES, this.scoresData)
-                .set(Queries.Scoreboards.TEAMS, this.teamsData);
+                .set(Queries.Scoreboard.DISPLAY_SLOTS, this.displaySlotsData)
+                .set(Queries.Scoreboard.OBJECTIVES, this.objectivesData)
+                .set(Queries.Scoreboard.SCORES, this.scoresData)
+                .set(Queries.Scoreboard.TEAMS, this.teamsData);
     }
 
 }

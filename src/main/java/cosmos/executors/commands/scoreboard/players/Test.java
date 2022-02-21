@@ -41,9 +41,9 @@ public class Test extends AbstractMultiTargetCommand {
                                 .asSupplier()
                 );
 
-        final int min = super.serviceProvider.scoreboards().extremum(context, CosmosKeys.MIN, true);
+        final int min = super.serviceProvider.scoreboard().extremum(context, CosmosKeys.MIN, true);
 
-        final int max = super.serviceProvider.scoreboards()
+        final int max = super.serviceProvider.scoreboard()
                 .findExtremum(context, CosmosKeys.MAX, false)
                 .orElse(Integer.MAX_VALUE);
 
@@ -53,7 +53,7 @@ public class Test extends AbstractMultiTargetCommand {
 
         final Collection<Component> contents = targets.stream()
                 .map(target -> {
-                    final Optional<Score> optionalScore = objective.score(target);
+                    final Optional<Score> optionalScore = objective.findScore(target);
 
                     if (!optionalScore.isPresent()) {
                         return super.serviceProvider.message()

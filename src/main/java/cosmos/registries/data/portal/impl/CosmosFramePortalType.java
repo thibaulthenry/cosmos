@@ -40,7 +40,7 @@ public class CosmosFramePortalType implements CosmosPortalType {
     }
 
     @Override
-    public void generatePortal(final ServerLocation location, final Axis axis) {
+    public boolean generatePortal(final ServerLocation location, final Axis axis) {
         throw new UnsupportedOperationException("Cosmos portals has to be generated with Cosmos API");
     }
 

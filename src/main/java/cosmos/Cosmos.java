@@ -2,11 +2,7 @@ package cosmos;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import cosmos.constants.CosmosKeys;
-import cosmos.constants.CosmosParameters;
-import cosmos.executors.commands.root.New;
 import cosmos.executors.modules.Root;
-import cosmos.executors.parameters.scoreboard.ScoreHolders;
 import cosmos.registries.portal.CosmosButtonPortal;
 import cosmos.registries.portal.CosmosFramePortal;
 import cosmos.registries.portal.CosmosPressurePlatePortal;
@@ -16,22 +12,19 @@ import cosmos.registries.portal.impl.CosmosFramePortalBuilderImpl;
 import cosmos.registries.portal.impl.CosmosPressurePlatePortalBuilderImpl;
 import cosmos.registries.portal.impl.CosmosSignPortalBuilderImpl;
 import cosmos.services.ServiceProvider;
-import io.leangen.geantyref.TypeToken;
-import net.kyori.adventure.text.Component;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.command.Command;
-import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
 import org.spongepowered.api.event.lifecycle.RegisterBuilderEvent;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.api.event.lifecycle.RegisterDataEvent;
 import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
 import org.spongepowered.api.event.lifecycle.StartingEngineEvent;
+import org.spongepowered.api.event.lifecycle.StoppingEngineEvent;
 import org.spongepowered.plugin.PluginContainer;
-import org.spongepowered.plugin.jvm.Plugin;
-
-import java.util.List;
+import org.spongepowered.plugin.builtin.jvm.Plugin;
 
 @Plugin(value = "cosmos")
 public class Cosmos {
@@ -65,6 +58,13 @@ public class Cosmos {
     }
 
     @Listener
+    public void onConstructPluginEvent(final ConstructPluginEvent event) {
+        if (!Cosmos.serviceProvider.finder().initDirectories()) {
+            Cosmos.logger.error("An unexpected error occurred while initializing Cosmos directories");
+        }
+    }
+
+    @Listener
     public void onRegisterBuilderEvent(final RegisterBuilderEvent event) {
         event.register(CosmosButtonPortal.Builder.class, () -> this.injector.getInstance(CosmosButtonPortalBuilderImpl.class));
         event.register(CosmosFramePortal.Builder.class, () -> this.injector.getInstance(CosmosFramePortalBuilderImpl.class));
@@ -85,17 +85,19 @@ public class Cosmos {
     }
 
     @Listener
-    public void onStartingServerEvent(final StartingEngineEvent<Server> event) {
-        Cosmos.serviceProvider.registry().listener().registerAll();
-
-        if (!Cosmos.serviceProvider.finder().initDirectories()) {
-            Cosmos.logger.error("An unexpected error occurred while initializing Cosmos directories");
-        }
+    public void onStartedServerEvent(final StartedEngineEvent<Server> event) {
+        Cosmos.serviceProvider.registry().portal().registerAll();
     }
 
     @Listener
-    public void onStartedServerEvent(final StartedEngineEvent<Server> event) {
-        Cosmos.serviceProvider.registry().portal().registerAll();
+    public void onStartingServerEvent(final StartingEngineEvent<Server> event) {
+        Cosmos.serviceProvider.registry().group().registerAll();
+        Cosmos.serviceProvider.registry().listener().registerAll();
+    }
+
+    @Listener
+    public void onStoppingServerEvent(final StoppingEngineEvent<Server> event) {
+        Cosmos.serviceProvider.configuration().save();
     }
 
 }

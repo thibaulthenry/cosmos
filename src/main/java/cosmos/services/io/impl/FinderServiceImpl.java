@@ -77,11 +77,6 @@ public class FinderServiceImpl implements FinderService {
     }
 
     @Override
-    public Optional<Path> findCosmosPath(final String directory, final ServerWorld world) {
-        return this.findCosmosPath(directory, world.key());
-    }
-
-    @Override
     public Optional<Path> findCosmosPath(final String directory, final ResourceKey worldKey, final ServerPlayer player) {
         if (!this.isCosmosDirectory(directory)) {
             return Optional.empty();
@@ -174,11 +169,11 @@ public class FinderServiceImpl implements FinderService {
             return Stream.empty();
         }
 
-        return this.findCosmosPath(directory).map(portalsDirectory -> {
+        return this.findCosmosPath(directory).map(dir -> {
             try {
-                return Files.walk(portalsDirectory).filter(path -> path.toFile().isFile());
+                return Files.walk(dir).filter(path -> path.toFile().isFile());
             } catch (final Exception e) {
-                Cosmos.logger().error("An unexpected error occurred while looking for existing portals", e);
+                Cosmos.logger().error("An unexpected error occurred while walking through Cosmos directory " + directory, e);
                 return Stream.<Path>empty();
             }
         }).orElse(Stream.empty());

@@ -8,6 +8,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.TextComponent;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.command.CommandCompletion;
 import org.spongepowered.api.command.exception.ArgumentParseException;
 import org.spongepowered.api.command.parameter.ArgumentReader;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -41,7 +42,7 @@ class PortalBlockTypeFilter implements ValueParameter<BlockType> {
     }
 
     @Override
-    public List<String> complete(final CommandContext context, final String currentInput) {
+    public List<CommandCompletion> complete(final CommandContext context, final String currentInput) {
         return RegistryTypes.BLOCK_TYPE.get()
                 .streamEntries()
                 .filter(entry -> context.one(CosmosKeys.PORTAL_COSMOS)
@@ -52,6 +53,7 @@ class PortalBlockTypeFilter implements ValueParameter<BlockType> {
                 .map(RegistryEntry::key)
                 .map(ResourceKey::formatted)
                 .filter(formatted -> formatted.contains(currentInput))
+                .map(CommandCompletion::of)
                 .collect(Collectors.toList());
     }
 

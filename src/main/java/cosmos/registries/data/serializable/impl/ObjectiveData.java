@@ -56,10 +56,10 @@ public class ObjectiveData implements CollectorSerializable<Objective> {
     @Override
     public DataContainer toContainer() {
         return DataContainer.createNew()
-                .set(Queries.Scoreboards.Objective.CRITERION, this.criterion.key(RegistryTypes.CRITERION))
-                .set(Queries.Scoreboards.Objective.DISPLAY_MODE, this.displayMode.key(RegistryTypes.OBJECTIVE_DISPLAY_MODE))
-                .set(Queries.Scoreboards.Objective.DISPLAY_NAME, this.displayName)
-                .set(Queries.Scoreboards.Objective.NAME, this.name);
+                .set(Queries.Scoreboard.Objective.CRITERION, this.criterion.key(RegistryTypes.CRITERION))
+                .set(Queries.Scoreboard.Objective.DISPLAY_MODE, this.displayMode.key(RegistryTypes.OBJECTIVE_DISPLAY_MODE))
+                .set(Queries.Scoreboard.Objective.DISPLAY_NAME, this.displayName)
+                .set(Queries.Scoreboard.Objective.NAME, this.name);
     }
 
 }

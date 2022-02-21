@@ -50,10 +50,10 @@ public class ExperienceData implements ShareableSerializable<ServerPlayer> {
     @Override
     public DataContainer toContainer() {
         return DataContainer.createNew()
-                .set(Queries.Experiences.EXPERIENCE, this.experience)
-                .set(Queries.Experiences.EXPERIENCE_FROM_START_OF_LEVEL, this.experienceFromStartOfLevel)
-                .set(Queries.Experiences.EXPERIENCE_LEVEL, this.experienceLevel)
-                .set(Queries.Experiences.EXPERIENCE_SINCE_LEVEL, this.experienceSinceLevel);
+                .set(Queries.Experience.EXPERIENCE, this.experience)
+                .set(Queries.Experience.EXPERIENCE_FROM_START_OF_LEVEL, this.experienceFromStartOfLevel)
+                .set(Queries.Experience.EXPERIENCE_LEVEL, this.experienceLevel)
+                .set(Queries.Experience.EXPERIENCE_SINCE_LEVEL, this.experienceSinceLevel);
     }
 
 }

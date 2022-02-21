@@ -22,8 +22,8 @@ public class ScoreCriterionProgressData extends CriterionProgressData {
     @Override
     public DataContainer toContainer() {
         return super.toContainer()
-                .set(Queries.Advancements.Criterion.GOAL, this.goal)
-                .set(Queries.Advancements.Criterion.SCORE, this.score);
+                .set(Queries.Advancement.Criterion.GOAL, this.goal)
+                .set(Queries.Advancement.Criterion.SCORE, this.score);
     }
 
 }

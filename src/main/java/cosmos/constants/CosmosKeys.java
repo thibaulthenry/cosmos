@@ -2,7 +2,6 @@ package cosmos.constants;
 
 import cosmos.registries.backup.BackupArchetype;
 import cosmos.registries.data.portal.CosmosPortalType;
-import cosmos.registries.listener.Listener;
 import cosmos.registries.portal.CosmosFramePortal;
 import cosmos.registries.portal.CosmosPortal;
 import io.leangen.geantyref.TypeToken;
@@ -11,6 +10,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.command.parameter.Parameter;
+import org.spongepowered.api.command.parameter.managed.operator.Operator;
 import org.spongepowered.api.effect.particle.ParticleType;
 import org.spongepowered.api.effect.potion.PotionEffectType;
 import org.spongepowered.api.effect.sound.SoundType;
@@ -68,8 +68,9 @@ public class CosmosKeys {
     public static final Parameter.Key<String> NAME = Parameter.key("name", String.class);
     public static final Parameter.Key<Objective> OBJECTIVE = Parameter.key("objective", Objective.class);
     public static final Parameter.Key<Operands> OPERAND = Parameter.key("operand", Operands.class);
+    public static final Parameter.Key<Operator> OPERATOR = Parameter.key("operator", Operator.class);
     public static final Parameter.Key<ParticleType> PARTICLE_TYPE = Parameter.key("particle-type", ParticleType.class);
-    public static final Parameter.Key<Listener> PER_WORLD_FEATURE = Parameter.key("feature", Listener.class);
+    public static final Parameter.Key<PerWorldFeatures> PER_WORLD_FEATURE = Parameter.key("feature", PerWorldFeatures.class);
     public static final Parameter.Key<Double> PITCH = Parameter.key("pitch", Double.class);
     public static final Parameter.Key<Vector3d> PITCH_YAW_ROLL = Parameter.key("pitch> <yaw> <roll", Vector3d.class);
     public static final Parameter.Key<CosmosPortal> PORTAL_COSMOS = Parameter.key("portal", CosmosPortal.class);

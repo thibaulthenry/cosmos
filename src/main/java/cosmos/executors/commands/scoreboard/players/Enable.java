@@ -44,7 +44,7 @@ public class Enable extends AbstractMultiTargetCommand {
         final Collection<Component> contents = targets
                 .stream()
                 .map(target -> {
-                    objective.scoreOrCreate(target).setLocked(false);
+                    objective.findOrCreateScore(target).setLocked(false);
                     super.addSuccess();
 
                     return super.serviceProvider.message()

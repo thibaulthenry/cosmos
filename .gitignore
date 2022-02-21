@@ -3,11 +3,14 @@
 gradle/
 build/
 classes/
+META-INF/
+run/
+
 settings.gradle
 gradlew
 gradlew.bat
-META-INF/
 !src/main/resources/META-INF
+.github
 
 #Ignoring IntelliJ Folders
 .idea/

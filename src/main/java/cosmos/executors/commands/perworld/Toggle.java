@@ -3,7 +3,7 @@ package cosmos.executors.commands.perworld;
 import com.google.inject.Singleton;
 import cosmos.constants.ConfigurationNodes;
 import cosmos.constants.CosmosKeys;
-import cosmos.registries.listener.impl.perworld.AbstractPerWorldListener;
+import cosmos.constants.PerWorldFeatures;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -25,44 +25,42 @@ public class Toggle extends AbstractPerWorldCommand {
     }
 
     @Override
-    protected void run(final Audience src, final CommandContext context, final AbstractPerWorldListener listener) throws CommandException {
-        final Class<? extends AbstractPerWorldListener> listenerClass = listener.getClass();
-        final String formattedName = super.serviceProvider.listener().format(listenerClass);
+    protected void run(final Audience src, final CommandContext context, final PerWorldFeatures feature) throws CommandException {
         final Optional<Boolean> optionalInput = context.one(CosmosKeys.STATE);
-        boolean currentValue = super.serviceProvider.registry().listener().isRegisteredToSponge(listenerClass);
+        boolean value = super.serviceProvider.listener().isRegisteredToSponge(feature.listenerClass());
 
         if (optionalInput.isPresent()) {
             boolean inputValue = optionalInput.get();
 
-            if (inputValue && currentValue) {
+            if (inputValue && value) {
                 throw super.serviceProvider.message()
                         .getMessage(src, "error.per-world.toggle")
-                        .replace("name", formattedName)
+                        .replace("name", feature.formatted())
                         .condition("value", true)
                         .asError();
             }
 
-            if (!inputValue && !currentValue) {
+            if (!inputValue && !value) {
                 throw super.serviceProvider.message()
                         .getMessage(src, "error.per-world.toggle")
-                        .replace("name", formattedName)
+                        .replace("name", feature.formatted())
                         .condition("value", false)
                         .asError();
             }
 
             if (inputValue) {
-                super.serviceProvider.registry().listener().register(listenerClass);
+                super.serviceProvider.registry().listener().register(feature.listenerClass());
             } else {
-                super.serviceProvider.registry().listener().unregister(listenerClass);
+                super.serviceProvider.registry().listener().unregister(feature.listenerClass());
             }
 
-            currentValue = inputValue;
+            value = inputValue;
         }
 
         super.serviceProvider.message()
                 .getMessage(src, optionalInput.isPresent() ? "success.per-world.toggle.set" : "success.per-world.toggle.get")
-                .replace("name", formattedName)
-                .condition("value", currentValue)
+                .replace("name", feature.formatted())
+                .condition("value", value)
                 .green()
                 .sendTo(src);
 
@@ -70,15 +68,13 @@ public class Toggle extends AbstractPerWorldCommand {
             return;
         }
 
-        final String rootNode = ConfigurationNodes.PER_WORLD;
-
-        if (!super.serviceProvider.configuration().saveValue(currentValue, rootNode, rootNode, formattedName)) {
-            throw super.serviceProvider.message().getError(src, "error.config.save", "node", formattedName);
+        if (!super.serviceProvider.configuration().saveValue(value, ConfigurationNodes.PER_WORLD, feature.formatted(), ConfigurationNodes.PER_WORLD_STATE)) {
+            throw super.serviceProvider.message().getError(src, "error.config.save", "node", feature.formatted());
         }
 
         super.serviceProvider.message()
                 .getMessage(src, "success.config.save")
-                .replace("node", formattedName)
+                .replace("node", feature.formatted())
                 .gray()
                 .sendTo(src);
     }

@@ -3,19 +3,23 @@ package cosmos.constants;
 import cosmos.executors.parameters.CosmosBuilder;
 import cosmos.executors.parameters.backup.Backup;
 import cosmos.executors.parameters.backup.BackupWorld;
-import cosmos.executors.parameters.perworld.Feature;
 import cosmos.executors.parameters.portal.PortalAll;
 import cosmos.executors.parameters.portal.PortalBlockTypeAll;
-import cosmos.executors.parameters.portal.PortalFrame;
 import cosmos.executors.parameters.portal.PortalTypeCosmos;
 import cosmos.executors.parameters.properties.GameRuleValueAll;
-import cosmos.executors.parameters.scoreboard.*;
+import cosmos.executors.parameters.scoreboard.Extremum;
+import cosmos.executors.parameters.scoreboard.ObjectiveAll;
+import cosmos.executors.parameters.scoreboard.ObjectiveTrigger;
+import cosmos.executors.parameters.scoreboard.Targets;
+import cosmos.executors.parameters.scoreboard.TeamAll;
 import cosmos.executors.parameters.time.DurationWithUnit;
-import cosmos.executors.parameters.world.*;
+import cosmos.executors.parameters.world.WorldAll;
+import cosmos.executors.parameters.world.WorldDistinct;
+import cosmos.executors.parameters.world.WorldExported;
+import cosmos.executors.parameters.world.WorldOffline;
+import cosmos.executors.parameters.world.WorldOnline;
 import cosmos.registries.backup.BackupArchetype;
 import cosmos.registries.data.portal.CosmosPortalType;
-import cosmos.registries.listener.Listener;
-import cosmos.registries.portal.CosmosFramePortal;
 import cosmos.registries.portal.CosmosPortal;
 import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -45,15 +49,13 @@ public class CosmosParameters {
     public static final Supplier<DurationWithUnit> DURATION_WITH_UNIT = DurationWithUnit::new;
 
     public static final Supplier<Parameter.Value.Builder<List<Entity>>> ENTITIES = () -> Parameter
-            .builder(new TypeToken<List<Entity>>() {
-            })
+            .builder(new TypeToken<List<Entity>>() {})
             .addParser(ResourceKeyedValueParameters.MANY_ENTITIES);
 
     public static final Supplier<Extremum> EXTREMUM = Extremum::new;
     public static final Supplier<CosmosBuilder<Object>> GAME_RULE_VALUE_ALL = GameRuleValueAll::new;
     public static final Supplier<CosmosBuilder<Objective>> OBJECTIVE_ALL = ObjectiveAll::new;
     public static final Supplier<CosmosBuilder<Objective>> OBJECTIVE_TRIGGER = ObjectiveTrigger::new;
-    public static final Supplier<CosmosBuilder<Listener>> PER_WORLD_LISTENER = Feature::new;
     public static final Supplier<CosmosBuilder<CosmosPortal>> PORTAL_ALL = PortalAll::new;
     public static final Supplier<CosmosBuilder<BlockType>> PORTAL_BLOCK_TYPE = PortalBlockTypeAll::new;
 
@@ -61,16 +63,11 @@ public class CosmosParameters {
             .builder(DelayFormat.class)
             .addParser(Parser.PORTAL_DELAY_TIMER_FORMATS);
 
-    public static final Supplier<CosmosBuilder<CosmosFramePortal>> PORTAL_FRAME = PortalFrame::new;
     public static final Supplier<CosmosBuilder<CosmosPortalType>> PORTAL_TYPE_COSMOS = PortalTypeCosmos::new;
 
     public static final Supplier<Parameter.Value.Builder<Operands>> SCOREBOARD_OPERANDS = () -> Parameter
             .builder(Operands.class)
             .addParser(Parser.SCOREBOARD_OPERANDS);
-
-    public static final Supplier<Parameter.Value.Builder<Operands>> STANDARD_OPERAND = () -> Parameter
-            .builder(Operands.class)
-            .addParser(Parser.STANDARD_OPERANDS);
 
     // TODO https://github.com/SpongePowered/Sponge/issues/3343
     public static final Supplier<Targets> TARGETS = Targets::new;
@@ -125,13 +122,6 @@ public class CosmosParameters {
                 .addChoice(Operands.MIN.operand(), Operands.MIN)
                 .addChoice(Operands.MAX.operand(), Operands.MAX)
                 .addChoice(Operands.SWAPS.operand(), Operands.SWAPS)
-                .build();
-
-        private static final ValueParameter<Operands> STANDARD_OPERANDS = VariableValueParameters.staticChoicesBuilder(Operands.class)
-                .addChoice(Operands.PLUS.operand(), Operands.PLUS)
-                .addChoice(Operands.MINUS.operand(), Operands.MINUS)
-                .addChoice(Operands.TIMES.operand(), Operands.TIMES)
-                .addChoice(Operands.DIVIDE.operand(), Operands.DIVIDE)
                 .build();
 
     }

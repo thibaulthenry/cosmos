@@ -40,7 +40,7 @@ public class ScoreData implements ShareableSerializable<Scoreboard> {
         final Component target = GsonComponentSerializer.gson().deserialize(this.targetName);
 
         data.objective(this.objective).ifPresent(objective -> {
-            final Score score = objective.scoreOrCreate(target);
+            final Score score = objective.findOrCreateScore(target);
 
             score.setScore(this.score);
             score.setLocked(this.locked);
@@ -50,10 +50,10 @@ public class ScoreData implements ShareableSerializable<Scoreboard> {
     @Override
     public DataContainer toContainer() {
         return DataContainer.createNew()
-                .set(Queries.Scoreboards.Score.LOCKED, this.locked)
-                .set(Queries.Scoreboards.Score.OBJECTIVE, this.objective)
-                .set(Queries.Scoreboards.Score.SCORE, this.score)
-                .set(Queries.Scoreboards.Score.TARGET_NAME, this.targetName);
+                .set(Queries.Scoreboard.Score.LOCKED, this.locked)
+                .set(Queries.Scoreboard.Score.OBJECTIVE, this.objective)
+                .set(Queries.Scoreboard.Score.SCORE, this.score)
+                .set(Queries.Scoreboard.Score.TARGET_NAME, this.targetName);
     }
 
 }

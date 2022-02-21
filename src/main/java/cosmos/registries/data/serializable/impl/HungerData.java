@@ -55,11 +55,11 @@ public class HungerData implements ShareableSerializable<ServerPlayer> {
     @Override
     public DataContainer toContainer() {
         return DataContainer.createNew()
-                .set(Queries.Hungers.EXHAUSTION, this.exhaustion)
-                .set(Queries.Hungers.FOOD_LEVEL, this.foodLevel)
-                .set(Queries.Hungers.MAX_EXHAUSTION, this.maxExhaustion)
-                .set(Queries.Hungers.MAX_FOOD_LEVEL, this.maxFoodLevel)
-                .set(Queries.Hungers.SATURATION, this.saturation);
+                .set(Queries.Hunger.EXHAUSTION, this.exhaustion)
+                .set(Queries.Hunger.FOOD_LEVEL, this.foodLevel)
+                .set(Queries.Hunger.MAX_EXHAUSTION, this.maxExhaustion)
+                .set(Queries.Hunger.MAX_FOOD_LEVEL, this.maxFoodLevel)
+                .set(Queries.Hunger.SATURATION, this.saturation);
     }
 
 }

@@ -35,7 +35,7 @@ public class CriterionProgressData implements DataSerializable {
 
     @Override
     public DataContainer toContainer() {
-        return DataContainer.createNew().set(Queries.Advancements.Criterion.DATE, this.date);
+        return DataContainer.createNew().set(Queries.Advancement.Criterion.DATE, this.date);
     }
 
 }

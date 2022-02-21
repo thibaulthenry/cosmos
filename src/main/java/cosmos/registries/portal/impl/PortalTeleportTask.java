@@ -62,7 +62,7 @@ public class PortalTeleportTask {
         this.entity = target;
         this.isAudience = target instanceof Audience;
         this.portal = portal;
-        final String taskDescription = portal.key().formatted() + "-" + target.uniqueId();
+        // final String taskDescription = portal.key().formatted() + "-" + target.uniqueId();
 
         this.teleportTask = Task.builder()
                 .execute(() -> {
@@ -79,7 +79,7 @@ public class PortalTeleportTask {
                     Cosmos.services().registry().portalTeleportTask().unregister(target.uniqueId());
                 })
                 .delay(delayDuration)
-                .name("cosmos-portal-tp-" + taskDescription)
+                // .name("cosmos-portal-tp-" + taskDescription)
                 .plugin(Cosmos.pluginContainer())
                 .build();
 
@@ -93,7 +93,7 @@ public class PortalTeleportTask {
             this.delayTimerTask = Task.builder()
                     .execute(() -> src.sendActionBar(this.formatDelay().color(this.colorDelay())))
                     .interval(this.delayFormat.interval())
-                    .name("cosmos-portal-delay-timer-" + taskDescription)
+                    // .name("cosmos-portal-delay-timer-" + taskDescription)
                     .plugin(Cosmos.pluginContainer())
                     .build();
 
@@ -107,7 +107,7 @@ public class PortalTeleportTask {
                     })
                     .delay(Ticks.of(this.delayDurationTicks + 1))
                     .plugin(Cosmos.pluginContainer())
-                    .name("cosmos-portal-delay-timer-kill-" + taskDescription)
+                    // .name("cosmos-portal-delay-timer-kill-" + taskDescription)
                     .build();
         }
 
@@ -123,14 +123,14 @@ public class PortalTeleportTask {
                         src.playSound(soundDelay);
                     })
                     .interval(optionalSoundDelayInterval.get())
-                    .name("cosmos-portal-sound-delay-" + taskDescription)
+                    // .name("cosmos-portal-sound-delay-" + taskDescription)
                     .plugin(Cosmos.pluginContainer())
                     .build();
 
             this.soundDelayKillTask = Task.builder()
                     .execute(() -> this.cancelTask(this.scheduledSoundDelayTask))
                     .delay(Ticks.of(this.delayDurationTicks - 1))
-                    .name("cosmos-portal-sound-delay-kill-" + taskDescription)
+                    // .name("cosmos-portal-sound-delay-kill-" + taskDescription)
                     .plugin(Cosmos.pluginContainer())
                     .build();
         }
@@ -168,7 +168,7 @@ public class PortalTeleportTask {
             return this.delayGradientColors.get(0);
         }
 
-        double percent = 1.0 - (this.teleportStopTick - Sponge.server().runningTimeTicks()) / (double) this.delayDurationTicks;
+        double percent = 1.0 - (this.teleportStopTick - Sponge.server().runningTimeTicks().ticks()) / (double) this.delayDurationTicks;
         percent = Math.max(0.0, Math.min(1.0, percent));
         final int rangeNumber = this.delayGradientColors.size() - 1;
         final int nStart = (int) Math.floor(percent * rangeNumber);
@@ -190,9 +190,11 @@ public class PortalTeleportTask {
     }
 
     public TextComponent formatDelay() {
+        long runningTimeTicks = Sponge.server().runningTimeTicks().ticks();
+
         switch (this.delayFormat) {
             case DIGITAL_CLOCK:
-                final long millis = 50 * (this.teleportStopTick - Sponge.server().runningTimeTicks());
+                final long millis = 50 * (this.teleportStopTick - runningTimeTicks);
 
                 final String digits = String.format(
                         "%02d:%02d:%02d.%03d",
@@ -204,13 +206,13 @@ public class PortalTeleportTask {
 
                 return Component.text(digits);
             case PERCENTAGE:
-                final double percent = 100 * ((this.teleportStopTick - Sponge.server().runningTimeTicks()) / (double) this.delayDurationTicks);
+                final double percent = 100 * ((this.teleportStopTick - runningTimeTicks) / (double) this.delayDurationTicks);
                 return Component.text(Math.max(0, Math.min(100, 100 - Math.round(percent))) + "%");
             case SECONDS:
-                final long ticks = Math.max(0, this.teleportStopTick - Sponge.server().runningTimeTicks());
+                final long ticks = Math.max(0, this.teleportStopTick - runningTimeTicks);
                 return Component.text(TimeUnit.MILLISECONDS.toSeconds(50 * ticks));
             case TICKS:
-                return Component.text(Math.max(0, this.teleportStopTick - Sponge.server().runningTimeTicks()));
+                return Component.text(Math.max(0, this.teleportStopTick - runningTimeTicks));
             default:
                 return Component.empty();
         }
@@ -256,7 +258,7 @@ public class PortalTeleportTask {
                         .add(
                                 PotionEffect.builder()
                                         .ambient(false)
-                                        .duration((int) this.delayDurationTicks + 60)
+                                        .duration(Ticks.of(this.delayDurationTicks + 60))
                                         .potionType(PotionEffectTypes.NAUSEA)
                                         .showIcon(false)
                                         .showParticles(false)
@@ -267,7 +269,7 @@ public class PortalTeleportTask {
             }
         }
 
-        this.teleportStopTick = Sponge.server().runningTimeTicks() + this.delayDurationTicks;
+        this.teleportStopTick = Sponge.server().runningTimeTicks().ticks() + this.delayDurationTicks;
         this.scheduledTeleportTask = Sponge.server().scheduler().submit(this.teleportTask);
 
         if (this.delayTimerTask != null) {

@@ -40,7 +40,7 @@ public class Get extends AbstractMultiTargetCommand {
 
         final Collection<Component> contents = targets.stream()
                 .map(target -> {
-                    final Optional<Score> optionalScore = objective.score(target);
+                    final Optional<Score> optionalScore = objective.findScore(target);
 
                     return optionalScore
                             .map(score -> {

@@ -13,12 +13,12 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 @Singleton
-public class InventoriesSerializer implements Serializer<ExtendedInventoryData> {
+public class InventorySerializer implements Serializer<ExtendedInventoryData> {
 
     private final FinderService finderService;
 
     @Inject
-    public InventoriesSerializer(final Injector injector) {
+    public InventorySerializer(final Injector injector) {
         this.finderService = injector.getInstance(FinderService.class);
     }
 

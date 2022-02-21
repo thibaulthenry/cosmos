@@ -20,12 +20,6 @@ public interface ConfigurationService extends CosmosService {
 
     boolean save();
 
-    boolean save(ConfigurationNode node);
-
-    boolean saveValue(Object value, Object startSaveAt, Object... paths);
-
-    boolean saveValue(Object value, ConfigurationNode savedNode, Object... paths);
-
-    boolean saveValue(Object value, ConfigurationNode savedNode, ConfigurationNode valueNode);
+    boolean saveValue(Object value, Object... paths);
 
 }

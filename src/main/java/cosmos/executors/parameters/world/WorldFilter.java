@@ -4,6 +4,7 @@ import cosmos.registries.message.Message;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandCompletion;
 import org.spongepowered.api.command.exception.ArgumentParseException;
 import org.spongepowered.api.command.parameter.ArgumentReader;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -41,12 +42,13 @@ class WorldFilter implements ValueParameter<ResourceKey> {
     }
 
     @Override
-    public List<String> complete(final CommandContext context, final String currentInput) {
+    public List<CommandCompletion> complete(final CommandContext context, final String currentInput) {
         return Sponge.server().worldManager().worldKeys()
                 .stream()
                 .filter(key -> key.formatted().startsWith(currentInput))
                 .filter(key -> this.filter.test(key, context))
                 .map(ResourceKey::formatted)
+                .map(CommandCompletion::of)
                 .collect(Collectors.toList());
     }
 

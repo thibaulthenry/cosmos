@@ -1,6 +1,7 @@
 package cosmos.executors.parameters.scoreboard;
 
 import cosmos.Cosmos;
+import org.spongepowered.api.command.CommandCompletion;
 import org.spongepowered.api.command.exception.ArgumentParseException;
 import org.spongepowered.api.command.parameter.ArgumentReader;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -23,14 +24,15 @@ class ObjectiveFilter implements ValueParameter<Objective> {
     }
 
     @Override
-    public List<String> complete(final CommandContext context, final String currentInput) {
+    public List<CommandCompletion> complete(final CommandContext context, final String currentInput) {
         return Cosmos.services().world().findKeyOrSource(context)
-                .map(worldKey -> Cosmos.services().scoreboards().objectives(worldKey))
+                .map(worldKey -> Cosmos.services().scoreboard().objectives(worldKey))
                 .orElse(Collections.emptySet())
                 .stream()
                 .filter(this.filter)
                 .map(Objective::name)
                 .filter(name -> name.startsWith(currentInput))
+                .map(CommandCompletion::of)
                 .collect(Collectors.toList());
     }
 
@@ -39,7 +41,7 @@ class ObjectiveFilter implements ValueParameter<Objective> {
         final String input = reader.parseString();
 
         return Cosmos.services().world().findKeyOrSource(context)
-                .map(worldKey -> Cosmos.services().scoreboards().scoreboardOrCreate(worldKey))
+                .map(worldKey -> Cosmos.services().scoreboard().scoreboardOrCreate(worldKey))
                 .flatMap(scoreboard -> scoreboard.objective(input));
     }
 

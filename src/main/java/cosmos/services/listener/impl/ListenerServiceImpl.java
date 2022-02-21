@@ -9,8 +9,11 @@ import cosmos.registries.listener.Listener;
 import cosmos.registries.listener.ListenerRegistry;
 import cosmos.registries.listener.ScheduledAsyncSaveListener;
 import cosmos.registries.listener.ScheduledSaveListener;
+import cosmos.registries.listener.ToggleListener;
 import cosmos.services.listener.ListenerService;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.scheduler.ScheduledTask;
 import org.spongepowered.api.scheduler.Task;
 
@@ -35,9 +38,14 @@ public class ListenerServiceImpl implements ListenerService {
     }
 
     @Override
+    public boolean isRegisteredToSponge(final Class<? extends Listener> clazz) {
+        return this.listenerRegistry.find(clazz).map(Listener::registeredToSponge).orElse(false);
+    }
+
+    @Override
     public void cancelSaveTaskIfNot() {
         if (this.saveTaskUuid != null) {
-            Sponge.asyncScheduler().taskById(this.saveTaskUuid).ifPresent(ScheduledTask::cancel);
+            Sponge.asyncScheduler().findTask(this.saveTaskUuid).ifPresent(ScheduledTask::cancel);
             this.saveTaskUuid = null;
         }
     }
@@ -63,7 +71,7 @@ public class ListenerServiceImpl implements ListenerService {
 
     @Override
     public void submitSaveTaskIfNot() {
-        if (this.saveTaskUuid != null && Sponge.asyncScheduler().taskById(this.saveTaskUuid).isPresent()) {
+        if (this.saveTaskUuid != null && Sponge.asyncScheduler().findTask(this.saveTaskUuid).isPresent()) {
             return;
         }
 
@@ -75,6 +83,33 @@ public class ListenerServiceImpl implements ListenerService {
                 .build();
 
         this.saveTaskUuid = Sponge.asyncScheduler().submit(task).uniqueId();
+    }
+
+    @Override
+    public void toggle(final Class<? extends Listener> listenerClass, final boolean state) {
+        this.toggle(listenerClass, state, null);
+    }
+
+    @Override
+    public void toggle(final Class<? extends Listener> listenerClass, final boolean state, @Nullable final ServerPlayer player) {
+        this.listenerRegistry.find(listenerClass)
+                .filter(listener -> listener.registeredToSponge() && listener instanceof ToggleListener)
+                .map(listener -> (ToggleListener) listener)
+                .ifPresent(listener -> {
+                    if (player == null) {
+                        if (state) {
+                            listener.start();
+                        } else {
+                            listener.stop();
+                        }
+                    } else {
+                        if (state) {
+                            listener.start(player);
+                        } else {
+                            listener.stop(player);
+                        }
+                    }
+                });
     }
 
 }

@@ -30,7 +30,6 @@ public class Operation extends AbstractMultiTargetCommand {
                 CosmosParameters.SCOREBOARD_OPERANDS.get().key(CosmosKeys.OPERAND).build(),
                 CosmosParameters.TARGETS.get()
                         .entitiesKey("sources")
-                        .scoreHoldersKey("source-score-holders")
                         .textAmpersandKey("source-text-ampersand")
                         .textJsonKey("source-text-json")
                         .build(),
@@ -47,7 +46,7 @@ public class Operation extends AbstractMultiTargetCommand {
                     .asSingleton();
         }
 
-        final Score targetScore = targetObjective.scoreOrCreate(target);
+        final Score targetScore = targetObjective.findOrCreateScore(target);
         final int targetScoreValue = targetScore.score();
 
         if (super.serviceProvider.validation().doesOverflowMaxLength(source, Units.SCORE_HOLDER_MAX_LENGTH)) {
@@ -58,7 +57,7 @@ public class Operation extends AbstractMultiTargetCommand {
                     .asSingleton();
         }
 
-        final Score sourceScore = sourceObjective.scoreOrCreate(source);
+        final Score sourceScore = sourceObjective.findOrCreateScore(source);
         final int mutationResult;
 
         try {
@@ -154,7 +153,7 @@ public class Operation extends AbstractMultiTargetCommand {
                                 .asSupplier()
                 );
 
-        final Collection<Component> sources = super.serviceProvider.scoreboards().sources(context, worldKey, false);
+        final Collection<Component> sources = super.serviceProvider.scoreboard().sources(context, worldKey, false);
 
         if (targets.size() > 1 && sources.size() > 1) {
             throw super.serviceProvider.message().getError(src, "error.invalid.operation.cross");

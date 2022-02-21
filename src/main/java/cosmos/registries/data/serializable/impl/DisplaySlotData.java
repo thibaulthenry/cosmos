@@ -36,8 +36,8 @@ public class DisplaySlotData implements ShareableSerializable<Scoreboard> {
     @Override
     public DataContainer toContainer() {
         return DataContainer.createNew()
-                .set(Queries.Scoreboards.DisplaySlot.DISPLAY_SLOT, this.displaySlot.key(RegistryTypes.DISPLAY_SLOT))
-                .set(Queries.Scoreboards.DisplaySlot.OBJECTIVE, this.objective);
+                .set(Queries.Scoreboard.DisplaySlot.DISPLAY_SLOT, this.displaySlot.key(RegistryTypes.DISPLAY_SLOT))
+                .set(Queries.Scoreboard.DisplaySlot.OBJECTIVE, this.objective);
     }
 
 }

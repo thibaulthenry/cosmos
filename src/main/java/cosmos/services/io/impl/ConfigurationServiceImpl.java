@@ -7,17 +7,16 @@ import cosmos.Cosmos;
 import cosmos.constants.Directories;
 import cosmos.services.io.ConfigurationService;
 import cosmos.services.io.FinderService;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.asset.Asset;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.io.File;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 @Singleton
 public class ConfigurationServiceImpl implements ConfigurationService {
@@ -44,6 +43,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     private HoconConfigurationLoader buildLoader() {
+        if (true) {
+            return null;
+        }
+
         try {
             final Optional<Path> optionalConfigPath = this.finderService.findConfigPath(Directories.Files.COSMOS_CONFIG);
 
@@ -53,9 +56,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             }
 
             final Path configPath = optionalConfigPath.get();
-            final Optional<Asset> optionalDefaultConfigAsset = Sponge.assetManager().asset(Cosmos.pluginContainer(), Directories.Files.DEFAULT_CONFIG);
+            final Optional<InputStream> optionalConfigResource = Cosmos.pluginContainer().openResource(URI.create(Directories.Files.DEFAULT_CONFIG));
 
-            if (!optionalDefaultConfigAsset.isPresent()) {
+            if (!optionalConfigResource.isPresent()) {
                 Cosmos.logger().error("Default configuration loading failed");
                 return null;
             }
@@ -67,7 +70,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 return null;
             }
 
-            optionalDefaultConfigAsset.get().copyToFile(configPath, false, true);
+            Files.copy(optionalConfigResource.get(), configPath);
 
             return HoconConfigurationLoader.builder().path(configPath).build();
         } catch (final Exception e) {
@@ -114,22 +117,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             return true;
         }
 
-        return node.removeChild(element) && this.save(node);
+        return node.removeChild(element) && this.save();
     }
 
     @Override
     public boolean save() {
-        return this.save(this.rootNode);
-    }
-
-    @Override
-    public boolean save(final ConfigurationNode node) {
-        if (!this.loader.canSave() || !node.isMap()) {
+        if (!this.loader.canSave() || !this.rootNode.isMap()) {
             return false;
         }
 
         try {
-            this.loader.save(node);
+            this.loader.save(this.rootNode);
 
             return true;
         } catch (final Exception e) {
@@ -139,29 +137,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public boolean saveValue(final Object value, final Object startSaveAt, Object... paths) {
-        final int parentIndex = IntStream.range(0, paths.length)
-                .filter(index -> startSaveAt.equals(paths[index]))
-                .findFirst()
-                .orElse(-1);
-
-        if (parentIndex < 0) {
-            return false;
-        }
-
-        return this.findNode(Arrays.copyOfRange(paths, 0, parentIndex))
-                .map(node -> this.saveValue(value, node, paths))
-                .orElse(false);
-    }
-
-    @Override
-    public boolean saveValue(final Object value, final ConfigurationNode savedNode, final Object... paths) {
-        return this.findNode(paths).map(node -> this.saveValue(value, savedNode, node)).orElse(false);
-    }
-
-    @Override
-    public boolean saveValue(final Object value, final ConfigurationNode savedNode, final ConfigurationNode valueNode) {
-        return this.setValue(value, valueNode) && this.save(savedNode);
+    public boolean saveValue(final Object value, final Object... paths) {
+        return this.setValue(value, paths) && this.save();
     }
 
     private boolean setValue(final Object value, final ConfigurationNode node) {

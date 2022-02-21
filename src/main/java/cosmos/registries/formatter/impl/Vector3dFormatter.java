@@ -14,9 +14,9 @@ public class Vector3dFormatter implements Formatter<Vector3d> {
 
     @Override
     public TextComponent asText(final Vector3d value) {
-        final double x = GenericMath.round(value.getX(), 2);
-        final double y = GenericMath.round(value.getY(), 2);
-        final double z = GenericMath.round(value.getZ(), 2);
+        final double x = GenericMath.round(value.x(), 2);
+        final double y = GenericMath.round(value.y(), 2);
+        final double z = GenericMath.round(value.z(), 2);
 
         final TextComponent hoverText = Component.text()
                 .append(Component.text("<x: "))

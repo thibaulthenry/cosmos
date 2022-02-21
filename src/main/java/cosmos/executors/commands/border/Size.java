@@ -6,7 +6,7 @@ import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
-import org.spongepowered.api.world.WorldBorder;
+import org.spongepowered.api.world.border.WorldBorder;
 import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 import java.util.Optional;
@@ -25,7 +25,7 @@ public class Size extends AbstractBorderCommand {
 
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
-            border.setDiameter(value);
+            // todo border.setDiameter(value);
             super.serviceProvider.world().saveProperties(src, properties);
         }
 

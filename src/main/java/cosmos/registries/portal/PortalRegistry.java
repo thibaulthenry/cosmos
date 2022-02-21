@@ -8,7 +8,7 @@ import cosmos.registries.CosmosRegistry;
 import cosmos.registries.CosmosRegistryEntry;
 import cosmos.registries.portal.impl.PortalParticlesTask;
 import cosmos.registries.portal.impl.PortalSoundAmbientTask;
-import cosmos.registries.serializer.impl.PortalsSerializer;
+import cosmos.registries.serializer.impl.PortalSerializer;
 import cosmos.services.io.FinderService;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.block.BlockType;
@@ -31,14 +31,14 @@ public class PortalRegistry implements CosmosRegistry<ResourceKey, CosmosPortal>
     private final FinderService finderService;
     private final PortalParticlesTaskRegistry portalParticlesTaskRegistry;
     private final PortalSoundAmbientTaskRegistry portalSoundAmbientTaskRegistry;
-    private final PortalsSerializer portalsSerializer;
+    private final PortalSerializer portalSerializer;
 
     @Inject
     public PortalRegistry(final Injector injector) {
         this.finderService = injector.getInstance(FinderService.class);
         this.portalParticlesTaskRegistry = injector.getInstance(PortalParticlesTaskRegistry.class);
         this.portalSoundAmbientTaskRegistry = injector.getInstance(PortalSoundAmbientTaskRegistry.class);
-        this.portalsSerializer = injector.getInstance(PortalsSerializer.class);
+        this.portalSerializer = injector.getInstance(PortalSerializer.class);
     }
 
     public Optional<CosmosPortal> find(final LocatableBlock key) {
@@ -70,7 +70,7 @@ public class PortalRegistry implements CosmosRegistry<ResourceKey, CosmosPortal>
                             .ifPresent(PortalSoundAmbientTask::submit);
 
                     this.finderService.findCosmosPath(Directories.PORTALS, v.key())
-                            .ifPresent(path -> this.portalsSerializer.serialize(path, v));
+                            .ifPresent(path -> this.portalSerializer.serialize(path, v));
 
                     return CosmosRegistryEntry.of(key, v);
                 });
@@ -78,7 +78,7 @@ public class PortalRegistry implements CosmosRegistry<ResourceKey, CosmosPortal>
 
     public void registerAll() {
         this.finderService.stream(Directories.PORTALS).forEach(path ->
-                this.portalsSerializer.deserialize(path).flatMap(portal -> this.register(portal.key(), portal))
+                this.portalSerializer.deserialize(path).flatMap(portal -> this.register(portal.key(), portal))
         );
     }
 

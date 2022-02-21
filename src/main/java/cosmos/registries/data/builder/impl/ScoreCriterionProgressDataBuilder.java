@@ -24,22 +24,22 @@ public class ScoreCriterionProgressDataBuilder extends AbstractDataBuilder<Score
 
     @Override
     protected Optional<ScoreCriterionProgressData> buildContent(final DataView container) throws InvalidDataException {
-        if (!container.contains(Queries.Advancements.Criterion.DATE, Queries.Advancements.Criterion.GOAL,
-                Queries.Advancements.Criterion.SCORE)) {
+        if (!container.contains(Queries.Advancement.Criterion.DATE, Queries.Advancement.Criterion.GOAL,
+                Queries.Advancement.Criterion.SCORE)) {
             return Optional.empty();
         }
 
-        final String date = container.getString(Queries.Advancements.Criterion.DATE)
+        final String date = container.getString(Queries.Advancement.Criterion.DATE)
                 .orElseThrow(() -> new InvalidDataException("Missing date while building ScoreCriterionProgressData"));
 
-        final int goal = container.getInt(Queries.Advancements.Criterion.GOAL)
+        final int goal = container.getInt(Queries.Advancement.Criterion.GOAL)
                 .orElseThrow(() -> new InvalidDataException("Missing goal while building ScoreCriterionProgressData"));
 
         final String name = container.parent()
                 .map(DataView::name)
                 .orElseThrow(() -> new InvalidDataException("Missing name while building ScoreCriterionProgressData"));
 
-        final int score = container.getInt(Queries.Advancements.Criterion.SCORE)
+        final int score = container.getInt(Queries.Advancement.Criterion.SCORE)
                 .orElseThrow(() -> new InvalidDataException("Missing score while building ScoreCriterionProgressData"));
 
         return Optional.of(new ScoreCriterionProgressData(date, goal, name, score));

@@ -30,7 +30,7 @@ public class Leave extends AbstractMultiTargetCommand {
         final Collection<Component> contents = targets
                 .stream()
                 .map(target -> {
-                    final Optional<Team> optionalTeam = super.serviceProvider.scoreboards()
+                    final Optional<Team> optionalTeam = super.serviceProvider.scoreboard()
                             .scoreboardOrCreate(worldKey)
                             .memberTeam(target);
 

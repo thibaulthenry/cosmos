@@ -45,9 +45,9 @@ public class HealthData implements ShareableSerializable<ServerPlayer> {
     @Override
     public DataContainer toContainer() {
         return DataContainer.createNew()
-                .set(Queries.Healths.ABSORPTION, this.absorption)
-                .set(Queries.Healths.HEALTH, this.health)
-                .set(Queries.Healths.MAX_HEALTH, this.maxHealth);
+                .set(Queries.Health.ABSORPTION, this.absorption)
+                .set(Queries.Health.HEALTH, this.health)
+                .set(Queries.Health.MAX_HEALTH, this.maxHealth);
     }
 
 }

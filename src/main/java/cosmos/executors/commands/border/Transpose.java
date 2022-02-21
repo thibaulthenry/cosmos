@@ -7,7 +7,7 @@ import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
-import org.spongepowered.api.world.WorldBorder;
+import org.spongepowered.api.world.border.WorldBorder;
 import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 import java.time.temporal.ChronoUnit;
@@ -39,7 +39,7 @@ public class Transpose extends AbstractBorderCommand {
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "parameter", CosmosKeys.END_DIAMETER));
         final double startDiameter = context.one(CosmosKeys.START_DIAMETER).orElse(border.diameter());
 
-        border.setDiameter(startDiameter, endDiameter, duration, unit);
+        // todo border.setDiameter(startDiameter, endDiameter, duration, unit);
         super.serviceProvider.world().saveProperties(src, properties);
 
         super.serviceProvider.message()

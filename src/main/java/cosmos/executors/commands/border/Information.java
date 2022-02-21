@@ -12,9 +12,9 @@ import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
-import org.spongepowered.api.world.WorldBorder;
+import org.spongepowered.api.world.border.WorldBorder;
 import org.spongepowered.api.world.server.storage.ServerWorldProperties;
-import org.spongepowered.math.vector.Vector3d;
+import org.spongepowered.math.vector.Vector2d;
 
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -31,20 +31,20 @@ public class Information extends AbstractBorderCommand {
 
     private TextComponent getBorderInformation(final Audience src, final ServerWorldProperties properties, final WorldBorder border) {
         final ResourceKey worldKey = properties.key();
-        final Vector3d center = border.center();
+        final Vector2d center = border.center();
 
         final double y = Sponge.server().worldManager().world(worldKey)
-                .map(world -> world.highestPositionAt(center.toInt()).getY())
+                .map(world -> world.highestPositionAt(center.toVector3().toInt()).y())
                 .orElse(1);
 
-        final String command = MessageFormat.format("/cm move {0} {1} {2} {3} --safe-only", worldKey.asString(), center.getX(), y, center.getZ());
+        final String command = MessageFormat.format("/cm move {0} {1} {2} {3} --safe-only", worldKey.asString(), center.x(), y, center.y());
 
-        final long secondsRemaining = border.timeRemaining().getSeconds();
+        final long secondsRemaining = border.timeUntilTargetDiameter().getSeconds();
 
         final TextComponent contractingTextDetails = secondsRemaining > 0
                 ? super.serviceProvider.message()
                 .getMessage(src, "success.border.information.contracting.details")
-                .replace("diameter", border.newDiameter())
+                // todo .replace("diameter", border.newDiameter())
                 .replace("time", secondsRemaining)
                 .gray()
                 .asText() :
@@ -52,8 +52,8 @@ public class Information extends AbstractBorderCommand {
 
         return super.serviceProvider.message()
                 .getMessage(src, "success.border.information")
-                .replace("amount", border.damageAmount())
-                .replace("center", center.toVector2(true))
+                // todo .replace("amount", border.damageAmount())
+                .replace("center", center)
                 .replace("contracting", secondsRemaining > 0
                         ? Component.text("✓", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true) :
                         Component.text("✗", NamedTextColor.RED).decoration(TextDecoration.BOLD, true)
@@ -61,7 +61,7 @@ public class Information extends AbstractBorderCommand {
                 .replace("details", contractingTextDetails)
                 .replace("diameter", border.diameter())
                 .replace("distance", border.warningDistance())
-                .replace("threshold", border.damageThreshold())
+                // todo .replace("threshold", border.damageThreshold())
                 .replace("time", border.warningTime().getSeconds())
                 .replace("world", properties)
                 .clickEvent("center", ClickEvent.suggestCommand(command))

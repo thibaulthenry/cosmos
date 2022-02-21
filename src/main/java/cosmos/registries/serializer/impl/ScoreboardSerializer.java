@@ -13,12 +13,12 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 @Singleton
-public class ScoreboardsSerializer implements Serializer<ScoreboardData> {
+public class ScoreboardSerializer implements Serializer<ScoreboardData> {
 
     private final FinderService finderService;
 
     @Inject
-    public ScoreboardsSerializer(final Injector injector) {
+    public ScoreboardSerializer(final Injector injector) {
         this.finderService = injector.getInstance(FinderService.class);
     }
 

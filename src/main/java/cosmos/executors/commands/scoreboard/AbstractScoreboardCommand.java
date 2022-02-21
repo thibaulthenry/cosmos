@@ -1,7 +1,7 @@
 package cosmos.executors.commands.scoreboard;
 
+import cosmos.constants.PerWorldFeatures;
 import cosmos.executors.commands.AbstractCommand;
-import cosmos.registries.listener.impl.perworld.ScoreboardsListener;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
@@ -17,12 +17,12 @@ public abstract class AbstractScoreboardCommand extends AbstractCommand {
 
     @Override
     protected final void run(final Audience src, final CommandContext context) throws CommandException {
-        if (!super.serviceProvider.registry().listener().isRegisteredToSponge(ScoreboardsListener.class)) {
+        if (!super.serviceProvider.listener().isRegisteredToSponge(PerWorldFeatures.SCOREBOARD.listenerClass())) {
             throw super.serviceProvider.message().getError(src, "error.per-world.scoreboards.disabled");
         }
 
         final ResourceKey worldKey = super.serviceProvider.world().keyOrSource(context);
-        this.run(src, context, worldKey, super.serviceProvider.scoreboards().scoreboardOrCreate(worldKey));
+        this.run(src, context, worldKey, super.serviceProvider.scoreboard().scoreboardOrCreate(worldKey));
     }
 
     protected abstract void run(Audience src, CommandContext context, ResourceKey worldKey, Scoreboard scoreboard) throws CommandException;

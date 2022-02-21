@@ -56,7 +56,7 @@ public class Add extends AbstractScoreboardCommand {
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.CRITERION));
 
         final Objective.Builder objectiveBuilder = Objective.builder().name(name).criterion(criterion);
-        super.serviceProvider.scoreboards().findComponent(context).ifPresent(objectiveBuilder::displayName);
+        super.serviceProvider.scoreboard().findComponent(context).ifPresent(objectiveBuilder::displayName);
         final Objective objective = objectiveBuilder.build();
         scoreboard.addObjective(objective);
 

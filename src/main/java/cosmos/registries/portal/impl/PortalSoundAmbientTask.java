@@ -28,7 +28,7 @@ public class PortalSoundAmbientTask {
                                 .ifPresent(sound -> location.world().playSound(sound, location.position()))
                 ))
                 .interval(Ticks.of(20))
-                .name("cosmos-portal-sound-ambient-" + portal.key().formatted())
+                // .name("cosmos-portal-sound-ambient-" + portal.key().formatted())
                 .plugin(Cosmos.pluginContainer())
                 .build();
     }

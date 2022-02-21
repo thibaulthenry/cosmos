@@ -46,7 +46,7 @@ public class InventoryData implements ShareableSerializable<Inventory> {
     @Override
     public DataContainer toContainer() {
         return DataContainer.createNew().set(
-                Queries.Inventories.INVENTORY,
+                Queries.Inventory.INVENTORY,
                 this.slots.stream()
                         .filter(InventorySlotData::isPresent)
                         .map(InventorySlotData::toContainer)

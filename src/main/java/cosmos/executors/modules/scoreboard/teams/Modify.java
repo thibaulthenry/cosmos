@@ -4,7 +4,15 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.constants.CosmosParameters;
-import cosmos.executors.commands.scoreboard.teams.modify.*;
+import cosmos.executors.commands.scoreboard.teams.modify.CollisionRule;
+import cosmos.executors.commands.scoreboard.teams.modify.Color;
+import cosmos.executors.commands.scoreboard.teams.modify.DeathMessageVisibility;
+import cosmos.executors.commands.scoreboard.teams.modify.DisplayName;
+import cosmos.executors.commands.scoreboard.teams.modify.FriendlyFire;
+import cosmos.executors.commands.scoreboard.teams.modify.NameTagVisibility;
+import cosmos.executors.commands.scoreboard.teams.modify.Prefix;
+import cosmos.executors.commands.scoreboard.teams.modify.SeeFriendlyInvisibles;
+import cosmos.executors.commands.scoreboard.teams.modify.Suffix;
 import cosmos.executors.modules.AbstractModule;
 
 @Singleton

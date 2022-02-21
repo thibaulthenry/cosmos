@@ -42,8 +42,8 @@ public class TransportationServiceImpl implements TransportationService {
                 safeOnly ? " --safe-only" : "",
                 target == null ? "" : " " + target,
                 worldKey == null ? "" : " " + worldKey.formatted(),
-                position == null ? "" : " " + position.getX() + " " + position.getY() + " " + position.getZ(),
-                rotation == null ? "" : " " + rotation.getX() + " " + rotation.getY() + " " + rotation.getZ()
+                position == null ? "" : " " + position.x() + " " + position.y() + " " + position.z(),
+                rotation == null ? "" : " " + rotation.x() + " " + rotation.y() + " " + rotation.z()
         );
     }
 

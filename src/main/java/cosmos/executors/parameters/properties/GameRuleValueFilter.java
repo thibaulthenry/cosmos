@@ -1,6 +1,7 @@
 package cosmos.executors.parameters.properties;
 
 import cosmos.constants.CosmosKeys;
+import org.spongepowered.api.command.CommandCompletion;
 import org.spongepowered.api.command.exception.ArgumentParseException;
 import org.spongepowered.api.command.parameter.ArgumentReader;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -23,7 +24,7 @@ class GameRuleValueFilter implements ValueParameter<Object> {
     }
 
     @Override
-    public List<String> complete(final CommandContext context, final String currentInput) {
+    public List<CommandCompletion> complete(final CommandContext context, final String currentInput) {
         return context.one(CosmosKeys.GAME_RULE)
                 .map(GameRule::valueType)
                 .filter(type -> Boolean.class.equals(type) || boolean.class.equals(type))

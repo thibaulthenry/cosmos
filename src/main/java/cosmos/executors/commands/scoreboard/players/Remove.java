@@ -56,7 +56,7 @@ public class Remove extends AbstractMultiTargetCommand {
                     }
 
                     try {
-                        final Score score = objective.scoreOrCreate(target);
+                        final Score score = objective.findOrCreateScore(target);
                         final int result = Math.subtractExact(score.score(), amount);
                         score.setScore(result);
                         super.addSuccess();

@@ -100,19 +100,19 @@ public class ExtendedInventoryData implements ShareableSerializable<ServerPlayer
         final DataContainer dataContainer = DataContainer.createNew();
 
         if (this.playerInventoryData != null) {
-            dataContainer.set(Queries.Inventories.Extended.PLAYER_INVENTORY, this.playerInventoryData);
+            dataContainer.set(Queries.Inventory.Extended.PLAYER_INVENTORY, this.playerInventoryData);
         }
 
         if (this.enderChestInventoryData != null) {
-            dataContainer.set(Queries.Inventories.Extended.ENDER_CHEST_INVENTORY, this.enderChestInventoryData);
+            dataContainer.set(Queries.Inventory.Extended.ENDER_CHEST_INVENTORY, this.enderChestInventoryData);
         }
 
         if (this.craftingInventoryData != null) {
-            dataContainer.set(Queries.Inventories.Extended.CRAFTING_INVENTORY, this.craftingInventoryData);
+            dataContainer.set(Queries.Inventory.Extended.CRAFTING_INVENTORY, this.craftingInventoryData);
         }
 
         if (this.pickedItem != null && !this.pickedItem.isEmpty()) {
-            dataContainer.set(Queries.Inventories.Extended.PICKED_ITEM, this.pickedItem);
+            dataContainer.set(Queries.Inventory.Extended.PICKED_ITEM, this.pickedItem);
         }
 
         return dataContainer;

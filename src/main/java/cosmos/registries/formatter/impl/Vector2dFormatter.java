@@ -14,8 +14,8 @@ public class Vector2dFormatter implements Formatter<Vector2d> {
 
     @Override
     public TextComponent asText(final Vector2d value) {
-        final double x = GenericMath.round(value.getX(), 2);
-        final double z = GenericMath.round(value.getY(), 2);
+        final double x = GenericMath.round(value.x(), 2);
+        final double z = GenericMath.round(value.y(), 2);
 
         final TextComponent hoverText = Component.text()
                 .append(Component.text("<x: "))

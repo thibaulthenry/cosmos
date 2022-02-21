@@ -24,21 +24,21 @@ public class ExperienceDataBuilder extends AbstractDataBuilder<ExperienceData> {
 
     @Override
     protected Optional<ExperienceData> buildContent(final DataView container) throws InvalidDataException {
-        if (!container.contains(Queries.Experiences.EXPERIENCE, Queries.Experiences.EXPERIENCE_FROM_START_OF_LEVEL,
-                Queries.Experiences.EXPERIENCE_LEVEL, Queries.Experiences.EXPERIENCE_SINCE_LEVEL)) {
+        if (!container.contains(Queries.Experience.EXPERIENCE, Queries.Experience.EXPERIENCE_FROM_START_OF_LEVEL,
+                Queries.Experience.EXPERIENCE_LEVEL, Queries.Experience.EXPERIENCE_SINCE_LEVEL)) {
             return Optional.empty();
         }
 
-        final int experience = container.getInt(Queries.Experiences.EXPERIENCE)
+        final int experience = container.getInt(Queries.Experience.EXPERIENCE)
                 .orElseThrow(() -> new InvalidDataException("Missing experience while building ExperienceData"));
 
-        final int experienceFromStartOfLevel = container.getInt(Queries.Experiences.EXPERIENCE_FROM_START_OF_LEVEL)
+        final int experienceFromStartOfLevel = container.getInt(Queries.Experience.EXPERIENCE_FROM_START_OF_LEVEL)
                 .orElseThrow(() -> new InvalidDataException("Missing experience from start of level while building ExperienceData"));
 
-        final int experienceLevel = container.getInt(Queries.Experiences.EXPERIENCE_LEVEL)
+        final int experienceLevel = container.getInt(Queries.Experience.EXPERIENCE_LEVEL)
                 .orElseThrow(() -> new InvalidDataException("Missing experience level while building ExperienceData"));
 
-        final int experienceSinceLevel = container.getInt(Queries.Experiences.EXPERIENCE_SINCE_LEVEL)
+        final int experienceSinceLevel = container.getInt(Queries.Experience.EXPERIENCE_SINCE_LEVEL)
                 .orElseThrow(() -> new InvalidDataException("Missing experience since level while building ExperienceData"));
 
         return Optional.of(new ExperienceData(experience, experienceFromStartOfLevel, experienceLevel, experienceSinceLevel));

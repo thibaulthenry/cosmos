@@ -28,7 +28,7 @@ public class InventoryDataBuilder extends AbstractDataBuilder<InventoryData> {
 
     @Override
     protected Optional<InventoryData> buildContent(final DataView container) throws InvalidDataException {
-        final Optional<List<DataView>> optionalViewList = container.getViewList(Queries.Inventories.INVENTORY);
+        final Optional<List<DataView>> optionalViewList = container.getViewList(Queries.Inventory.INVENTORY);
 
         if (!optionalViewList.isPresent()) {
             return Optional.empty();

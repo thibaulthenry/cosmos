@@ -27,21 +27,21 @@ public class ObjectiveDataBuilder extends AbstractDataBuilder<ObjectiveData> {
 
     @Override
     protected Optional<ObjectiveData> buildContent(final DataView container) throws InvalidDataException {
-        if (!container.contains(Queries.Scoreboards.Objective.CRITERION, Queries.Scoreboards.Objective.DISPLAY_NAME,
-                Queries.Scoreboards.Objective.NAME, Queries.Scoreboards.Objective.DISPLAY_MODE)) {
+        if (!container.contains(Queries.Scoreboard.Objective.CRITERION, Queries.Scoreboard.Objective.DISPLAY_NAME,
+                Queries.Scoreboard.Objective.NAME, Queries.Scoreboard.Objective.DISPLAY_MODE)) {
             return Optional.empty();
         }
 
-        final Criterion criterion = container.getRegistryValue(Queries.Scoreboards.Objective.CRITERION, RegistryTypes.CRITERION)
+        final Criterion criterion = container.getRegistryValue(Queries.Scoreboard.Objective.CRITERION, RegistryTypes.CRITERION)
                 .orElseThrow(() -> new InvalidDataException("Missing criterion while building ObjectiveData"));
 
-        final ObjectiveDisplayMode displayMode = container.getRegistryValue(Queries.Scoreboards.Objective.DISPLAY_MODE, RegistryTypes.OBJECTIVE_DISPLAY_MODE)
+        final ObjectiveDisplayMode displayMode = container.getRegistryValue(Queries.Scoreboard.Objective.DISPLAY_MODE, RegistryTypes.OBJECTIVE_DISPLAY_MODE)
                 .orElseThrow(() -> new InvalidDataException("Missing display mode while building ObjectiveData"));
 
-        final String displayName = container.getString(Queries.Scoreboards.Objective.DISPLAY_NAME)
+        final String displayName = container.getString(Queries.Scoreboard.Objective.DISPLAY_NAME)
                 .orElseThrow(() -> new InvalidDataException("Missing display name while building ObjectiveData"));
 
-        final String name = container.getString(Queries.Scoreboards.Objective.NAME)
+        final String name = container.getString(Queries.Scoreboard.Objective.NAME)
                 .orElseThrow(() -> new InvalidDataException("Missing name while building ObjectiveData"));
 
         return Optional.of(new ObjectiveData(criterion, displayMode, displayName, name));

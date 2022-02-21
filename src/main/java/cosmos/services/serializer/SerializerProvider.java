@@ -1,31 +1,31 @@
 package cosmos.services.serializer;
 
 import com.google.inject.ImplementedBy;
-import cosmos.registries.serializer.impl.AdvancementsSerializer;
-import cosmos.registries.serializer.impl.ExperiencesSerializer;
-import cosmos.registries.serializer.impl.HealthsSerializer;
-import cosmos.registries.serializer.impl.HungersSerializer;
-import cosmos.registries.serializer.impl.InventoriesSerializer;
-import cosmos.registries.serializer.impl.PortalsSerializer;
-import cosmos.registries.serializer.impl.ScoreboardsSerializer;
+import cosmos.registries.serializer.impl.AdvancementSerializer;
+import cosmos.registries.serializer.impl.ExperienceSerializer;
+import cosmos.registries.serializer.impl.HealthSerializer;
+import cosmos.registries.serializer.impl.HungerSerializer;
+import cosmos.registries.serializer.impl.InventorySerializer;
+import cosmos.registries.serializer.impl.PortalSerializer;
+import cosmos.registries.serializer.impl.ScoreboardSerializer;
 import cosmos.services.CosmosService;
 import cosmos.services.serializer.impl.SerializerProviderImpl;
 
 @ImplementedBy(SerializerProviderImpl.class)
 public interface SerializerProvider extends CosmosService {
 
-    AdvancementsSerializer advancements();
+    AdvancementSerializer advancement();
 
-    ExperiencesSerializer experiences();
+    ExperienceSerializer experience();
 
-    HealthsSerializer healths();
+    HealthSerializer health();
 
-    HungersSerializer hungers();
+    HungerSerializer hunger();
 
-    InventoriesSerializer inventories();
+    InventorySerializer inventory();
 
-    PortalsSerializer portals();
+    PortalSerializer portal();
 
-    ScoreboardsSerializer scoreboards();
+    ScoreboardSerializer scoreboard();
 
 }

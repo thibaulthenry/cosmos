@@ -5,6 +5,7 @@ import cosmos.registries.message.Message;
 import cosmos.registries.portal.CosmosPortal;
 import net.kyori.adventure.audience.Audience;
 import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.command.CommandCompletion;
 import org.spongepowered.api.command.exception.ArgumentParseException;
 import org.spongepowered.api.command.parameter.ArgumentReader;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -39,13 +40,14 @@ class PortalFilter<T extends CosmosPortal> implements ValueParameter<T> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<String> complete(final CommandContext context, final String currentInput) {
+    public List<CommandCompletion> complete(final CommandContext context, final String currentInput) {
         return Cosmos.services().registry().portal()
                 .stream()
                 .filter(portal -> this.clazz.isAssignableFrom(portal.getClass()) && this.filter.test((T) portal))
                 .map(CosmosPortal::key)
                 .map(ResourceKey::formatted)
                 .filter(formatted -> formatted.contains(currentInput))
+                .map(CommandCompletion::of)
                 .collect(Collectors.toList());
     }
 

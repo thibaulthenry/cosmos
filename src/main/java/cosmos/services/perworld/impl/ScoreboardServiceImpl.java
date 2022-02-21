@@ -6,13 +6,14 @@ import com.google.inject.Singleton;
 import cosmos.Cosmos;
 import cosmos.constants.CosmosKeys;
 import cosmos.constants.Directories;
-import cosmos.registries.CosmosRegistryEntry;
+import cosmos.constants.PerWorldFeatures;
 import cosmos.registries.data.serializable.impl.ScoreboardData;
-import cosmos.registries.perworld.ScoreboardsRegistry;
-import cosmos.registries.serializer.impl.ScoreboardsSerializer;
+import cosmos.registries.perworld.GroupRegistry;
+import cosmos.registries.perworld.ScoreboardRegistry;
+import cosmos.registries.serializer.impl.ScoreboardSerializer;
 import cosmos.services.io.FinderService;
 import cosmos.services.message.MessageService;
-import cosmos.services.perworld.ScoreboardsService;
+import cosmos.services.perworld.ScoreboardService;
 import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -28,25 +29,33 @@ import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.scoreboard.objective.Objective;
 import org.spongepowered.api.util.Identifiable;
+import org.spongepowered.api.util.Tuple;
 import org.spongepowered.api.world.server.ServerWorld;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
-public class ScoreboardsServiceImpl implements ScoreboardsService {
+public class ScoreboardServiceImpl implements ScoreboardService {
 
     private final FinderService finderService;
+    private final GroupRegistry groupRegistry;
     private final MessageService messageService;
-    private final ScoreboardsRegistry scoreboardsRegistry;
-    private final ScoreboardsSerializer scoreboardsSerializer;
+    private final ScoreboardRegistry scoreboardRegistry;
+    private final ScoreboardSerializer scoreboardSerializer;
 
     @Inject
-    public ScoreboardsServiceImpl(final Injector injector) {
+    public ScoreboardServiceImpl(final Injector injector) {
         this.finderService = injector.getInstance(FinderService.class);
+        this.groupRegistry = injector.getInstance(GroupRegistry.class);
         this.messageService = injector.getInstance(MessageService.class);
-        this.scoreboardsRegistry = injector.getInstance(ScoreboardsRegistry.class);
-        this.scoreboardsSerializer = injector.getInstance(ScoreboardsSerializer.class);
+        this.scoreboardRegistry = injector.getInstance(ScoreboardRegistry.class);
+        this.scoreboardSerializer = injector.getInstance(ScoreboardSerializer.class);
     }
 
     @Override
@@ -82,22 +91,34 @@ public class ScoreboardsServiceImpl implements ScoreboardsService {
         return this.scoreboardOrCreate(worldKey).objectives();
     }
 
+    private void registerSafely(final Scoreboard scoreboard, final Set<ResourceKey> group) {
+        group.forEach(key -> {
+            if (!this.scoreboardRegistry.register(key, scoreboard).isPresent()) {
+                Cosmos.logger().error("An unexpected error occurred while registering a new scoreboard for world " + key);
+            }
+        });
+    }
+
     @Override
     public Scoreboard scoreboardOrCreate(final ResourceKey worldKey) {
-        return this.scoreboardsRegistry.find(worldKey)
+        final Set<ResourceKey> group = this.groupRegistry.find(Tuple.of(PerWorldFeatures.SCOREBOARD, worldKey))
+                .orElse(Collections.singleton(worldKey));
+
+        return this.scoreboardRegistry.find(worldKey)
                 .map(Optional::of)
                 .orElse(
                         this.finderService.findCosmosPath(Directories.SCOREBOARDS, worldKey)
-                                .flatMap(this.scoreboardsSerializer::deserialize)
+                                .flatMap(this.scoreboardSerializer::deserialize)
                                 .flatMap(ScoreboardData::collect)
+                                .map(scoreboard -> {
+                                    this.registerSafely(scoreboard, group);
+
+                                    return scoreboard;
+                                })
                 )
-                .flatMap(scoreboard -> this.scoreboardsRegistry.register(worldKey, scoreboard).map(CosmosRegistryEntry::value))
                 .orElseGet(() -> {
                     final Scoreboard scoreboard = Scoreboard.builder().build();
-
-                    if (!this.scoreboardsRegistry.register(worldKey, scoreboard).isPresent()) {
-                        Cosmos.logger().error("An unexpected error occurred while registering a new scoreboard for world " + worldKey);
-                    }
+                    this.registerSafely(scoreboard, group);
 
                     return scoreboard;
                 });
@@ -120,28 +141,32 @@ public class ScoreboardsServiceImpl implements ScoreboardsService {
 
     @Override
     public Collection<Component> targets(final CommandContext context, final ResourceKey worldKey, final boolean returnSource) throws CommandException {
-        return this.targetsOrSources(
-                context, CosmosKeys.ENTITIES, CosmosKeys.MANY_SCORE_HOLDER,
-                CosmosKeys.TEXT_AMPERSAND, CosmosKeys.TEXT_JSON, worldKey, returnSource
-        );
+        return this.targetsOrSources(context, CosmosKeys.ENTITIES, CosmosKeys.TEXT_AMPERSAND, CosmosKeys.TEXT_JSON, worldKey, returnSource);
     }
 
     private Collection<Component> targetsOrSources(final CommandContext context, final Parameter.Key<List<Entity>> entitiesKey,
-                                                   final Parameter.Key<List<Component>> scoreHoldersKey, final Parameter.Key<Component> textAmpersandKey,
-                                                   final Parameter.Key<Component> textJsonKey, final ResourceKey worldKey,
-                                                   final boolean returnSource) throws CommandException {
+                                                   final Parameter.Key<Component> textAmpersandKey, final Parameter.Key<Component> textJsonKey,
+                                                   final ResourceKey worldKey, final boolean returnSource) throws CommandException {
         final Audience src = context.cause().audience();
 
         if (!this.isTargetsParameterFilled(context)) {
             return returnSource ? this.tryReturnSource(src) : this.scoreHolders(worldKey);
         }
 
+        if (context.one(textAmpersandKey).map(component -> "*".equals(PlainComponentSerializer.plain().serialize(component))).orElse(false)) {
+            final Collection<Component> scoreHolders = this.scoreHolders(worldKey);
+
+            if (scoreHolders.isEmpty()) {
+                throw this.messageService.getError(src, "error.missing.score-holders.selector", "world", worldKey);
+            }
+
+            return scoreHolders;
+        }
+
         final Optional<List<Component>> optionalSingleInputs = context.one(textAmpersandKey)
                 .map(Optional::of)
                 .orElse(context.one(textJsonKey))
                 .map(Collections::singletonList);
-
-        // TODO https://github.com/SpongePowered/Sponge/pull/3286
 
         final Optional<List<Component>> optionalTargets = context.one(entitiesKey)
                 .map(entities -> entities
@@ -150,8 +175,6 @@ public class ScoreboardsServiceImpl implements ScoreboardsService {
                         .map(Component::text)
                         .collect(Collectors.<Component>toList())
                 )
-                .map(Optional::of)
-                .orElse(context.one(scoreHoldersKey))
                 .map(Optional::of)
                 .orElse(optionalSingleInputs);
 
@@ -165,11 +188,10 @@ public class ScoreboardsServiceImpl implements ScoreboardsService {
     @Override
     public Collection<Component> sources(final CommandContext context, final ResourceKey worldKey, final boolean returnSource) throws CommandException {
         final Parameter.Key<List<Entity>> entitiesKey = Parameter.key("sources", new TypeToken<List<Entity>>() {});
-        final Parameter.Key<List<Component>> scoreHoldersKey = Parameter.key("source-score-holders", new TypeToken<List<Component>>() {});
         final Parameter.Key<Component> textAmpersandKey = Parameter.key("source-text-ampersand", new TypeToken<Component>() {});
         final Parameter.Key<Component> textJsonKey = Parameter.key("source-text-json", new TypeToken<Component>() {});
 
-        return this.targetsOrSources(context, entitiesKey, scoreHoldersKey, textAmpersandKey, textJsonKey, worldKey, returnSource);
+        return this.targetsOrSources(context, entitiesKey, textAmpersandKey, textJsonKey, worldKey, returnSource);
     }
 
     @Override

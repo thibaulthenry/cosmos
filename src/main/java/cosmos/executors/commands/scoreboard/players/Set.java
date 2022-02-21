@@ -51,7 +51,7 @@ public class Set extends AbstractMultiTargetCommand {
                         .asText();
             }
 
-            objective.scoreOrCreate(target).setScore(score);
+            objective.findOrCreateScore(target).setScore(score);
             super.addSuccess();
 
             return super.serviceProvider.message()

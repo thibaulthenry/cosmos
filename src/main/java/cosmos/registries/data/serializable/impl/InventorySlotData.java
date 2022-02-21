@@ -48,8 +48,8 @@ public class InventorySlotData implements ShareableSerializable<Inventory> {
     @Override
     public DataContainer toContainer() {
         return DataContainer.createNew()
-                .set(Queries.Inventories.SLOT_INDEX, this.slotIndex)
-                .set(Queries.Inventories.SLOT_STACK, this.slotStack);
+                .set(Queries.Inventory.SLOT_INDEX, this.slotIndex)
+                .set(Queries.Inventory.SLOT_STACK, this.slotStack);
     }
 
 }

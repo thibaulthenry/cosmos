@@ -7,7 +7,7 @@ import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.command.parameter.managed.standard.ResourceKeyedValueParameters;
-import org.spongepowered.api.world.WorldBorder;
+import org.spongepowered.api.world.border.WorldBorder;
 import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 import org.spongepowered.math.vector.Vector2d;
 
@@ -29,11 +29,11 @@ public class Center extends AbstractBorderCommand {
     @Override
     protected void run(final Audience src, final CommandContext context, final ServerWorldProperties properties, final WorldBorder border) throws CommandException {
         final Optional<Vector2d> optionalInput = context.one(CosmosKeys.X_Z);
-        Vector2d value = border.center().toVector2(true);
+        Vector2d value = border.center();
 
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
-            border.setCenter(value.getX(), value.getY());
+            // todo border.toBuilder().center(value.x(), value.y()).build();
             super.serviceProvider.world().saveProperties(src, properties);
         }
 

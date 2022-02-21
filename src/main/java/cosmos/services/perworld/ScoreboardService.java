@@ -1,7 +1,7 @@
 package cosmos.services.perworld;
 
 import com.google.inject.ImplementedBy;
-import cosmos.services.perworld.impl.ScoreboardsServiceImpl;
+import cosmos.services.perworld.impl.ScoreboardServiceImpl;
 import net.kyori.adventure.text.Component;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
@@ -16,8 +16,8 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
-@ImplementedBy(ScoreboardsServiceImpl.class)
-public interface ScoreboardsService {
+@ImplementedBy(ScoreboardServiceImpl.class)
+public interface ScoreboardService {
 
     int extremum(CommandContext context, Parameter.Key<Integer> integerKey, boolean negativeBound) throws CommandException;
 

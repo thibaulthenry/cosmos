@@ -4,7 +4,17 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import cosmos.constants.CosmosParameters;
-import cosmos.executors.commands.border.*;
+import cosmos.executors.commands.border.Center;
+import cosmos.executors.commands.border.DamageAmount;
+import cosmos.executors.commands.border.DamageThreshold;
+import cosmos.executors.commands.border.DefaultSettings;
+import cosmos.executors.commands.border.Information;
+import cosmos.executors.commands.border.Operate;
+import cosmos.executors.commands.border.Remove;
+import cosmos.executors.commands.border.Size;
+import cosmos.executors.commands.border.Transpose;
+import cosmos.executors.commands.border.WarningDistance;
+import cosmos.executors.commands.border.WarningTime;
 
 @Singleton
 class Border extends AbstractModule {

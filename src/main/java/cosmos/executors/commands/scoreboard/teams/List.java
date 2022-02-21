@@ -27,7 +27,7 @@ public class List extends AbstractScoreboardCommand {
     }
 
     private PaginationList getRegisteredTeamsText(final Audience src, final ResourceKey worldKey) {
-        final Collection<Component> contents = super.serviceProvider.scoreboards()
+        final Collection<Component> contents = super.serviceProvider.scoreboard()
                 .scoreboardOrCreate(worldKey)
                 .teams()
                 .stream()
@@ -66,7 +66,7 @@ public class List extends AbstractScoreboardCommand {
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Scoreboard scoreboard) throws CommandException {
-        if (super.serviceProvider.scoreboards().scoreboardOrCreate(worldKey).teams().isEmpty()) {
+        if (super.serviceProvider.scoreboard().scoreboardOrCreate(worldKey).teams().isEmpty()) {
             throw super.serviceProvider.message().getError(src, "error.scoreboard.teams.list.empty", "world", worldKey);
         }
 
