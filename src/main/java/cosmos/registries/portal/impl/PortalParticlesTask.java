@@ -58,7 +58,6 @@ public class PortalParticlesTask {
                     }
                 })
                 .interval(optionalParticlesSpawnInterval.get())
-                // .name("cosmos-portal-particles-" + portal.key().formatted())
                 .plugin(Cosmos.pluginContainer())
                 .build();
     }

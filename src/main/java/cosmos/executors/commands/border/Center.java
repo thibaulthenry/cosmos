@@ -3,6 +3,7 @@ package cosmos.executors.commands.border;
 import com.google.inject.Singleton;
 import cosmos.constants.CosmosKeys;
 import net.kyori.adventure.audience.Audience;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
 import org.spongepowered.api.command.parameter.Parameter;
@@ -33,6 +34,7 @@ public class Center extends AbstractBorderCommand {
 
         if (optionalInput.isPresent()) {
             value = optionalInput.get();
+            border.toBuilder().center(value.x(), value.y()).build();
             // todo border.toBuilder().center(value.x(), value.y()).build();
             super.serviceProvider.world().saveProperties(src, properties);
         }

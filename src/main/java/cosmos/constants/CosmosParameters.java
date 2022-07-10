@@ -39,6 +39,7 @@ import java.util.function.Supplier;
 public class CosmosParameters {
 
     public static final Supplier<CosmosBuilder<BackupArchetype>> BACKUP = Backup::new;
+
     public static final Supplier<CosmosBuilder<ResourceKey>> BACKUP_WORLD = BackupWorld::new;
 
     public static final Supplier<Parameter.Value.Builder<NamedTextColor>> COLOR = () -> Parameter
@@ -53,10 +54,15 @@ public class CosmosParameters {
             .addParser(ResourceKeyedValueParameters.MANY_ENTITIES);
 
     public static final Supplier<Extremum> EXTREMUM = Extremum::new;
+
     public static final Supplier<CosmosBuilder<Object>> GAME_RULE_VALUE_ALL = GameRuleValueAll::new;
+
     public static final Supplier<CosmosBuilder<Objective>> OBJECTIVE_ALL = ObjectiveAll::new;
+
     public static final Supplier<CosmosBuilder<Objective>> OBJECTIVE_TRIGGER = ObjectiveTrigger::new;
+
     public static final Supplier<CosmosBuilder<CosmosPortal>> PORTAL_ALL = PortalAll::new;
+
     public static final Supplier<CosmosBuilder<BlockType>> PORTAL_BLOCK_TYPE = PortalBlockTypeAll::new;
 
     public static final Supplier<Parameter.Value.Builder<DelayFormat>> PORTAL_DELAY_FORMAT = () -> Parameter
@@ -71,6 +77,7 @@ public class CosmosParameters {
 
     // TODO https://github.com/SpongePowered/Sponge/issues/3343
     public static final Supplier<Targets> TARGETS = Targets::new;
+
     public static final Supplier<CosmosBuilder<Team>> TEAM_ALL = TeamAll::new;
 
     public static final Supplier<Parameter.FirstOfBuilder> TEXTS_ALL = () -> Parameter
@@ -78,9 +85,13 @@ public class CosmosParameters {
             .orFirstOf(Parameter.jsonText().key(CosmosKeys.TEXT_JSON).build());
 
     public static final Supplier<CosmosBuilder<ResourceKey>> WORLD_ALL = WorldAll::new;
+
     public static final Supplier<WorldDistinct> WORLD_DISTINCT = WorldDistinct::new;
+
     public static final Supplier<CosmosBuilder<ResourceKey>> WORLD_EXPORTED = WorldExported::new;
+
     public static final Supplier<CosmosBuilder<ResourceKey>> WORLD_OFFLINE = WorldOffline::new;
+
     public static final Supplier<CosmosBuilder<ResourceKey>> WORLD_ONLINE = WorldOnline::new;
 
     private static class Parser {

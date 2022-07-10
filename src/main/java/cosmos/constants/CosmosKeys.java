@@ -40,6 +40,7 @@ public class CosmosKeys {
     public static final Parameter.Key<Integer> AMOUNT = Parameter.key("amount", Integer.class);
     public static final Parameter.Key<Double> AMOUNT_DOUBLE = Parameter.key("amount", Double.class);
     public static final Parameter.Key<BackupArchetype> BACKUP = Parameter.key("backup", BackupArchetype.class);
+
     public static final Parameter.Key<BlockType> BLOCK_TYPE = Parameter.key("block-type", BlockType.class);
     public static final Parameter.Key<Integer> BLOCKS = Parameter.key("blocks", Integer.class);
     public static final Parameter.Key<Integer> CHUNKS = Parameter.key("chunks", Integer.class);
@@ -50,6 +51,8 @@ public class CosmosKeys {
     public static final Parameter.Key<Difficulty> DIFFICULTY = Parameter.key("difficulty", Difficulty.class);
     public static final Parameter.Key<Direction> DIRECTION = Parameter.key("direction", Direction.class);
     public static final Parameter.Key<ObjectiveDisplayMode> DISPLAY_MODE = Parameter.key("display-mode", ObjectiveDisplayMode.class);
+
+    public static final Parameter.Key<ObjectiveDisplayMode> DISPLAY_NAME = Parameter.key("display-mode", ObjectiveDisplayMode.class);
     public static final Parameter.Key<DisplaySlot> DISPLAY_SLOT = Parameter.key("display-slot", DisplaySlot.class);
     public static final Parameter.Key<Double> DISTANCE = Parameter.key("distance", Double.class);
     public static final Parameter.Key<Long> DURATION = Parameter.key("duration", Long.class);
@@ -65,7 +68,9 @@ public class CosmosKeys {
     public static final Parameter.Key<Integer> MAX = Parameter.key("maximum", Integer.class);
     public static final Parameter.Key<ServerPlayer> MESSAGE_RECEIVER = Parameter.key("message-receiver", ServerPlayer.class);
     public static final Parameter.Key<Integer> MIN = Parameter.key("minimum", Integer.class);
+
     public static final Parameter.Key<String> NAME = Parameter.key("name", String.class);
+
     public static final Parameter.Key<Objective> OBJECTIVE = Parameter.key("objective", Objective.class);
     public static final Parameter.Key<Operands> OPERAND = Parameter.key("operand", Operands.class);
     public static final Parameter.Key<Operator> OPERATOR = Parameter.key("operator", Operator.class);
@@ -75,7 +80,9 @@ public class CosmosKeys {
     public static final Parameter.Key<Vector3d> PITCH_YAW_ROLL = Parameter.key("pitch> <yaw> <roll", Vector3d.class);
     public static final Parameter.Key<CosmosPortal> PORTAL_COSMOS = Parameter.key("portal", CosmosPortal.class);
     public static final Parameter.Key<DelayFormat> PORTAL_DELAY_FORMAT = Parameter.key("delay-timer-format", DelayFormat.class);
+
     public static final Parameter.Key<CosmosFramePortal> PORTAL_FRAME_COSMOS = Parameter.key("portal-frame", CosmosFramePortal.class);
+
     public static final Parameter.Key<PortalType> PORTAL_TYPE = Parameter.key("portal-type", PortalType.class);
     public static final Parameter.Key<CosmosPortalType> PORTAL_TYPE_COSMOS = Parameter.key("portal-type", CosmosPortalType.class);
     public static final Parameter.Key<PotionEffectType> POTION_EFFECT_TYPE = Parameter.key("potion-effect-type", PotionEffectType.class);
@@ -83,6 +90,7 @@ public class CosmosKeys {
     public static final Parameter.Key<Long> SEED = Parameter.key("seed", Long.class);
     public static final Parameter.Key<SoundType> SOUND_TYPE = Parameter.key("sound-type", SoundType.class);
     public static final Parameter.Key<Double> START_DIAMETER = Parameter.key("start-diameter", Double.class);
+
     public static final Parameter.Key<Boolean> STATE = Parameter.key("state", Boolean.class);
     public static final Parameter.Key<String> TAG = Parameter.key("tag", String.class);
     public static final Parameter.Key<Team> TEAM = Parameter.key("team", Team.class);
@@ -93,6 +101,7 @@ public class CosmosKeys {
     public static final Parameter.Key<Visibility> VISIBILITY = Parameter.key("visibility", Visibility.class);
     public static final Parameter.Key<Double> VOLUME = Parameter.key("volume", Double.class);
     public static final Parameter.Key<String> WILDCARD = Parameter.key("wildcard", String.class);
+
     public static final Parameter.Key<ResourceKey> WORLD = Parameter.key("world", ResourceKey.class);
     public static final Parameter.Key<ResourceKey> WORLD_DESTINATION = Parameter.key("world-destination", ResourceKey.class);
     public static final Parameter.Key<ResourceKey> WORLD_ORIGIN = Parameter.key("world-origin", ResourceKey.class);

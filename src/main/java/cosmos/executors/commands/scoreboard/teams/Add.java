@@ -44,7 +44,7 @@ public class Add extends AbstractScoreboardCommand {
         }
 
         final Team.Builder teamBuilder = Team.builder().name(name);
-        super.serviceProvider.scoreboard().findComponent(context).ifPresent(teamBuilder::displayName);
+        super.serviceProvider.parameter().findComponent(context).ifPresent(teamBuilder::displayName);
         final Team team = teamBuilder.build();
         scoreboard.registerTeam(team);
 

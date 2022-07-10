@@ -1,29 +1,22 @@
 package cosmos.services.perworld;
 
 import com.google.inject.ImplementedBy;
+import cosmos.services.CosmosService;
 import cosmos.services.perworld.impl.ScoreboardServiceImpl;
 import net.kyori.adventure.text.Component;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
-import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.scoreboard.Scoreboard;
 import org.spongepowered.api.scoreboard.Team;
 import org.spongepowered.api.scoreboard.objective.Objective;
 import org.spongepowered.api.world.server.ServerWorld;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.Set;
 
 @ImplementedBy(ScoreboardServiceImpl.class)
-public interface ScoreboardService {
-
-    int extremum(CommandContext context, Parameter.Key<Integer> integerKey, boolean negativeBound) throws CommandException;
-
-    Optional<Integer> findExtremum(CommandContext context, Parameter.Key<Integer> integerKey, boolean negativeBound);
-
-    Optional<Component> findComponent(CommandContext context);
+public interface ScoreboardService extends CosmosService {
 
     boolean isTargetsParameterFilled(CommandContext context);
 

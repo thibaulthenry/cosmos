@@ -35,7 +35,7 @@ public class Fill extends AbstractCommand {
     protected void run(final Audience src, final CommandContext context) throws CommandException {
         final CosmosPortal portal = context.one(CosmosKeys.PORTAL_COSMOS)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.value", "param", CosmosKeys.PORTAL_COSMOS));
-
+// todo duplication bug when you update blocks surrounding flying sign or buttons
         if (!context.hasFlag(CosmosKeys.Flag.WITH_TARGET_BLOCK)) {
             super.serviceProvider.portal().fill(src, portal);
 

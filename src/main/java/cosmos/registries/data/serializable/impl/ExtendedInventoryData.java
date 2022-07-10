@@ -77,8 +77,7 @@ public class ExtendedInventoryData implements ShareableSerializable<ServerPlayer
         final Container playerContainer = data.openInventory().get();
 
         if (this.pickedItem != null) {
-            // playerContainer.setCursor(this.pickedItem);
-            // TODO https://github.com/SpongePowered/Sponge/issues/3258
+            playerContainer.setCursor(this.pickedItem);
         }
 
         final Optional<Inventory> optionalCraftingInventory = playerContainer.viewed()

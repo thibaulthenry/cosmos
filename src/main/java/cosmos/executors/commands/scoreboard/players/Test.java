@@ -41,9 +41,9 @@ public class Test extends AbstractMultiTargetCommand {
                                 .asSupplier()
                 );
 
-        final int min = super.serviceProvider.scoreboard().extremum(context, CosmosKeys.MIN, true);
+        final int min = super.serviceProvider.parameter().extremum(context, CosmosKeys.MIN, true);
 
-        final int max = super.serviceProvider.scoreboard()
+        final int max = super.serviceProvider.parameter()
                 .findExtremum(context, CosmosKeys.MAX, false)
                 .orElse(Integer.MAX_VALUE);
 

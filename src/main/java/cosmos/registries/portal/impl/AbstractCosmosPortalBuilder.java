@@ -10,6 +10,7 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.DataView;
@@ -69,13 +70,10 @@ abstract class AbstractCosmosPortalBuilder<T extends CosmosPortal> extends Abstr
         final ResourceKey key = container.getResourceKey(Queries.Portal.KEY)
                 .orElseThrow(() -> new InvalidDataException("Missing key while building CosmosPortal"));
 
-        final Set<ServerLocation> origins = container.getViewList(Queries.Portal.ORIGINS)
-                .orElseThrow(() -> new InvalidDataException("Missing origins while building CosmosPortal"))
-                .stream()
-                .map(this::buildServerLocation)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
+        final Set<ServerLocation> origins = new HashSet<>(
+                container.getSerializableList(Queries.Portal.ORIGINS, ServerLocation.class)
+                        .orElseThrow(() -> new InvalidDataException("Missing origins while building CosmosPortal"))
+        );
 
         final BlockType trigger = container.getRegistryValue(Queries.Portal.TRIGGER, RegistryTypes.BLOCK_TYPE)
                 .orElseThrow(() -> new InvalidDataException("Missing trigger while building CosmosPortal"));
@@ -100,19 +98,19 @@ abstract class AbstractCosmosPortalBuilder<T extends CosmosPortal> extends Abstr
                     .ifPresent(builder::delayFormat);
 
             container.getIntegerList(Queries.Portal.DELAY_GRADIENT_COLORS)
-                    .map(value -> value.stream().map(NamedTextColor::ofExact).collect(Collectors.toList()))
+                    .map(value -> value.stream().map(NamedTextColor::namedColor).collect(Collectors.toList()))
                     .ifPresent(builder::delayGradientColors);
 
             container.getBoolean(Queries.Portal.DELAY_SHOWN).ifPresent(builder::delayShown);
 
-            container.getView(Queries.Portal.DESTINATION)
-                    .flatMap(this::buildServerLocation)
+            container.getSerializable(Queries.Portal.DESTINATION, ServerLocation.class)
                     .ifPresent(builder::destination);
 
             container.getBoolean(Queries.Portal.NAUSEA).ifPresent(builder::nausea);
 
-            // container.getLong(Queries.Portal.PARTICLES).map(Ticks::of).ifPresent(builder::delay);
-            // TODO https://github.com/SpongePowered/Sponge/issues/3311
+            container.getView(Queries.Portal.PARTICLES)
+                    .flatMap(view -> ParticleEffect.builder().build(view))
+                    .ifPresent(builder::particles);
 
             container.getBoolean(Queries.Portal.PARTICLES_FLUCTUATION).ifPresent(builder::particlesFluctuation);
 
@@ -147,20 +145,6 @@ abstract class AbstractCosmosPortalBuilder<T extends CosmosPortal> extends Abstr
         }
 
         return Optional.of(builder.build());
-    }
-
-    protected Optional<ServerLocation> buildServerLocation(final DataView container) {
-        if (!container.contains(Queries.Portal.Location.POSITION, Queries.Portal.Location.WORLD)) {
-            return Optional.empty();
-        }
-
-        final Vector3d position = container.getObject(Queries.Portal.Location.POSITION, Vector3d.class)
-                .orElseThrow(() -> new InvalidDataException("Missing position while building ServerLocation"));
-
-        final ResourceKey worldKey = container.getResourceKey(Queries.Portal.Location.WORLD)
-                .orElseThrow(() -> new InvalidDataException("Missing world key while building ServerLocation"));
-
-        return Optional.of(ServerLocation.of(worldKey, position));
     }
 
     protected Optional<Sound> buildSound(final DataView container) {

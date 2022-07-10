@@ -20,7 +20,7 @@ public class Prefix extends AbstractTeamModifyCommand {
 
     @Override
     protected void run(final Audience src, final CommandContext context, final ResourceKey worldKey, final Scoreboard scoreboard, final Team team) throws CommandException {
-        final Component prefix = super.serviceProvider.scoreboard().findComponent(context)
+        final Component prefix = super.serviceProvider.parameter().findComponent(context)
                 .orElseThrow(super.serviceProvider.message().supplyError(src, "error.invalid.text"));
 
         team.setPrefix(prefix);

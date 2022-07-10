@@ -17,7 +17,7 @@ import cosmos.services.perworld.ScoreboardService;
 import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.CommandContext;
@@ -56,28 +56,6 @@ public class ScoreboardServiceImpl implements ScoreboardService {
         this.messageService = injector.getInstance(MessageService.class);
         this.scoreboardRegistry = injector.getInstance(ScoreboardRegistry.class);
         this.scoreboardSerializer = injector.getInstance(ScoreboardSerializer.class);
-    }
-
-    @Override
-    public Optional<Integer> findExtremum(final CommandContext context, final Parameter.Key<Integer> integerKey, final boolean negativeBound) {
-        return context.one(integerKey)
-                .map(Optional::of)
-                .orElse(context.one(CosmosKeys.WILDCARD).map(value -> negativeBound ? Integer.MIN_VALUE : Integer.MAX_VALUE));
-    }
-
-    @Override
-    public Optional<Component> findComponent(final CommandContext context) {
-        return context.one(CosmosKeys.TEXT_JSON)
-                .map(Optional::of)
-                .orElse(context.one(CosmosKeys.TEXT_AMPERSAND));
-    }
-
-    @Override
-    public int extremum(final CommandContext context, final Parameter.Key<Integer> integerKey, final boolean negativeBound) throws CommandException {
-        final Audience src = context.cause().audience();
-
-        return this.findExtremum(context, integerKey, negativeBound)
-                .orElseThrow(this.messageService.supplyError(src, "error.invalid.value", "param", integerKey));
     }
 
     @Override
@@ -135,7 +113,7 @@ public class ScoreboardServiceImpl implements ScoreboardService {
                 .scores()
                 .stream()
                 .map(Score::name)
-                .sorted(Comparator.comparing(component -> PlainComponentSerializer.plain().serialize(component)))
+                .sorted(Comparator.comparing(component -> PlainTextComponentSerializer.plainText().serialize(component)))
                 .collect(Collectors.toList());
     }
 
@@ -153,7 +131,7 @@ public class ScoreboardServiceImpl implements ScoreboardService {
             return returnSource ? this.tryReturnSource(src) : this.scoreHolders(worldKey);
         }
 
-        if (context.one(textAmpersandKey).map(component -> "*".equals(PlainComponentSerializer.plain().serialize(component))).orElse(false)) {
+        if (context.one(textAmpersandKey).map(component -> "*".equals(PlainTextComponentSerializer.plainText().serialize(component))).orElse(false)) {
             final Collection<Component> scoreHolders = this.scoreHolders(worldKey);
 
             if (scoreHolders.isEmpty()) {

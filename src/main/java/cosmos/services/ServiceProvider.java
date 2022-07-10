@@ -8,6 +8,7 @@ import cosmos.services.io.FinderService;
 import cosmos.services.listener.ListenerService;
 import cosmos.services.message.MessageService;
 import cosmos.services.pagination.PaginationService;
+import cosmos.services.parameter.ParameterService;
 import cosmos.services.perworld.ScoreboardService;
 import cosmos.services.portal.PortalService;
 import cosmos.services.registry.RegistryProvider;
@@ -34,6 +35,8 @@ public interface ServiceProvider {
     MessageService message();
 
     PaginationService pagination();
+
+    ParameterService parameter();
 
     PortalService portal();
 

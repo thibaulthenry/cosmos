@@ -30,11 +30,9 @@ import org.spongepowered.plugin.builtin.jvm.Plugin;
 public class Cosmos {
 
     public static final String NAMESPACE = "cosmos";
-
     private static Logger logger;
     private static PluginContainer pluginContainer;
     private static ServiceProvider serviceProvider;
-
     private final Injector injector;
 
     @Inject

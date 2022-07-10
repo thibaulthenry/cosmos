@@ -25,6 +25,8 @@ import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.entity.BlockEntity;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.data.Keys;
+import org.spongepowered.api.effect.particle.ParticleEffect;
+import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.FallingBlock;
 import org.spongepowered.api.registry.RegistryTypes;
@@ -82,6 +84,8 @@ public class PortalServiceImpl implements PortalService {
                 .delayShown(true)
                 .key(key)
                 .origins(selection)
+                .particles(ParticleEffect.builder().type(ParticleTypes.PORTAL).build())
+                .particlesFluctuation(true)
                 .particlesSpawnInterval(Ticks.single())
                 .soundDelayInterval(Ticks.single())
                 .trigger(type.defaultTrigger())

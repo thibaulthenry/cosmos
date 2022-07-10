@@ -5,6 +5,7 @@ import cosmos.Cosmos;
 import cosmos.constants.Directories;
 import cosmos.services.io.FinderService;
 import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.persistence.DataContainer;
 import org.spongepowered.api.data.persistence.DataFormats;
 import org.spongepowered.api.data.persistence.DataSerializable;
@@ -179,10 +180,9 @@ public class FinderServiceImpl implements FinderService {
         }).orElse(Stream.empty());
     }
 
-    // TODO https://github.com/SpongePowered/Sponge/issues/3265
     @Override
     public Optional<Path> worldPath(final ResourceKey worldKey) {
-        return Optional.empty();
+        return Sponge.server().worldManager().worldDirectory(worldKey);
     }
 
     @Override

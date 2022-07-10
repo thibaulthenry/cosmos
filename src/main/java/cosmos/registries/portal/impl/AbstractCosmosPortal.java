@@ -11,6 +11,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.persistence.DataContainer;
+import org.spongepowered.api.data.persistence.DataSerializable;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.util.Ticks;
@@ -193,7 +194,7 @@ abstract class AbstractCosmosPortal implements CosmosPortal {
     public DataContainer toContainer() {
         final DataContainer dataContainer = DataContainer.createNew()
                 .set(Queries.Portal.KEY, this.key)
-                .set(Queries.Portal.ORIGINS, this.origins.stream().map(this::toContainerServerLocation).collect(Collectors.toList()))
+                .set(Queries.Portal.ORIGINS, this.origins.stream().map(ServerLocation::toContainer).collect(Collectors.toList()))
                 .set(Queries.Portal.TRIGGER, this.trigger.key(RegistryTypes.BLOCK_TYPE))
                 .set(Queries.Portal.TYPE, this.type.key(RegistryTypes.PORTAL_TYPE));
 
@@ -213,15 +214,14 @@ abstract class AbstractCosmosPortal implements CosmosPortal {
                 .ifPresent(value -> dataContainer.set(Queries.Portal.DELAY_SHOWN, value));
 
         Optional.ofNullable(this.destination)
-                .map(this::toContainerServerLocation)
+                .map(ServerLocation::toContainer)
                 .ifPresent(value -> dataContainer.set(Queries.Portal.DESTINATION, value));
 
         Optional.ofNullable(this.nausea)
                 .ifPresent(value -> dataContainer.set(Queries.Portal.NAUSEA, value));
 
-//        Optional.ofNullable(this.particles)
-//                .ifPresent(value -> dataContainer.set(Queries.Portal.PARTICLES, value));
-        // TODO https://github.com/SpongePowered/Sponge/issues/3311
+        Optional.ofNullable(this.particles)
+                .ifPresent(value -> dataContainer.set(Queries.Portal.PARTICLES, value));
 
         Optional.ofNullable(this.particlesFluctuation)
                 .ifPresent(value -> dataContainer.set(Queries.Portal.PARTICLES_FLUCTUATION, value));
@@ -254,12 +254,6 @@ abstract class AbstractCosmosPortal implements CosmosPortal {
                 .ifPresent(value -> dataContainer.set(Queries.Portal.SOUND_TRIGGER, value));
 
         return dataContainer;
-    }
-
-    private DataContainer toContainerServerLocation(final ServerLocation location) {
-        return DataContainer.createNew()
-                .set(Queries.Portal.Location.POSITION, location.position())
-                .set(Queries.Portal.Location.WORLD, location.worldKey());
     }
 
     private DataContainer toContainerSound(final Sound sound) {

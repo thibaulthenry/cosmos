@@ -109,10 +109,9 @@ public class WorldServiceImpl implements WorldService {
                 .orElseThrow(this.messageService.getMessage(context, "error.missing.world.properties").asSupplier());
     }
 
-    // TODO https://github.com/SpongePowered/Sponge/issues/3268
     @Override
     public boolean isImported(final ResourceKey worldKey) {
-        return true; //Sponge.server().worldManager().templateExists(worldKey);
+        return Sponge.server().worldManager().templateKeys().contains(worldKey);
     }
 
     @Override

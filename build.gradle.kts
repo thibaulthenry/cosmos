@@ -6,14 +6,14 @@ plugins {
     id("org.spongepowered.gradle.plugin") version "2.0.1"
 }
 
-version = "2.0.0-8.0.0"
+version = "2.0.0-8.1.0"
 
 repositories {
     mavenCentral()
 }
 
 sponge {
-    apiVersion("8.0.0")
+    apiVersion("8.1.0")
     license("LICENSE")
     loader {
         name(PluginLoaders.JAVA_PLAIN)
